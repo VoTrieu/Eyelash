@@ -1,0 +1,35 @@
+<div class="location-container relative w-full h-96">
+  <!-- Address display in top left corner -->
+  <div class="absolute flex top-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-xs">
+    <div >
+      <h3 class="font-semibold text-gray-800 mb-1">Location Address</h3>
+      <p class="text-sm text-gray-600">{{ address }}</p>
+    </div>
+
+
+     <!-- Open map -->
+    <button (click)="openInGoogleMaps()" class="text-blue-500
+     hover:bg-gray-200 mr-2 h-9 w-9 rounded-full p-1 flex items-center justify-center">
+      <i class="pi pi-map"></i>
+    </button>
+
+    <!-- Directions -->
+    <button (click)="getDirections()" class="text-blue-500 hover:bg-gray-200 h-9 w-9 
+    rounded-full p-1 flex items-center justify-center">
+      <i class="pi pi-directions"></i>
+    </button>
+  </div>
+
+  <!-- Google Map -->
+  <google-map
+    [center]="center"
+    [zoom]="zoom"
+    width="100%"
+    height="100%"
+    class="rounded-lg">
+    <map-marker
+      [position]="center"
+      [options]="markerOptions">
+    </map-marker>
+  </google-map>
+</div>
