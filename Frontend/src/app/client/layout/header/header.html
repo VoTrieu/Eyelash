@@ -1,26 +1,30 @@
-<!-- <header class="flex bg-black text-white p-4 h-40 items-center justify-center">
-    <div class="p-fluid">
-        <div class="logo">
-            <img src="/logo-1.png" alt="Brand Logo" class="logo-image w-40 h-24" />
-        </div>
-        
-    </div>
-</header> -->
-
-<div class="bg-black flex items-center justify-center">
+<div
+  class="flex items-center justify-center"
+  [class.bg-black]="!isScrolled()"
+  [class.bg-white]="isScrolled()"
+>
   <div class="card container">
     <p-toolbar class="border-0 bg-transparent h-40">
       <ng-template #start>
-        <img src="/logo-1.png" alt="Brand logo" class="logo-image w-40 h-24" />
+        <img
+          [src]="isScrolled() ? '/logo.png' : '/logo3.png'"
+          alt="Brand logo"
+          class="logo-image h-36 w-36"
+        />
       </ng-template>
       <ng-template #center class="">
         <div class="items-center gap-2 pr-40">
-          <p-button label="HOME" text plain />
-          <p-button label="BEHIND THE EDIT" text plain />
-          <p-button label="SERVICES" text plain />
-          <p-button label="PORTFOLIO" text plain />
-          <p-button label="CONTACT" text plain />
-    
+            <p-button 
+                [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'"
+            label="HOME" text plain/>
+          <p-button 
+            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="BEHIND THE EDIT" text plain />
+          <p-button 
+            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="SERVICES" text plain />
+          <p-button 
+            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="PORTFOLIO" text plain />
+          <p-button 
+            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="CONTACT" text plain />
         </div>
       </ng-template>
       <ng-template #end>

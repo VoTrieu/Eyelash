@@ -1,13 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
-@import "tailwindcss";
-@import "tailwindcss-primeui";
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
 
-/* Define CSS variables for the SVG */
-:root {
-  --p-primary-color: #3f3f46; /* zinc-700 */
-  --ground-background: #ffffff; /* white for light mode */
-}
+@theme {
+  /* Define the animation keyframes and the utility class name */
+  --animate-slide-down: slideDown 0.5s ease-out forwards;
 
-.dark {
-  --ground-background: #18181b; /* zinc-900 for dark mode */
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
