@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
-import { Header } from './client/layout/header/header';
-import { Map } from "./shared/map/map";
-import { Carousel } from "./client/features/carousel/carousel";
-import { Footer } from './client/layout/footer/footer';
-
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [Header, Map, Carousel, Footer],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
