@@ -24,13 +24,13 @@ jobs:
 
       - name: Build Angular production bundle
         working-directory: Frontend
-        run: npm run build -- --configuration production --output-path dist/frontend --base-href /Eyelash/
+        run: npm run build -- --configuration production --localize=en-CA --output-path dist/frontend --base-href /Eyelash/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: Frontend/dist/frontend
+          publish_dir: Frontend/dist/frontend/browser
           publish_branch: gh-pages
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
