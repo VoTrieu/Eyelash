@@ -9,39 +9,61 @@ import { TagModule } from 'primeng/tag';
   templateUrl: './carousel.html',
   styleUrl: './carousel.css',
   host: {
-    class: 'flex items-center justify-center',
-  }
+    class: 'flex items-center justify-center my-8',
+  },
 })
 export class Carousel {
   products = [
     {
-      image: "./image.png",
-      title: "Product",
+      image: './image.png',
+      title: 'Product',
     },
     {
-      image: "./image1.png",
-      title: "Product 1",
+      image: './image1.png',
+      title: 'Product 1',
     },
     {
-      image: "./image2.png",
-      title: "Product 2",
+      image: './image2.png',
+      title: 'Product 2',
     },
     {
-      image: "./image3.png",
-      title: "Product 3",
+      image: './image3.png',
+      title: 'Product 3',
     },
     {
-      image: "./image4.png",
-      title: "Product 4",
+      image: './image4.png',
+      title: 'Product 4',
     },
     {
-      image: "./image5.png",
-      title: "Product 5",
+      image: './image5.png',
+      title: 'Product 5',
     },
     {
-      image: "./image6.png",
-      title: "Product 6",
-    }
+      image: './image6.png',
+      title: 'Product 6',
+    },
+  ];
 
-  ]
+  responsiveOptions = [
+    {
+      breakpoint: '1400px',
+      numVisible: 2,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '1199px',
+      numVisible: 3,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '767px',
+      numVisible: 2,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '575px',
+      numVisible: 1,
+      numScroll: 1,
+    },
+  ];
 }
