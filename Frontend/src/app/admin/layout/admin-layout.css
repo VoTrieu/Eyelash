@@ -1,0 +1,14 @@
+.content-area {
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  .content-area.desktop-sidebar-open {
+    margin-left: 20rem;
+  }
+}
+
+button.p-button-text {
+  min-width: auto;
+}

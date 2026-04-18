@@ -1,0 +1,31 @@
+.admin-sidebar {
+  width: 20rem;
+  transform: translateX(-100%);
+}
+
+.admin-sidebar .p-panelmenu {
+  border: 0;
+}
+
+.admin-sidebar .p-panelmenu .p-panelmenu-panel {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.admin-sidebar .p-panelmenu .p-panelmenu-panel:not(:last-child) {
+  margin-bottom: 0.75rem;
+}
+
+.admin-sidebar .p-panelmenu .p-panelmenu-header {
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.admin-sidebar .p-panelmenu .p-menuitem-link {
+  border-radius: 1rem;
+}
+
+.admin-sidebar .p-panelmenu .p-menuitem-link:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
