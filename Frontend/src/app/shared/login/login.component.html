@@ -1,0 +1,86 @@
+<div class="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-6 py-12">
+  <div
+    class="grid gap-8 w-full max-w-6xl rounded-4xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-lg md:grid-cols-[1.1fr_1fr]"
+  >
+    <div class="relative hidden md:flex flex-col justify-center p-10 bg-slate-900 text-white">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.4),transparent_35%)]"
+      ></div>
+      <div class="relative z-10 space-y-6">
+        <div class="flex items-center gap-3">
+          <span
+            class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-bold"
+            >E</span
+          >
+          <div>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-300">yelash</p>
+            <h1 class="text-3xl font-semibold">ffortless Beauty</h1>
+          </div>
+        </div>
+        <p class="max-w-xs text-slate-300">Sign in to access admin features.</p>
+      </div>
+    </div>
+
+    <div class="p-8 md:p-12 bg-white text-slate-900">
+      <div class="mb-8">
+        <span class="text-sm uppercase tracking-[0.3em] text-sky-600">Welcome</span>
+        <h2 class="mt-4 text-3xl font-semibold">Sign in to your account</h2>
+        <p class="mt-3 text-sm text-slate-500">Use your email and password to continue.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-3">
+          <label for="email" class="block text-sm font-medium text-slate-700"
+            >Email or Username</label
+          >
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email or username"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+          />
+          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+            <p class="text-sm text-red-600">Please enter a valid email address.</p>
+          }
+        </div>
+
+        <div class="space-y-3">
+          <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            styleClass="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+            [toggleMask]="true"
+            [feedback]="false"
+          ></p-password>
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <p class="text-sm text-red-600">Password must be at least 6 characters.</p>
+          }
+        </div>
+
+        <div
+          class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-slate-500"
+        >
+          <a href="#" class="text-sky-600 hover:text-sky-700">Forgot password?</a>
+          <a href="#" class="text-slate-400 hover:text-slate-600">Need help logging in?</a>
+        </div>
+
+        <p-button
+          type="submit"
+          label="Sign In"
+          [disabled]="loginForm.invalid"
+          styleClass="w-full rounded-xl bg-sky-600 text-white shadow-lg hover:bg-sky-700"
+        ></p-button>
+      </form>
+
+      <div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">
+        <p>
+          New to Eyelash? <a href="#" class="text-sky-600 hover:text-sky-700">Create an account</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

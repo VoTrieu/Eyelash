@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminTopbar } from './topbar/admin-topbar';
-import { AdminSidebar } from './sidebar/admin-sidebar';
-import { AdminFooter } from './footer/admin-footer';
-import { AdminDashboard } from '../features/dashboard/admin-dashboard';
-import { SidebarService } from '../services/sidebar.service';
+
 import { ButtonModule } from 'primeng/button';
+import { AdminTopbar } from '../admin-topbar/admin-topbar';
+import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
+import { AdminFooter } from '../admin-footer/admin-footer';
+import { AdminDashboard } from '../../features/dashboard/admin-dashboard';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-admin-layout',

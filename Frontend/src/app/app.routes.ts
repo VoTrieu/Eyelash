@@ -6,6 +6,16 @@ export const routes: Routes = [
     },
     {
         path: 'admin',
-        loadComponent: () => import('./admin/layout/admin-layout').then(m => m.AdminLayout)
-    }
+        loadComponent: () => import('./admin/admin-main/admin-main').then(m => m.AdminMain),
+        children: [
+            {
+                path: 'login',
+                loadComponent: () => import('./shared/login/login.component').then(m => m.LoginComponent)   
+            },
+            {
+                path: 'main',
+                loadComponent: () => import('./admin/layout/admin-layout/admin-layout').then(m => m.AdminLayout)   
+            }
+        ]
+    },
 ];
