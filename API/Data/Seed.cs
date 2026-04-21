@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Text.Json;
 using API.DTOs;
 using API.Entities;
@@ -14,10 +15,11 @@ public class Seed
         if (await userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
-        var users = JsonSerializer.Deserialize<List<UserDto>>(userData);
+        var users = JsonSerializer.Deserialize<List<SeedUserDto>>(userData);
+
 
         if (users == null) return;
-
+        
         foreach (var user in users)
         {
             var appUser = new AppUser
@@ -31,18 +33,17 @@ public class Seed
             appUser.Photos.Add(new Photo
             {
                 Url = user.ImageUrl!,
-                UserId = appUser.Id
             });
 
             var result = await userManager.CreateAsync(appUser, "Pa$$w0rd");
+          
             if (!result.Succeeded)
             {
-                Console.WriteLine($"Failed to create user {appUser.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                Console.WriteLine($"❌ {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                continue;
             }
-            else
-            {
-                await userManager.AddToRoleAsync(appUser, "Client");    
-            }
+            await userManager.AddToRoleAsync(appUser, "Client");    
+      
 
         }
 
@@ -54,10 +55,12 @@ public class Seed
         };
 
         await userManager.CreateAsync(admin, "Pa$$w0rd");
+
         var adminResult = await userManager.AddToRoleAsync(admin, "Admin");
         if (!adminResult.Succeeded)        {
             Console.WriteLine($"Failed to create admin user: {string.Join(", ", adminResult.Errors.Select(e => e.Description))}");
-        }          
+        }  
+        Console.WriteLine($"Users count: {userManager.Users.Count()}");        
     }
 
 }
