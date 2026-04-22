@@ -1,12 +1,41 @@
+using API.DTOs;
 using API.Entities;
-using Microsoft.AspNetCore.Http;
+using API.Extensions;
+using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class AccountController(UserManager<AppUser> userManager) : BaseApiController
+    public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService) : BaseApiController
     {
-        
+        [HttpPost("login")]
+        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+        {
+           var user = await userManager.FindByEmailAsync(loginDto.Email);
+           if (user == null) return Unauthorized("❌ Invalid email or password");
+           var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+           if (!result) return Unauthorized("❌ Invalid email or password");
+            await SetRefreshTokenCookie(user);
+           return await user.ToDto(tokenService);
+        }
+
+        private async Task SetRefreshTokenCookie(AppUser user)
+        {
+            var refreshToken = tokenService.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            await userManager.UpdateAsync(user);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
+
+       
     }
 }
