@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { AccountService } from '../../core/services/account.service';
+import { AccountService } from '../../core/services/account-service';
 import { Router } from '@angular/router';
 
 @Component({

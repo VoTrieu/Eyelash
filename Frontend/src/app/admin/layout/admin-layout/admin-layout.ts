@@ -6,7 +6,7 @@ import { AdminTopbar } from '../admin-topbar/admin-topbar';
 import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
 import { AdminFooter } from '../admin-footer/admin-footer';
 import { AdminDashboard } from '../../features/dashboard/admin-dashboard';
-import { SidebarService } from '../../../core/services/sidebar.service';
+import { SidebarService } from '../../../core/services/sidebar-service';
 
 @Component({
   selector: 'app-admin-layout',
