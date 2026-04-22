@@ -10,6 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("CorsPolicy", policy =>
+    {
+        policy
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .WithOrigins("https://localhost:4200", "http://localhost:4200");
+    });
+});
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
@@ -34,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();

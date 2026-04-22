@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { MenuItem } from 'primeng/api';
-import { SidebarService } from '../../services/sidebar.service';
+import { SidebarService } from '../../../core/services/sidebar.service';
 
 @Component({
   selector: 'app-admin-sidebar',
