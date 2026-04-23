@@ -34,6 +34,7 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.accountService.login(this.loginForm.value).subscribe({
         next: user => {
+          this.toastService.showSuccess('Login successful!');
           this.router.navigate(['/admin/main']);
           this.accountService.setCurrentUser(user);
         },

@@ -10,7 +10,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 export class AccountService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-  currentUser = signal<User | null>(null);
+  currentUser = signal<User | null>(this.getUserFromStorage());
 
   login(creds: LoginCreds){
     return this.http.post<User>(this.baseUrl + 'account/login', creds, { withCredentials: true })
@@ -23,8 +23,40 @@ export class AccountService {
 
   setCurrentUser(user: User) {
     user.roles = this.getRolesFromToken(user.token);
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('token', user.token);
     this.currentUser.set(user);
-  } 
+  }
+
+  logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    this.currentUser.set(null);
+  }
+
+  isTokenValid(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload);
+      const payloadObj = JSON.parse(decodedPayload);
+      const expiresAt = payloadObj.exp * 1000; // Convert to milliseconds
+      return Date.now() < expiresAt;
+    } catch {
+      return false;
+    }
+  }
+
+  private getUserFromStorage(): User | null {
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch {
+      return null;
+    }
+  }
 
   private getRolesFromToken(token: string): string[] {
     const payload = token.split('.')[1];
