@@ -11,7 +11,7 @@ export const adminGuard: CanActivateChildFn = (route, state) => {
 
   if (!currentUser || !currentUser.roles.includes('Admin')) {
     toastService.showError('Access denied. Admins only.');
-    return router.createUrlTree(['/admin/login']);
+    return router.createUrlTree(['/login']);
   }
   
   return true;

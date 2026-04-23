@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AccountService } from '../services/account-service';
 
@@ -11,7 +11,13 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   if (user && isTokenValid) {
     // User already logged in, redirect to admin dashboard
-    return router.createUrlTree(['/admin/main/dashboard']);
+    if (user.roles.includes('Admin') && state.url !== '/admin') {
+       router.navigate(['/admin']);
+    }
+
+    if (state.url !== '/') {
+       router.navigate(['/']);
+    }
   }
 
   return true;
