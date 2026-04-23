@@ -47,8 +47,9 @@ export class RegisterComponent {
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[\+]?[1-9][\d]{0,15}$/)]],
       displayName: ['', [Validators.required, Validators.minLength(2)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       gender: ['', Validators.required],
+      agreeTerms: ['', Validators.requiredTrue],
       dateOfBirth: ['', Validators.required],
       address: ['']
     }, { validators: this.passwordMatchValidator });
@@ -76,11 +77,13 @@ export class RegisterComponent {
 
       // Remove confirmPassword from the submission data
       const { confirmPassword, ...registerData } = formValue;
+      const genderCode = formValue.gender.code;
+      const submissionData = { ...registerData, gender: genderCode };
 
-      this.accountService.register(registerData as RegisterCreds).subscribe({
+      this.accountService.register(submissionData as RegisterCreds).subscribe({
         next: user => {
-          this.toastService.showSuccess('Registration successful! Please login.');
-          this.router.navigate(['/admin/login']);
+          this.toastService.showSuccess('Registration successful!');
+          this.router.navigate(['/']);
         },
         error: err => {
           this.toastService.showError('Registration failed. Please try again.');

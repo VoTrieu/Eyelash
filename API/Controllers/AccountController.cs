@@ -20,18 +20,51 @@ namespace API.Controllers
            return await user.ToDto(tokenService);
         }
 
+        [HttpPost("register")]
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        {
+            var existingUser = await userManager.FindByEmailAsync(registerDto.Email);
+            if (existingUser != null) return BadRequest("❌ Email is already in use");
+
+            var user = new AppUser
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber,
+                UserName = registerDto.Email,
+                Gender = registerDto.Gender,
+                Address = registerDto.Address,
+                DateOfBirth = registerDto.DateOfBirth,
+            };
+
+            var result = await userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("identity", error.Description);
+                }
+                return ValidationProblem();
+            }
+
+            await userManager.AddToRoleAsync(user, "Client");
+            await SetRefreshTokenCookie(user);
+
+            return await user.ToDto(tokenService);
+        }
+
         private async Task SetRefreshTokenCookie(AppUser user)
         {
             var refreshToken = tokenService.GenerateRefreshToken();
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(1);
             await userManager.UpdateAsync(user);
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
+                Expires = DateTime.UtcNow.AddDays(1)
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }

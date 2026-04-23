@@ -22,7 +22,12 @@ export class AccountService {
   }
 
   register(creds: RegisterCreds){
-    return this.http.post<User>(this.baseUrl + 'account/register', creds);
+    return this.http.post<User>(this.baseUrl + 'account/register', creds, { withCredentials: true })
+     .pipe(
+        tap(user => {
+          this.setCurrentUser(user);
+        })
+      );
   }
 
   setCurrentUser(user: User) {
