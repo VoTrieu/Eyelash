@@ -7,13 +7,17 @@ export const routes: Routes = [
         path: '', loadComponent: () => import('./client/layout/main/main').then(m => m.Main)
     },
     {
+        path: 'not-found',
+        loadComponent: () => import('./shared/not-found/not-found').then(m => m.NotFoundComponent)
+    },
+     {
         path: 'admin',
         loadComponent: () => import('./admin/admin-main/admin-main').then(m => m.AdminMain),
         children: [
             {
                 path: 'login',
                 canActivate: [authGuard],
-                loadComponent: () => import('./shared/login/login.component').then(m => m.LoginComponent)   
+                loadComponent: () => import('./shared/login/login').then(m => m.LoginComponent)   
             },
             {
                 path: 'main',
@@ -35,5 +39,9 @@ export const routes: Routes = [
                 redirectTo: 'login'
             }
         ]
+    },
+    {
+        path: '**',
+        redirectTo: 'not-found'
     },
 ];
