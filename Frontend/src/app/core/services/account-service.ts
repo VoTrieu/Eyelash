@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { LoginCreds, User } from '../../types/user';
+import { LoginCreds, RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs/internal/operators/tap';
 
 @Injectable({
@@ -19,6 +19,10 @@ export class AccountService {
           this.setCurrentUser(user);
         })
       );
+  }
+
+  register(creds: RegisterCreds){
+    return this.http.post<User>(this.baseUrl + 'account/register', creds);
   }
 
   setCurrentUser(user: User) {

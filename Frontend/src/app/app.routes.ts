@@ -20,6 +20,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./shared/login/login').then(m => m.LoginComponent)   
             },
             {
+                path: 'register',
+                loadComponent: () => import('./shared/register/register').then(m => m.RegisterComponent)   
+            },
+            {
                 path: 'main',
                 canActivateChild: [adminGuard],
                 loadComponent: () => import('./admin/layout/admin-layout/admin-layout').then(m => m.AdminLayout),

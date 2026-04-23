@@ -1,0 +1,198 @@
+<div class="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-6 py-12">
+  <div
+    class="grid gap-8 w-full max-w-6xl rounded-4xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-lg md:grid-cols-[1.1fr_1fr]"
+  >
+    <div class="relative hidden md:flex flex-col justify-center p-10 bg-slate-900 text-white">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.4),transparent_35%)]"
+      ></div>
+      <div class="relative z-10 space-y-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center">
+            <span class="text-sm font-bold">E</span>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-300">yelash</p>
+            <h1 class="text-3xl font-semibold">ffortless Beauty</h1>
+          </div>
+        </div>
+        <p class="max-w-xs text-slate-300">Create your account to get started.</p>
+      </div>
+    </div>
+
+    <div class="p-8 md:p-12 bg-white text-slate-900">
+      <div class="mb-8">
+        <span class="text-sm uppercase tracking-[0.3em] text-sky-600">Join Us</span>
+        <h2 class="mt-4 text-3xl font-semibold">Create your account</h2>
+        <p class="mt-3 text-sm text-slate-500">Fill in your details to get started.</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Display Name -->
+        <div class="space-y-3">
+          <label for="displayName" class="block text-sm font-medium text-slate-700">Display Name</label>
+          <input
+            pInputText
+            id="displayName"
+            type="text"
+            formControlName="displayName"
+            placeholder="Enter your display name"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+          />
+          @if (registerForm.get('displayName')?.invalid && registerForm.get('displayName')?.touched) {
+            <p class="text-sm text-red-600">Display name must be at least 5 characters.</p>
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="space-y-3">
+          <label for="email" class="block text-sm font-medium text-slate-700">Email Address</label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email address"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+          />
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <p class="text-sm text-red-600">Please enter a valid email address.</p>
+          }
+        </div>
+
+        <!-- Phone Number -->
+        <div class="space-y-3">
+          <label for="phoneNumber" class="block text-sm font-medium text-slate-700">Phone Number</label>
+          <input
+            pInputText
+            id="phoneNumber"
+            type="tel"
+            formControlName="phoneNumber"
+            placeholder="Enter your phone number"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+          />
+          @if (registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched) {
+            <p class="text-sm text-red-600">Please enter a valid phone number.</p>
+          }
+        </div>
+
+        
+
+        <!-- Password -->
+        <div class="space-y-3">
+          <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="Create a password"
+            styleClass="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1 text-slate-900 focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-100"
+            [toggleMask]="true"
+            [feedback]="true"
+            inputStyleClass="w-full mr-5 bg-transparent text-slate-900 border-none"
+          ></p-password>
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <p class="text-sm text-red-600">Password must be at least 8 characters.</p>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="space-y-3">
+          <label for="confirmPassword" class="block text-sm font-medium text-slate-700">Confirm Password</label>
+          <p-password
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+            styleClass="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1 text-slate-900 focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-100"
+            [toggleMask]="true"
+            [feedback]="false"
+            inputStyleClass="w-full mr-5 bg-transparent text-slate-900 border-none"
+          ></p-password>
+          @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+            @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+              <p class="text-sm text-red-600">Passwords do not match.</p>
+            } @else {
+              <p class="text-sm text-red-600">Please confirm your password.</p>
+            }
+          }
+        </div>
+        
+
+        <!-- Gender and Date of Birth Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Gender -->
+          <div class="space-y-3">
+            <label for="gender" class="block text-sm font-medium text-slate-700">Gender</label>
+            <p-select 
+              inputId="gender"
+              formControlName="gender"
+              [options]="genders" 
+              optionLabel="name" 
+              placeholder="Select a Gender" 
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              panelStyleClass="text-slate-900!"
+              >
+            </p-select> 
+            @if (registerForm.get('gender')?.invalid && registerForm.get('gender')?.touched) {
+              <p class="text-sm text-red-600">Please select your gender.</p>
+            }
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="space-y-3">
+            <label for="dateOfBirth" class="block text-sm font-medium text-slate-700">Date of Birth</label>
+              <p-datepicker 
+              id="dateOfBirth"
+              formControlName="dateOfBirth"  
+              [iconDisplay]="'input'" 
+              inputStyleClass="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              [showIcon]="true"/>
+            @if (registerForm.get('dateOfBirth')?.invalid && registerForm.get('dateOfBirth')?.touched) {
+              <p class="text-sm text-red-600">Please select your date of birth.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="space-y-3">
+          <label for="address" class="block text-sm font-medium text-slate-700">Address (Optional)</label>
+          <textarea
+            id="address"
+            formControlName="address"
+            placeholder="Enter your address"
+            rows="3"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Terms and Privacy -->
+        <div class="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="terms"
+            class="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500 border-slate-300 rounded"
+            required
+          />
+          <label for="terms" class="text-sm text-slate-600">
+            I agree to the <a href="#" class="text-sky-600 hover:text-sky-700">Terms of Service</a> and
+            <a href="#" class="text-sky-600 hover:text-sky-700">Privacy Policy</a>
+          </label>
+        </div>
+
+        <p-button
+          type="submit"
+          label="Create Account"
+          [disabled]="registerForm.invalid"
+          styleClass="w-full rounded-xl bg-sky-600 text-white shadow-lg hover:bg-sky-700"
+        ></p-button>
+      </form>
+
+      <div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">
+        <p>
+          Already have an account? <a href="#" class="text-sky-600 hover:text-sky-700">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
