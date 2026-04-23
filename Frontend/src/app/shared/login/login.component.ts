@@ -7,17 +7,21 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { AccountService } from '../../core/services/account-service';
 import { Router } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CardModule, InputTextModule, PasswordModule, ButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, CardModule, InputTextModule, PasswordModule, ButtonModule, ToastModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
   loginForm: FormGroup;
   private accountService = inject(AccountService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
+
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -29,12 +33,12 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       this.accountService.login(this.loginForm.value).subscribe({
-        next: response => {
+        next: user => {
           this.router.navigate(['/admin/main']);
+          this.accountService.setCurrentUser(user);
         },
         error: err => {
-          console.error('Login failed:', err);
-          // Handle login error, e.g., show error message to user
+          this.toastService.showError('Login failed. Please check your credentials.');
         }
       });
     }

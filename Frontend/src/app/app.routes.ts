@@ -17,11 +17,20 @@ export const routes: Routes = [
                 path: 'main',
                 canActivateChild: [adminGuard],
                 loadComponent: () => import('./admin/layout/admin-layout/admin-layout').then(m => m.AdminLayout),
+                children: [
+                    { path: 'dashboard', loadComponent: () => import('./admin/features/dashboard/admin-dashboard').then(m => m.AdminDashboard) },
+                    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+                    { path: '**', redirectTo: 'dashboard' }
+                ]
             },
             {
                 path: '',
                 redirectTo: 'login',
                 pathMatch: 'full'
+            },
+            {
+                path: '**',
+                redirectTo: 'login'
             }
         ]
     },

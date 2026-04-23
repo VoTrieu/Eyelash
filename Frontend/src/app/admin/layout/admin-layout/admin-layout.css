@@ -6,6 +6,7 @@
 @media (min-width: 1024px) {
   .content-area.desktop-sidebar-open {
     margin-left: 20rem;
+    width: calc(100% - 20rem);
   }
 }
 
