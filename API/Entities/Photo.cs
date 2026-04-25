@@ -11,6 +11,15 @@ public class Photo
     public string? PublicId { get; set; }
     
     [JsonIgnore]
-    public AppUser User { get; set; } = null!;
-    public string UserId { get; set; } = null!;
+    public AppUser? User { get; set; } = null!;
+    public string? UserId { get; set; } = null!;
+
+    [JsonIgnore]
+    public Service? Service { get; set; }
+    public int? ServiceId { get; set; }
+
+    [JsonIgnore]
+    public Review? Review { get; set; }
+    public int? ReviewId { get; set; }
+
 }

@@ -13,8 +13,17 @@ public class AppUser: IdentityUser
     public DateTime? DateOfBirth { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiry { get; set; }
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime LastActive { get; set; } = DateTime.UtcNow;
     
     [JsonIgnore]
-    public List<Photo> Photos { get; set; } = [];
+    public ICollection<Photo> Photos { get; set; } = [];
+    [JsonIgnore]
+    public ICollection<Appointment> Appointments { get; set; } = [];
+    [JsonIgnore]
+    public ICollection<Review> Reviews { get; set; } = [];
+
+    [JsonIgnore]
+    public ICollection<Service> FavoriteServices { get; set; } = [];
 
 }
