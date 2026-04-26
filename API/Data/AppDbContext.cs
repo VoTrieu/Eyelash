@@ -75,16 +75,5 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .WithMany(s => s.Appointments)
             .UsingEntity(j => j.ToTable("AppointmentServices")); 
 
-        // Service <-> AppUser (Clients)  Many-to-Many
-        builder.Entity<Service>()
-            .HasMany(s => s.Clients)
-            .WithMany(u => u.FavoriteServices)
-            .UsingEntity(j => j.ToTable("ClientServices"));
-            
-        // AppUser <-> Service (FavoriteServices) Bidirectional Many-to-Many
-        builder.Entity<AppUser>()
-            .HasMany(u => u.FavoriteServices)
-            .WithMany(s => s.Clients)
-            .UsingEntity(j => j.ToTable("ClientServices"));
     }
 }

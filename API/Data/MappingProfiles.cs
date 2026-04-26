@@ -1,0 +1,33 @@
+using System;
+using API.DTOs;
+using API.Entities;
+using AutoMapper;
+
+namespace API.Data;
+
+public class MappingProfiles: Profile
+{
+    public MappingProfiles()
+    {
+        //Service -> ServiceDTo
+        CreateMap<Service, ServiceDto>()
+            .ForMember(dest => dest.MainPhotoUrl,
+            opt => opt.MapFrom(src => src.Photos.Where(p => p.IsMain)
+            .Select(p => p.Url)
+            .FirstOrDefault()));
+
+        // Service -> Detail
+        CreateMap<Service, ServiceDetailDto>();
+
+        // Photo
+        CreateMap<Photo, PhotoDto>();
+
+        // Review
+         CreateMap<Review, ReviewDto>();
+
+        // Appointment
+        CreateMap<Appointment, AppointmentDto>();
+
+    }
+
+}

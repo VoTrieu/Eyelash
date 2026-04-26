@@ -14,16 +14,10 @@ public class Service
     public bool IsAvailable { get; set; } = true;  
     public DateTime Created { get; set; } = DateTime.UtcNow;
 
-    [JsonIgnore]
     public ICollection<Photo> Photos { get; set; } = [];
 
-    [JsonIgnore]
     public ICollection<Appointment> Appointments { get; set; } = [];
 
-    [JsonIgnore]
     public ICollection<Review> Reviews { get; set; } = [];
-
-    [JsonIgnore]
-    public ICollection<AppUser> Clients { get; set; } = [];
 
 }
