@@ -10,5 +10,6 @@ public class ServiceDto
     public string Description { get; set; } = "";
     public byte DurationInMinutes { get; set; }
     public bool IsAvailable { get; set; }
+    public DateTime Created { get; set; }
     public string? MainPhotoUrl { get; set; }
 }

@@ -1,13 +1,14 @@
 <div
   class="flex items-center justify-center"
   [class.bg-black]="!isScrolled()"
-  [class.bg-white]="isScrolled()"
+  [class.bg-white]="isScrolled() && themeService.mode() === 'light'"
+  [class.bg-slate-950]="isScrolled() && themeService.mode() === 'dark'"
 >
   <div class="card container">
     <p-toolbar class="border-0 bg-transparent h-40">
       <ng-template #start>
         <img
-          [src]="isScrolled() ? './logo.png' : './logo3.png'"
+          [src]="isScrolled() && themeService.mode() === 'light' ? './logo.png' : './logo3.png'"
           alt="Brand logo"
           class="logo-image h-36 w-36"
         />
@@ -15,20 +16,28 @@
       <ng-template #center class="">
         <div class="items-center gap-2 pr-40">
             <p-button 
-                [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'"
+                [styleClass]="navButtonClass()"
             label="HOME" text plain/>
           <p-button 
-            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="BEHIND THE EDIT" text plain />
+            [styleClass]="navButtonClass()" label="BEHIND THE EDIT" text plain />
           <p-button 
-            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="SERVICES" text plain />
+            [styleClass]="navButtonClass()" label="SERVICES" text plain />
           <p-button 
-            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="PORTFOLIO" text plain />
+            [styleClass]="navButtonClass()" label="PORTFOLIO" text plain />
           <p-button 
-            [styleClass]="isScrolled() ? 'text-black hover:bg-gray-200' : 'text-white hover:bg-gray-800'" label="CONTACT" text plain />
+            [styleClass]="navButtonClass()" label="CONTACT" text plain />
         </div>
       </ng-template>
       <ng-template #end>
         <div class="flex items-center gap-2">
+          <p-button
+            [icon]="themeService.mode() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
+            [styleClass]="navButtonClass()"
+            [attr.aria-label]="themeService.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            text
+            rounded
+            plain
+            (onClick)="themeService.toggle()" />
           <p-button label="Share" severity="contrast" size="small" />
           <p-avatar
             image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"

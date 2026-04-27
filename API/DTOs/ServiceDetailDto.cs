@@ -9,6 +9,9 @@ public class ServiceDetailDto
     public decimal Price { get; set; }
     public string Description { get; set; } = "";
     public byte DurationInMinutes { get; set; }
+    public bool IsAvailable { get; set; }
+    public DateTime Created { get; set; }
+    public string? MainPhotoUrl { get; set; }
 
     public List<PhotoDto> Photos { get; set; } = [];
     public List<ReviewDto> Reviews { get; set; } = [];

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { SidebarService } from '../../../core/services/sidebar-service';
+import { ThemeService } from '../../../core/services/theme-service';
 
 @Component({
   selector: 'app-admin-topbar',
@@ -11,5 +12,8 @@ import { SidebarService } from '../../../core/services/sidebar-service';
   styleUrls: ['./admin-topbar.css']
 })
 export class AdminTopbar {
-  constructor(public sidebarService: SidebarService) {}
+  constructor(
+    public sidebarService: SidebarService,
+    public themeService: ThemeService
+  ) {}
 }

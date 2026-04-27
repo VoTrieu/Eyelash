@@ -22,14 +22,49 @@ public class ServicesRepository(AppDbContext context, IMapper mapper) : IService
         context.Services.Remove(service);
     }
 
+    public async Task<Service?> GetServiceEntityByIdAsync(int serviceId)
+    {
+        return await context.Services
+            .Include(s => s.Photos)
+            .FirstOrDefaultAsync(s => s.Id == serviceId);
+    }
+
     public Task<PaginatedResult<ServiceDto>> GetAllServicesAsync(ServiceParams serviceParams)
     {
         var query = context.Services
-            .OrderBy(s => s.Name)
-            .ProjectTo<ServiceDto>(mapper.ConfigurationProvider)
             .AsQueryable();
 
-        return PaginationHelper.CreatePaginatedResultAsync(query, 
+        if (!string.IsNullOrWhiteSpace(serviceParams.Search))
+        {
+            var search = serviceParams.Search.Trim();
+            query = query.Where(s =>
+                EF.Functions.Like(s.Name, $"%{search}%") ||
+                EF.Functions.Like(s.Description, $"%{search}%"));
+        }
+
+        if (serviceParams.IsAvailable.HasValue)
+        {
+            query = query.Where(s => s.IsAvailable == serviceParams.IsAvailable.Value);
+        }
+
+        var descending = string.Equals(serviceParams.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+        query = serviceParams.SortBy?.ToLowerInvariant() switch
+        {
+            "price" => descending ? query.OrderByDescending(s => s.Price) : query.OrderBy(s => s.Price),
+            "duration" or "durationinminutes" => descending
+                ? query.OrderByDescending(s => s.DurationInMinutes)
+                : query.OrderBy(s => s.DurationInMinutes),
+            "created" => descending ? query.OrderByDescending(s => s.Created) : query.OrderBy(s => s.Created),
+            "availability" or "isavailable" => descending
+                ? query.OrderByDescending(s => s.IsAvailable)
+                : query.OrderBy(s => s.IsAvailable),
+            _ => descending ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name)
+        };
+
+        var dtoQuery = query.ProjectTo<ServiceDto>(mapper.ConfigurationProvider);
+
+        return PaginationHelper.CreatePaginatedResultAsync(dtoQuery, 
             serviceParams.PageNumber, serviceParams.PageSize);
     }
 
@@ -55,31 +90,4 @@ public class ServicesRepository(AppDbContext context, IMapper mapper) : IService
     {
         context.Services.Update(service);
     }
-
-    // private IQueryable<ServiceDto> BuildServicesQuery(ServiceParams serviceParams)
-    // {
-    //     var query = context.Services.Include(s => s.Photos).AsQueryable();
-
-    //     if(serviceParams.IncludeAppointments)
-    //     {
-    //         query = query.Include(s => s.Appointments);
-    //     }
-
-    //     if(serviceParams.IncludeReviews)
-    //     {
-    //         query = query.Include(s => s.Reviews);
-    //     }
-
-    //     if(serviceParams.IncludeClients)
-    //     {
-    //         query = query
-    //             .Include(s => s.Appointments)
-    //             .ThenInclude(a => a.Client);  
-    //     }
-
-    //     query = (IQueryable<Service>)query.ProjectTo<ServiceDto>(mapper.ConfigurationProvider);
-
-
-    //     return query.AsSplitQuery();
-    // }
 }

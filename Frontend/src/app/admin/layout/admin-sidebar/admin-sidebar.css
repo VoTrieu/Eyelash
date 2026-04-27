@@ -29,3 +29,12 @@
 .admin-sidebar .p-panelmenu .p-menuitem-link:hover {
   background: rgba(15, 23, 42, 0.06);
 }
+
+:host-context(.app-dark) .admin-sidebar .p-panelmenu .p-panelmenu-header {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+:host-context(.app-dark) .admin-sidebar .p-panelmenu .p-menuitem-link:hover {
+  background: rgba(248, 250, 252, 0.08);
+}

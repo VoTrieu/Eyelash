@@ -1,4 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 
@@ -11,11 +12,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
+    provideHttpClient(),
     provideRouter(routes, withComponentInputBinding()),
     providePrimeNG({
       theme: {
         preset: Noir,
         options: {
+          darkModeSelector: '.app-dark',
           cssLayer: {
             name: 'primeng',
             order: 'theme, base, primeng',

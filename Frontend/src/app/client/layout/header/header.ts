@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
+import { ThemeService } from '../../../core/services/theme-service';
 
 @Component({
   selector: 'app-header',
@@ -18,8 +19,20 @@ import { ToolbarModule } from 'primeng/toolbar';
 export class Header {
   protected isScrolled = signal(false);
 
+  constructor(public themeService: ThemeService) {}
+
   onScroll() {
     const scrolled = window.scrollY > 0;
     this.isScrolled.set(scrolled);
+  }
+
+  navButtonClass(): string {
+    if (!this.isScrolled()) {
+      return 'text-white hover:bg-gray-800';
+    }
+
+    return this.themeService.mode() === 'dark'
+      ? 'text-white hover:bg-slate-800'
+      : 'text-black hover:bg-gray-200';
   }
 }

@@ -17,7 +17,11 @@ public class MappingProfiles: Profile
             .FirstOrDefault()));
 
         // Service -> Detail
-        CreateMap<Service, ServiceDetailDto>();
+        CreateMap<Service, ServiceDetailDto>()
+            .ForMember(dest => dest.MainPhotoUrl,
+            opt => opt.MapFrom(src => src.Photos.Where(p => p.IsMain)
+            .Select(p => p.Url)
+            .FirstOrDefault()));
 
         // Photo
         CreateMap<Photo, PhotoDto>();

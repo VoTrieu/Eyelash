@@ -2,6 +2,8 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
 @theme {
   /* Define the animation keyframes and the utility class name */
   --animate-slide-down: slideDown 0.5s ease-out forwards;
