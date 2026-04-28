@@ -1,0 +1,141 @@
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule } from 'primeng/fileupload';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { finalize } from 'rxjs';
+import { AppointmentsService } from '../../../core/services/appointments-service';
+import { ServicesService } from '../../../core/services/services-service';
+import { ToastService } from '../../../core/services/toast-service';
+import { AppointmentFormValue } from '../../../types/appointment';
+import { Service } from '../../../types/service';
+import { Header } from '../../layout/header/header';
+import { Footer } from '../../layout/footer/footer';
+
+@Component({
+  selector: 'app-book-appointment',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    CheckboxModule,
+    FileUploadModule,
+    InputTextModule,
+    TextareaModule,
+    Header,
+    Footer,
+  ],
+  templateUrl: './book-appointment.html',
+  styleUrls: ['./book-appointment.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class BookAppointment implements OnInit {
+  private appointmentsService = inject(AppointmentsService);
+  private servicesService = inject(ServicesService);
+  private toastService = inject(ToastService);
+  private fb = inject(FormBuilder);
+
+  services = this.servicesService.services;
+  selectedServiceIds = signal<number[]>([]);
+  selectedFiles = signal<File[]>([]);
+  loadingServices = signal(false);
+  submitting = signal(false);
+  submitted = signal(false);
+
+  totalDuration = computed(() =>
+    this.selectedServices().reduce((total, service) => total + service.durationInMinutes, 0)
+  );
+
+  totalPrice = computed(() =>
+    this.selectedServices().reduce((total, service) => total + service.price, 0)
+  );
+
+  bookingForm = this.fb.group({
+    clientName: ['', Validators.required],
+    clientEmail: ['', [Validators.required, Validators.email]],
+    clientPhone: ['', [Validators.required, Validators.pattern(/^(\+1\s?)?(\(?[2-9][0-9]{2}\)?[\s.-]?)?[2-9][0-9]{2}[\s.-]?[0-9]{4}$/)]],
+    appointmentDate: ['', Validators.required],
+    startTime: ['', Validators.required],
+    notes: [''],
+  });
+
+  ngOnInit() {
+    this.loadingServices.set(true);
+    this.servicesService
+      .loadServices({ pageNumber: 1, pageSize: 50, isAvailable: true, sortBy: 'name' })
+      .pipe(finalize(() => this.loadingServices.set(false)))
+      .subscribe({
+        error: () => this.toastService.showError('Could not load services'),
+      });
+  }
+
+  toggleService(serviceId: number, checked: boolean) {
+    this.selectedServiceIds.update((ids) =>
+      checked ? [...new Set([...ids, serviceId])] : ids.filter((id) => id !== serviceId)
+    );
+  }
+
+  isSelected(serviceId: number) {
+    return this.selectedServiceIds().includes(serviceId);
+  }
+
+  onPhotosSelected(event: any) {
+  const files = event.currentFiles || event.files || [];
+  this.selectedFiles.set([...files]);
+
+  console.log('Selected:', this.selectedFiles());
+  }
+
+  clearSelectedPhotos() {
+    this.selectedFiles.set([]);
+  }
+
+  submit() {
+    if (this.bookingForm.invalid || this.selectedServiceIds().length === 0) {
+      this.bookingForm.markAllAsTouched();
+      if (this.selectedServiceIds().length === 0) {
+        this.toastService.showWarn('Select at least one service');
+      }
+      return;
+    }
+
+    this.submitting.set(true);
+    this.appointmentsService
+      .createAppointment(
+        this.bookingForm.getRawValue() as AppointmentFormValue,
+        this.selectedServiceIds(),
+        this.selectedFiles()
+      )
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.submitted.set(true);
+          this.bookingForm.reset();
+          this.selectedServiceIds.set([]);
+          this.selectedFiles.set([]);
+          this.toastService.showSuccess('Appointment request sent');
+        },
+        error: () => this.toastService.showError('Could not send appointment request'),
+      });
+  }
+
+  imageUrl(url?: string | null) {
+    return this.servicesService.resolvePhotoUrl(url);
+  }
+
+  serviceCardClass(serviceId: number) {
+    return this.isSelected(serviceId)
+      ? 'border-rose-500 dark:border-rose-400'
+      : 'border-slate-200 dark:border-slate-800';
+  }
+
+  private selectedServices(): Service[] {
+    const ids = this.selectedServiceIds();
+    return this.services().filter((service) => ids.includes(service.id));
+  }
+}

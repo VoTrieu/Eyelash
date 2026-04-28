@@ -1,0 +1,182 @@
+<section class="mb-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">Appointments</p>
+      <h1 class="mt-1 text-2xl font-semibold text-slate-950 dark:text-slate-50">Manage bookings</h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Review client requests, confirm times, and watch updates arrive in realtime.
+      </p>
+    </div>
+
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="grid gap-3 lg:grid-cols-[180px_150px_150px_150px_auto_auto]">
+      <input pInputText type="search" formControlName="search" placeholder="Search client or service" />
+      <p-select formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value" />
+      <input pInputText type="date" formControlName="fromDate" />
+      <input pInputText type="date" formControlName="toDate" />
+      <button pButton type="submit" label="Search" icon="pi pi-search"></button>
+      <button pButton type="button" label="Clear" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clearFilters()"></button>
+    </form>
+  </div>
+</section>
+
+<section class="mb-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h2 class="text-base font-semibold text-slate-950 dark:text-slate-50">Confirmation notifications</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Realtime: {{ realtimeConnected() ? 'connected' : 'offline' }}
+      </p>
+    </div>
+
+    <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" class="flex flex-wrap items-center gap-4">
+      <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <p-checkbox formControlName="sendConfirmationNotifications" [binary]="true" />
+        Enabled
+      </label>
+      <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <p-checkbox formControlName="sendEmail" [binary]="true" />
+        Email
+      </label>
+      <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <p-checkbox formControlName="sendSms" [binary]="true" />
+        SMS
+      </label>
+      <button pButton type="submit" label="Save" icon="pi pi-check" [loading]="savingSettings()"></button>
+    </form>
+  </div>
+</section>
+
+<section class="rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div class="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
+    <div>
+      <h2 class="text-base font-semibold text-slate-950 dark:text-slate-50">Appointment queue</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ totalRecords() }} total appointments</p>
+    </div>
+  </div>
+
+  <p-table
+    [value]="appointments()"
+    [lazy]="true"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="rows"
+    [first]="first"
+    [totalRecords]="totalRecords()"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    (onLazyLoad)="onTableLazyLoad($event)"
+    responsiveLayout="scroll"
+    styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="appointmentDate">Date <p-sortIcon field="appointmentDate" /></th>
+        <th>Client</th>
+        <th>Services</th>
+        <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+        <th>Notify</th>
+        <th class="w-56 text-right">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-appointment>
+      <tr>
+        <td>
+          <div class="font-semibold text-slate-950 dark:text-slate-50">{{ appointment.appointmentDate | date: 'mediumDate' }}</div>
+          <div class="text-sm text-slate-500 dark:text-slate-400">{{ appointment.startTime }} - {{ appointment.endTime }}</div>
+        </td>
+        <td>
+          <div class="font-semibold text-slate-950 dark:text-slate-50">{{ appointment.clientName }}</div>
+          <div class="text-sm text-slate-500 dark:text-slate-400">{{ appointment.clientEmail }}</div>
+        </td>
+        <td>
+          <div class="max-w-md text-sm text-slate-600 dark:text-slate-300">
+            {{ appointment.services.length ? appointment.services[0].name : 'No services' }}
+            @if (appointment.services.length > 1) {
+              <span>+{{ appointment.services.length - 1 }} more</span>
+            }
+          </div>
+        </td>
+        <td><p-tag [value]="appointment.status" [severity]="severity(appointment.status)" /></td>
+        <td>
+          <i
+            class="pi"
+            [class.pi-check-circle]="appointment.confirmationNotificationSent"
+            [class.pi-minus-circle]="!appointment.confirmationNotificationSent"></i>
+        </td>
+        <td>
+          <div class="flex justify-end gap-1">
+            <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm" aria-label="View" (click)="viewDetails(appointment)"></button>
+            <button pButton type="button" icon="pi pi-check" class="p-button-rounded p-button-text p-button-success p-button-sm" aria-label="Confirm" [disabled]="appointment.status === 'Confirmed'" (click)="confirm(appointment)"></button>
+            <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger p-button-sm" aria-label="Cancel" [disabled]="appointment.status === 'Cancelled'" (click)="cancel(appointment)"></button>
+            <button pButton type="button" icon="pi pi-flag" class="p-button-rounded p-button-text p-button-sm" aria-label="Complete" [disabled]="appointment.status === 'Completed'" (click)="complete(appointment)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">No appointments found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  header="Appointment details"
+  [visible]="detailsDialog()"
+  (visibleChange)="detailsDialog.set($event)"
+  [modal]="true"
+  [style]="{ width: 'min(760px, 94vw)' }"
+  [draggable]="false"
+  [resizable]="false">
+  @if (selectedAppointment(); as appointment) {
+    <div class="grid gap-5">
+      <div>
+        <h3 class="text-xl font-semibold text-slate-950 dark:text-slate-50">{{ appointment.clientName }}</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ appointment.clientEmail }} · {{ appointment.clientPhone || 'No phone' }}</p>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-3">
+        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Date</div>
+          <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.appointmentDate | date: 'mediumDate' }}</div>
+        </div>
+        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Time</div>
+          <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.startTime }} - {{ appointment.endTime }}</div>
+        </div>
+        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Status</div>
+          <div class="mt-1"><p-tag [value]="appointment.status" [severity]="severity(appointment.status)" /></div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Services</h4>
+        <div class="grid gap-2">
+          @for (service of appointment.services; track service.id) {
+            <div class="rounded-md border border-slate-200 p-3 dark:border-slate-800">
+              <div class="font-semibold text-slate-950 dark:text-slate-50">{{ service.name }}</div>
+              <p class="text-sm text-slate-500 dark:text-slate-400">{{ service.price | currency }} · {{ service.durationInMinutes }} min</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (appointment.photos.length) {
+        <div>
+          <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Client images</h4>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @for (photo of appointment.photos; track photo.id) {
+              <img [src]="imageUrl(photo.url)" alt="Appointment reference" class="aspect-square rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700" />
+            }
+          </div>
+        </div>
+      }
+
+      @if (appointment.notes) {
+        <p class="rounded-md bg-slate-50 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ appointment.notes }}</p>
+      }
+    </div>
+  }
+</p-dialog>

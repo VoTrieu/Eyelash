@@ -10,7 +10,9 @@ namespace API.Repositories;
 public class UnitOfWork(AppDbContext context, IMapper mapper) : IUnitOfWork
 {
     private IServicesRepository? _servicesRepository;
+    private IAppointmentsRepository? _appointmentsRepository;
     public IServicesRepository ServicesRepository => _servicesRepository ??= new ServicesRepository(context, mapper);
+    public IAppointmentsRepository AppointmentsRepository => _appointmentsRepository ??= new AppointmentsRepository(context, mapper);
 
     public async Task<bool> CompleteAsync()
     {

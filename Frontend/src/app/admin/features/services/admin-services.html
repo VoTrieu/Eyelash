@@ -55,8 +55,7 @@
     [totalRecords]="totalRecords()"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
     (onLazyLoad)="onTableLazyLoad($event)"
-    responsiveLayout="scroll"
-    styleClass="p-datatable-sm">
+    class="p-datatable-sm p-4">
     <ng-template pTemplate="header">
       <tr>
         <th class="w-20">Photo</th>

@@ -23,4 +23,8 @@ public class Photo
     public Review? Review { get; set; }
     public int? ReviewId { get; set; }
 
+    [JsonIgnore]
+    public Appointment? Appointment { get; set; }
+    public int? AppointmentId { get; set; }
+
 }

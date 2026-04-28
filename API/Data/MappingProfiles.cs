@@ -30,7 +30,10 @@ public class MappingProfiles: Profile
          CreateMap<Review, ReviewDto>();
 
         // Appointment
-        CreateMap<Appointment, AppointmentDto>();
+        CreateMap<Appointment, AppointmentDto>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+        CreateMap<AppointmentSettings, AppointmentSettingsDto>();
 
     }
 

@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Hubs;
 using API.Interfaces;
 using API.Repositories;
 using API.Services;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();
 builder.Services.AddCors(opt =>
 {
@@ -20,11 +23,16 @@ builder.Services.AddCors(opt =>
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()
-        .WithOrigins("https://localhost:4200", "http://localhost:4200");
+        .WithOrigins(
+            "https://localhost:4200",
+            "http://localhost:4200",
+            "https://localhost:4201",
+            "http://localhost:4201");
     });
 });
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
 builder.Services.AddAutoMapper(cfg => {}, AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
@@ -54,6 +62,7 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 app.MapControllers();
+app.MapHub<AppointmentHub>("/hubs/appointments");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

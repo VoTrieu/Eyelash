@@ -22,6 +22,11 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/register/register').then((m) => m.RegisterComponent),
   },
   {
+    path: 'book-appointment',
+    loadComponent: () =>
+      import('./client/features/book-appointment/book-appointment').then((m) => m.BookAppointment),
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./admin/admin-main/admin-main').then((m) => m.AdminMain),
     children: [
@@ -40,6 +45,11 @@ export const routes: Routes = [
             path: 'services',
             loadComponent: () =>
               import('./admin/features/services/admin-services').then((m) => m.AdminServices),
+          },
+          {
+            path: 'appointments',
+            loadComponent: () =>
+              import('./admin/features/appointments/admin-appointments').then((m) => m.AdminAppointments),
           },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           { path: '**', redirectTo: 'dashboard' },

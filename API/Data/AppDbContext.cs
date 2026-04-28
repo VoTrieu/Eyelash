@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
 {
 
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<AppointmentSettings> AppointmentSettings { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Photo> Photos { get; set; }
@@ -28,6 +29,15 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .WithMany(u => u.Appointments)
             .HasForeignKey(a => a.ClientId)
             .OnDelete(DeleteBehavior.Restrict); // Prevent multiple cascade paths
+
+        builder.Entity<AppointmentSettings>().HasData(new AppointmentSettings
+        {
+            Id = 1,
+            SendConfirmationNotifications = true,
+            SendEmail = true,
+            SendSms = false,
+            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc)
+        });
 
         // Review -> AppUser (Client)
         builder.Entity<Review>()
@@ -67,6 +77,12 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .HasOne(p => p.Review)
             .WithMany(r => r.Photos)
             .HasForeignKey(p => p.ReviewId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Photo>()
+            .HasOne(p => p.Appointment)
+            .WithMany(a => a.Photos)
+            .HasForeignKey(p => p.AppointmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Appointment <-> Service (Many-to-Many)

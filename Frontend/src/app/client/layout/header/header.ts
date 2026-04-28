@@ -3,10 +3,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ThemeService } from '../../../core/services/theme-service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [AvatarModule, ButtonModule, ToolbarModule],
+  imports: [AvatarModule, ButtonModule, ToolbarModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
   host: {
