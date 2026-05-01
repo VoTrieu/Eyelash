@@ -12,4 +12,6 @@ public interface IAppointmentsRepository
     Task<AppointmentDto?> GetAppointmentByIdAsync(int appointmentId);
     Task<PaginatedResult<AppointmentDto>> GetAppointmentsAsync(AppointmentParams appointmentParams);
     Task<AppointmentSettings> GetSettingsAsync();
+    Task<IReadOnlyList<Appointment>> GetAppointmentForDateAsync(DateOnly date);
+
 }

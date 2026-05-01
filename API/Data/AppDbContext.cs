@@ -13,7 +13,9 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     public DbSet<Service> Services { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Photo> Photos { get; set; }
-
+    
+    public DbSet<AppointmentAvailabilityBlock> AppointmentAvailabilityBlocks { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

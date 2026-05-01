@@ -25,9 +25,7 @@ builder.Services.AddCors(opt =>
         .AllowCredentials()
         .WithOrigins(
             "https://localhost:4200",
-            "http://localhost:4200",
-            "https://localhost:4201",
-            "http://localhost:4201");
+            "http://localhost:4200");
     });
 });
 builder.Services.AddScoped<ITokenService, TokenService>();

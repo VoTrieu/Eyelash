@@ -11,8 +11,13 @@ public class UnitOfWork(AppDbContext context, IMapper mapper) : IUnitOfWork
 {
     private IServicesRepository? _servicesRepository;
     private IAppointmentsRepository? _appointmentsRepository;
+
+    private IAppointmentAvailabilityRepository? _appointmentAvailabilityRepository;
+
     public IServicesRepository ServicesRepository => _servicesRepository ??= new ServicesRepository(context, mapper);
     public IAppointmentsRepository AppointmentsRepository => _appointmentsRepository ??= new AppointmentsRepository(context, mapper);
+
+    public IAppointmentAvailabilityRepository AppointmentAvailabilityRepository => _appointmentAvailabilityRepository ??= new AppointmentAvailabilityRepository(context, mapper);
 
     public async Task<bool> CompleteAsync()
     {

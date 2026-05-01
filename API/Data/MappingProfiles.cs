@@ -35,6 +35,11 @@ public class MappingProfiles: Profile
 
         CreateMap<AppointmentSettings, AppointmentSettingsDto>();
 
+        CreateMap<AppointmentAvailabilityBlock, AppointmentAvailabilityBlockDto>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+
+
+
     }
 
 }
