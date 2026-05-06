@@ -2,13 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import {
-  PaginatedResult,
   Service,
   ServiceDetail,
   ServiceFormValue,
   ServiceQueryParams,
 } from '../../types/service';
 import { tap } from 'rxjs/internal/operators/tap';
+import { PaginatedResult } from '../../types/pagination';
 
 @Injectable({
   providedIn: 'root',

@@ -9,7 +9,7 @@ import {
   AppointmentQueryParams,
   AppointmentSettings,
 } from '../../types/appointment';
-import { PaginatedResult } from '../../types/service';
+import { PaginatedResult } from '../../types/pagination';
 
 @Injectable({
   providedIn: 'root',

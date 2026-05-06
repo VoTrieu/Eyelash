@@ -29,18 +29,6 @@ export interface ServiceDetail extends Service {
   reviews: Review[];
 }
 
-export interface PaginationMetadata {
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-  totalItems: number;
-}
-
-export interface PaginatedResult<T> {
-  metadata: PaginationMetadata;
-  items: T[];
-}
-
 export interface ServiceQueryParams {
   pageNumber?: number;
   pageSize?: number;

@@ -51,6 +51,11 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./admin/features/appointments/admin-appointments').then((m) => m.AdminAppointments),
           },
+          {
+            path: 'availability',
+            loadComponent: () =>
+              import('./admin/features/availability/availability').then((m) => m.Availability),
+          },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           { path: '**', redirectTo: 'dashboard' },
         ],

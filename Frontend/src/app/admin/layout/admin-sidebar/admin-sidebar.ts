@@ -32,6 +32,11 @@ export class AdminSidebar {
       routerLink: ['/admin/appointments']
     },
     {
+      label: 'Availability',
+      icon: 'pi pi-fw pi-clock',
+      routerLink: ['/admin/availability']
+    },
+    {
       label: 'Content',
       icon: 'pi pi-fw pi-book',
       items: [

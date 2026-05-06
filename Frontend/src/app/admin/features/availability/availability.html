@@ -1,0 +1,179 @@
+<section class="mb-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">Availability</p>
+      <h1 class="mt-1 text-2xl font-semibold text-slate-950 dark:text-slate-50">Manage appointment availability</h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Create working windows, blocked periods, and closed days.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="grid gap-3 sm:grid-cols-[170px_170px_auto_auto]">
+        <p-datepicker inputId="starttimedisplay" formControlName="fromDate" [showIcon]="true" placeholder="Start Date"></p-datepicker>
+        <p-datepicker inputId="starttimedisplay" formControlName="toDate" [showIcon]="true" placeholder="End Date"></p-datepicker>
+        <button pButton type="submit" label="Filter" icon="pi pi-search"></button>
+        <button pButton type="button" label="Clear" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clearFilters()"></button>
+      </form>
+
+      <button pButton type="button" label="New block" icon="pi pi-plus" (click)="openCreate()"></button>
+    </div>
+  </div>
+</section>
+
+<section class="rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div class="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
+    <div>
+      <h2 class="text-base font-semibold text-slate-950 dark:text-slate-50">Availability blocks</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ totalRecords() }} total blocks</p>
+    </div>
+  </div>
+
+  <p-table
+    [value]="availabilityBlocks()"
+    [lazy]="true"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="rows"
+    [first]="first"
+    [totalRecords]="totalRecords()"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    (onLazyLoad)="onTableLazyLoad($event)"
+    class="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
+        <th>Time</th>
+        <th pSortableColumn="type">Type <p-sortIcon field="type" /></th>
+        <th>Active</th>
+        <th>Notes</th>
+        <th class="w-40 text-right">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-block>
+      <tr>
+        <td class="font-semibold text-slate-950 dark:text-slate-50">{{ block.date | date: 'mediumDate' }}</td>
+        <td class="text-slate-600 dark:text-slate-300">
+          {{ block.startTime || 'All day' }}
+          @if (block.endTime){
+              <span> - {{ block.endTime }}</span>
+          }
+        </td>
+        <td class="text-slate-600 dark:text-slate-300">{{ block.type }}</td>
+        <td class="text-slate-600 dark:text-slate-300">{{ block.isActive ? 'Yes' : 'No' }}</td>
+        <td class="max-w-sm text-sm text-slate-500 dark:text-slate-400">{{ block.notes || 'No notes' }}</td>
+        <td>
+          <div class="flex justify-end gap-2">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-sm"
+              (click)="openEdit(block)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-danger p-button-sm"
+              (click)="delete(block)">
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">
+          No availability blocks found.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  [header]="editingBlock() ? 'Edit availability block' : 'Create availability block'"
+  [visible]="editorVisible()"
+  (visibleChange)="editorVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(640px, 94vw)' }">
+  <form [formGroup]="editorForm" (ngSubmit)="save()" class="grid gap-4">
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label for="datedisplay" class="grid gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <span class="after:content-['*'] after:ml-0.5 after:text-red-500">Date</span>
+        <p-datepicker inputId="datedisplay" [showOnFocus]="false" formControlName="date" [showIcon]="true"></p-datepicker>
+      </label>
+
+      <label class="grid gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <span>Type</span>
+        <p-select
+          formControlName="type"
+          [options]="typeOptions"
+          optionLabel="label"
+          optionValue="value">
+        </p-select>
+      </label>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label for="starttimedisplay" class="grid gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <span>Start time</span>
+        <p-datepicker inputId="starttimedisplay" formControlName="startTime" [timeOnly]="true" [iconDisplay]="'input'" [showIcon]="true">
+            <ng-template #inputicon let-clickCallBack="clickCallBack">
+                <i class="pi pi-clock" (click)="clickCallBack($event)"></i>
+            </ng-template>
+        </p-datepicker>
+      </label>
+
+      <label for="endtimedisplay" class="grid gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <span>End time</span>
+        <p-datepicker inputId="endtimedisplay" formControlName="endTime" [timeOnly]="true" [iconDisplay]="'input'" [showIcon]="true">
+            <ng-template #inputicon let-clickCallBack="clickCallBack">
+                <i class="pi pi-clock" (click)="clickCallBack($event)"></i>
+            </ng-template>
+        </p-datepicker>
+      </label>
+    </div>
+
+    <label class="grid gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+      <span>Notes</span>
+      <textarea
+        pTextarea
+        rows="4"
+        formControlName="notes"
+        placeholder="Optional explanation for this block">
+      </textarea>
+    </label>
+
+    <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+      <p-checkbox formControlName="isActive" [binary]="true"></p-checkbox>
+      Active
+    </label>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        class="p-button-outlined"
+        (click)="editorVisible.set(false)">
+      </button>
+
+      <button
+        pButton
+        type="submit"
+        label="Save"
+        icon="pi pi-check"
+        [disabled]="editorForm.invalid || !editorForm.dirty"
+        [loading]="saving()">
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
