@@ -1,0 +1,50 @@
+@if (images().length) {
+  <div class="image-zoom-gallery-shell relative h-full min-h-90">
+    <p-galleria
+      #galleria
+      [showThumbnailNavigators]="images().length > 5" 
+      [value]="images()"
+      [responsiveOptions]="responsiveOptions"
+      [numVisible]="5">
+      <ng-template #item let-item>
+        <div
+          class="relative grid h-full min-h-0 w-full cursor-zoom-in place-items-center overflow-hidden 
+          rounded-md border border-slate-200 bg-slate-50 dark:border-slate-700
+           dark:bg-slate-950"
+          (mouseenter)="showZoom($event)"
+          (mousemove)="moveZoom($event)"
+          (mouseleave)="hideZoom()">
+          <img
+            [src]="item.src"
+            [alt]="item.alt || 'Selected image preview'"
+            class="h-105 object-cover" />
+        </div>
+      </ng-template>
+      
+      <ng-template #thumbnail let-item>
+        <div class="grid gap-4 justify-center">
+          <img
+            [src]="item.src"
+            [alt]="item.alt || 'Image thumbnail'"
+            class="h-16 w-16 object-cover" />
+        </div>
+      </ng-template>
+    </p-galleria>
+
+    @if (zoomVisible()) {
+      <div
+        class="pointer-events-none fixed z-9999 h-[min(420px,58vh)] w-[min(420px,42vw)] 
+        overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl
+         dark:border-slate-700 dark:bg-slate-950 max-sm:hidden
+         left-96 top-0"
+         >
+        <div
+          class="h-full w-full bg-no-repeat"
+          [style.background-image]="'url(' + images()[galleria.activeIndex].src + ')'"
+          [style.background-size]="'260%'"
+          [style.background-position]="zoomX() + '% ' + zoomY() + '%'">
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -12,6 +12,7 @@ import { finalize } from 'rxjs';
 import { AppointmentsService } from '../../../core/services/appointments-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { Appointment, AppointmentQueryParams, AppointmentSettings, AppointmentStatus } from '../../../types/appointment';
+import { ImageZoomGallery, ImageZoomGalleryItem } from '../../../shared/image-zoom-gallery/image-zoom-gallery';
 
 @Component({
   selector: 'app-admin-appointments',
@@ -26,6 +27,7 @@ import { Appointment, AppointmentQueryParams, AppointmentSettings, AppointmentSt
     SelectModule,
     TableModule,
     TagModule,
+    ImageZoomGallery,
   ],
   templateUrl: './admin-appointments.html',
   styleUrls: ['./admin-appointments.css'],
@@ -145,21 +147,30 @@ export class AdminAppointments implements OnInit, OnDestroy {
 
   confirm(appointment: Appointment) {
     this.appointmentsService.confirmAppointment(appointment.id).subscribe({
-      next: () => this.toastService.showSuccess('Appointment confirmed'),
+      next: (updated) => {
+        this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
+        this.toastService.showSuccess('Appointment confirmed');
+      },
       error: () => this.toastService.showError('Could not confirm appointment'),
     });
   }
 
   cancel(appointment: Appointment) {
     this.appointmentsService.cancelAppointment(appointment.id).subscribe({
-      next: () => this.toastService.showSuccess('Appointment cancelled'),
+      next: (updated) => {
+        this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
+        this.toastService.showSuccess('Appointment cancelled');
+      },
       error: () => this.toastService.showError('Could not cancel appointment'),
     });
   }
 
   complete(appointment: Appointment) {
     this.appointmentsService.completeAppointment(appointment.id).subscribe({
-      next: () => this.toastService.showSuccess('Appointment completed'),
+      next: (updated) => {
+        this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
+        this.toastService.showSuccess('Appointment completed');
+      },
       error: () => this.toastService.showError('Could not complete appointment'),
     });
   }
@@ -181,5 +192,12 @@ export class AdminAppointments implements OnInit, OnDestroy {
 
   imageUrl(url?: string | null) {
     return this.appointmentsService.resolvePhotoUrl(url);
+  }
+
+  appointmentImages(appointment: Appointment): ImageZoomGalleryItem[] {
+    return appointment.photos.map((photo, index) => ({
+      src: this.imageUrl(photo.url),
+      alt: `Appointment reference ${index + 1}`,
+    }));
   }
 }

@@ -130,53 +130,87 @@
   [draggable]="false"
   [resizable]="false">
   @if (selectedAppointment(); as appointment) {
-    <div class="grid gap-5">
-      <div>
-        <h3 class="text-xl font-semibold text-slate-950 dark:text-slate-50">{{ appointment.clientName }}</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400">{{ appointment.clientEmail }} · {{ appointment.clientPhone || 'No phone' }}</p>
-      </div>
+    <div class="grid items-stretch gap-5 lg:grid-cols-2">
+        @if (appointment.photos.length) {
+         <app-image-zoom-gallery class="h-full min-h-0" [images]="appointmentImages(appointment)"></app-image-zoom-gallery>
+        }
 
-      <div class="grid gap-3 sm:grid-cols-3">
-        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Date</div>
-          <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.appointmentDate | date: 'mediumDate' }}</div>
-        </div>
-        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Time</div>
-          <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.startTime }} - {{ appointment.endTime }}</div>
-        </div>
-        <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-          <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Status</div>
-          <div class="mt-1"><p-tag [value]="appointment.status" [severity]="severity(appointment.status)" /></div>
-        </div>
-      </div>
-
-      <div>
-        <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Services</h4>
-        <div class="grid gap-2">
-          @for (service of appointment.services; track service.id) {
-            <div class="rounded-md border border-slate-200 p-3 dark:border-slate-800">
-              <div class="font-semibold text-slate-950 dark:text-slate-50">{{ service.name }}</div>
-              <p class="text-sm text-slate-500 dark:text-slate-400">{{ service.price | currency }} · {{ service.durationInMinutes }} min</p>
+        <div class="flex h-full min-h-0 flex-col">
+          <div class="flex-1">
+            <div class="flex flex-col gap-3">
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Name:</label>
+                <h3 class="mt-1 font-semibold text-slate-950 dark:text-slate-50" >{{ appointment.clientName }}</h3>
+              </div>
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Email:</label>
+                <p class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.clientEmail }}</p>
+              </div>
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Phone:</label>
+                <p class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.clientPhone || 'No phone' }}</p>
+              </div>
             </div>
-          }
+      
+            <div class="flex flex-col gap-3 py-3">
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Date:</label>
+                <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.appointmentDate | date: 'mediumDate' }}</div>
+              </div>
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Time:</label>
+                <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ appointment.startTime }} - {{ appointment.endTime }}</div>
+              </div>
+              <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Status:</label>
+                <div class="mt-1"><p-tag [value]="appointment.status" [severity]="severity(appointment.status)" /></div>
+              </div>
+            </div>      
+          </div>   
         </div>
+
       </div>
 
-      @if (appointment.photos.length) {
+      <div class="flex flex-col gap-3 py-3">
         <div>
-          <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Client images</h4>
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            @for (photo of appointment.photos; track photo.id) {
-              <img [src]="imageUrl(photo.url)" alt="Appointment reference" class="aspect-square rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700" />
+          <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Services</h4>
+          <div class="grid gap-2">
+            @for (service of appointment.services; track service.id) {
+              <div class="rounded-md border border-slate-200 p-3 dark:border-slate-800">
+                <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">{{ service.name }}</label>
+                <p class="mt-1 font-semibold text-slate-950 dark:text-slate-50">{{ service.price | currency }} · {{ service.durationInMinutes }} min</p>
+              </div>
             }
           </div>
         </div>
-      }
 
-      @if (appointment.notes) {
-        <p class="rounded-md bg-slate-50 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ appointment.notes }}</p>
-      }
-    </div>
+        @if (appointment.notes) {
+          <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+            <label class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Note:</label>
+            <p class="rounded-md bg-slate-50 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ appointment.notes }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2">
+          <button
+            pButton
+            type="button"
+            label="Confirm"
+            icon="pi pi-check"
+            class="p-button-success p-button-sm"
+            [disabled]="appointment.status === 'Confirmed'"
+            (click)="confirm(appointment)">
+          </button>
+          <button
+            pButton
+            type="button"
+            label="Reject"
+            icon="pi pi-times"
+            class="p-button-danger p-button-sm"
+            [disabled]="appointment.status === 'Cancelled'"
+            (click)="cancel(appointment)">
+          </button>
+      </div>
   }
 </p-dialog>
