@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{Headline}}</title>
+</head>
+<body style="margin:0; padding:0; background:#f8e8ed; font-family: Arial, Helvetica, sans-serif;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    {{Preheader}}
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8e8ed; margin:0; padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px; background:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 24px 70px rgba(136, 19, 55, .18);">
+          <tr>
+            <td style="background:#111827; padding:30px 34px; text-align:center;">
+              <div style="font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:#f9a8d4; font-weight:700;">Eyelash Studio</div>
+              <h1 style="margin:12px 0 0; color:#ffffff; font-size:30px; line-height:1.2; font-weight:800;">{{Headline}}</h1>
+              <p style="margin:12px 0 0; color:#e5e7eb; font-size:15px; line-height:1.6;">{{StatusLabel}}</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:34px;">
+              <p style="margin:0; color:#374151; font-size:16px; line-height:1.7;">Hi <strong style="color:#111827;">{{ClientName}}</strong>,</p>
+              <p style="margin:10px 0 0; color:#4b5563; font-size:15px; line-height:1.7;">
+                {{Intro}}
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px; border-collapse:separate; border-spacing:0; background:#fff7f9; border:1px solid #fbcfe8; border-radius:18px;">
+                <tr>
+                  <td width="50%" style="padding:20px; border-right:1px solid #fbcfe8;">
+                    <div style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9f1239;">Date</div>
+                    <div style="margin-top:8px; color:#111827; font-size:18px; line-height:1.35; font-weight:800;">{{AppointmentDate}}</div>
+                  </td>
+                  <td width="50%" style="padding:20px;">
+                    <div style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9f1239;">Time</div>
+                    <div style="margin-top:8px; color:#111827; font-size:18px; line-height:1.35; font-weight:800;">{{StartTime}} - {{EndTime}}</div>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:26px;">
+                <tr>
+                  <td>
+                    <div style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9f1239;">Services</div>
+                  </td>
+                </tr>
+                {{ServicesRows}}
+                <tr>
+                  <td style="padding:16px 0 0; color:#111827; font-size:15px; font-weight:800;">Total duration</td>
+                  <td align="right" style="padding:16px 0 0; color:#111827; font-size:15px; font-weight:800;">{{TotalDuration}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0 0; color:#111827; font-size:15px; font-weight:800;">Estimated total</td>
+                  <td align="right" style="padding:8px 0 0; color:#111827; font-size:15px; font-weight:800;">{{TotalPrice}}</td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                {{NotesSection}}
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px; background:#111827; border-radius:18px;">
+                <tr>
+                  <td style="padding:22px 24px;">
+                    <div style="color:#ffffff; font-size:17px; font-weight:800;">{{GuidanceTitle}}</div>
+                    <p style="margin:8px 0 0; color:#d1d5db; font-size:14px; line-height:1.7;">
+                      {{GuidanceBody}}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 34px; background:#fff1f5; text-align:center;">
+              <div style="color:#9f1239; font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;">Thank you for choosing us</div>
+              <p style="margin:8px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
+                This is an automated appointment message. Please reply to the studio directly if anything looks incorrect.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

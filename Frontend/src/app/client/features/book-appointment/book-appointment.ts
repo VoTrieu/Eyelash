@@ -1,9 +1,9 @@
-import { AfterViewChecked, ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs';
@@ -41,12 +41,13 @@ import { toDateOnly } from '../../../shared/helpers/date-time-helper';
   styleUrls: ['./book-appointment.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookAppointment implements OnInit, AfterViewChecked {
+export class BookAppointment implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
   private availabilityService = inject(AvailabilityService);
   private fb = inject(FormBuilder);
+  private fileUpload: Signal<FileUpload | undefined> = viewChild('fileUpload');
 
   services = this.servicesService.services;
   selectedServiceIds = signal<number[]>([]);
@@ -83,10 +84,6 @@ export class BookAppointment implements OnInit, AfterViewChecked {
         error: () => this.toastService.showError('Could not load services'),
       });
     this.bookingForm.controls.appointmentDate.valueChanges.subscribe(() => this.loadAvailableSlots());
-  }
-
-  ngAfterViewChecked(): void {
-    this.selectedFiles.set([]);
   }
 
   toggleService(serviceId: number, checked: boolean) {
@@ -131,6 +128,7 @@ export class BookAppointment implements OnInit, AfterViewChecked {
           this.bookingForm.reset();
           this.selectedServiceIds.set([]);
           this.selectedFiles.set([]);
+          this.fileUpload()?.clear();
           this.toastService.showSuccess('Appointment request sent');
         },
         error: () => this.toastService.showError('Could not send appointment request'),

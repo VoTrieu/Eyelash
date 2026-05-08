@@ -102,7 +102,22 @@ public class AppointmentsController(
     [HttpPut("{id:int}/cancel")]
     public async Task<ActionResult<AppointmentDto>> CancelAppointment(int id)
     {
-        return await SetStatus(id, AppointmentStatus.Cancelled);
+        var appointment = await uow.AppointmentsRepository.GetAppointmentEntityByIdAsync(id);
+        if (appointment == null) return NotFound();
+
+        appointment.Status = AppointmentStatus.Cancelled;
+
+        var settings = await uow.AppointmentsRepository.GetSettingsAsync();
+        appointment.ConfirmationNotificationSent = await notificationService.SendRejectionAsync(appointment, settings);
+
+        if (await uow.CompleteAsync())
+        {
+            var updated = await uow.AppointmentsRepository.GetAppointmentByIdAsync(id);
+            await appointmentHub.Clients.All.SendAsync("AppointmentUpdated", updated);
+            return Ok(updated);
+        }
+
+        return BadRequest("Failed to cancel appointment.");
     }
 
     [HttpPut("{id:int}/complete")]
