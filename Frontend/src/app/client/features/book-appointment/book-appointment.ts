@@ -14,6 +14,9 @@ import { AppointmentFormValue } from '../../../types/appointment';
 import { Service } from '../../../types/service';
 import { Header } from '../../layout/header/header';
 import { Footer } from '../../layout/footer/footer';
+import { AvailabilityService } from '../../../core/services/availability-service';
+import { AvailableAppointmentSlot } from '../../../types/availability';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-book-appointment',
@@ -29,6 +32,7 @@ import { Footer } from '../../layout/footer/footer';
     TextareaModule,
     Header,
     Footer,
+    SelectModule
   ],
   templateUrl: './book-appointment.html',
   styleUrls: ['./book-appointment.css'],
@@ -38,6 +42,7 @@ export class BookAppointment implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
+  private availabilityService = inject(AvailabilityService);
   private fb = inject(FormBuilder);
 
   services = this.servicesService.services;
@@ -46,6 +51,8 @@ export class BookAppointment implements OnInit {
   loadingServices = signal(false);
   submitting = signal(false);
   submitted = signal(false);
+  availableSlots = signal<AvailableAppointmentSlot[]>([]);
+  loadingSlots = signal(false);
 
   totalDuration = computed(() =>
     this.selectedServices().reduce((total, service) => total + service.durationInMinutes, 0)
@@ -72,12 +79,14 @@ export class BookAppointment implements OnInit {
       .subscribe({
         error: () => this.toastService.showError('Could not load services'),
       });
+    this.bookingForm.controls.appointmentDate.valueChanges.subscribe(() => this.loadAvailableSlots());
   }
 
   toggleService(serviceId: number, checked: boolean) {
     this.selectedServiceIds.update((ids) =>
       checked ? [...new Set([...ids, serviceId])] : ids.filter((id) => id !== serviceId)
     );
+    this.loadAvailableSlots();
   }
 
   isSelected(serviceId: number) {
@@ -137,5 +146,31 @@ export class BookAppointment implements OnInit {
   private selectedServices(): Service[] {
     const ids = this.selectedServiceIds();
     return this.services().filter((service) => ids.includes(service.id));
+  }
+
+  loadAvailableSlots() {
+    const date = this.bookingForm.value.appointmentDate as string;
+    const serviceIds = this.selectedServiceIds();
+    if (!date || serviceIds.length === 0) {
+      this.toastService.showWarn('Select at least one service and appointment date first');
+      this.availableSlots.set([]);
+      return;
+    }
+
+    this.loadingSlots.set(true);
+    this.availabilityService.getAvailableAppointmentSlots(date, serviceIds)
+      .pipe(finalize(() => this.loadingSlots.set(false)))
+      .subscribe({
+        next: (slots) => {
+          this.availableSlots.set(slots);
+          if (!slots.some(slot => slot.startTime === this.bookingForm.value.startTime)) {
+            this.bookingForm.patchValue({ startTime: '' });
+          }
+          if (slots.length === 0) {
+            this.toastService.showInfo('No available slots for the selected date and services');
+          }
+        },
+        error: () => this.toastService.showError('Could not load available slots'),
+      });
   }
 }

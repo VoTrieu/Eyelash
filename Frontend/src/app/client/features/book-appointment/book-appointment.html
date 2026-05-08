@@ -3,15 +3,20 @@
 
   <main class="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-6">
     <section>
-      <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">Book an appointment</p>
+      <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">
+        Book an appointment
+      </p>
       <h1 class="mt-2 text-3xl font-semibold">Choose your lash service</h1>
       <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
-        Pick the services you want, add reference images, and send your preferred time for confirmation.
+        Pick the services you want, add reference images, and send your preferred time for
+        confirmation.
       </p>
 
       <div class="mt-6 grid gap-4">
         @if (loadingServices()) {
-          <div class="rounded-lg border border-slate-200 p-5 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          <div
+            class="rounded-lg border border-slate-200 p-5 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
+          >
             Loading services...
           </div>
         }
@@ -21,75 +26,134 @@
             type="button"
             class="grid gap-4 rounded-lg border p-4 text-left shadow-sm transition hover:border-slate-400 dark:hover:border-slate-500 sm:grid-cols-[112px_1fr_auto]"
             [ngClass]="serviceCardClass(service.id)"
-            (click)="toggleService(service.id, !isSelected(service.id))">
+            (click)="toggleService(service.id, !isSelected(service.id))"
+          >
             @if (service.mainPhotoUrl) {
-              <img [src]="imageUrl(service.mainPhotoUrl)" [alt]="service.name" class="h-28 w-full rounded-md object-cover sm:w-28" />
+              <img
+                [src]="imageUrl(service.mainPhotoUrl)"
+                [alt]="service.name"
+                class="h-28 w-full rounded-md object-cover sm:w-28"
+              />
             } @else {
-              <div class="flex h-28 w-full items-center justify-center rounded-md bg-slate-100 text-slate-400 dark:bg-slate-800 sm:w-28">
+              <div
+                class="flex h-28 w-full items-center justify-center rounded-md bg-slate-100 text-slate-400 dark:bg-slate-800 sm:w-28"
+              >
                 <i class="pi pi-image text-2xl"></i>
               </div>
             }
 
             <div>
               <h2 class="font-semibold text-slate-950 dark:text-slate-50">{{ service.name }}</h2>
-              <p class="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">{{ service.description }}</p>
+              <p class="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
+                {{ service.description }}
+              </p>
               <p class="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 {{ service.price | currency }} · {{ service.durationInMinutes }} min
               </p>
             </div>
 
-            <p-checkbox [binary]="true" [ngModel]="isSelected(service.id)" [ngModelOptions]="{ standalone: true }" />
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="isSelected(service.id)"
+              [ngModelOptions]="{ standalone: true }"
+            />
           </button>
         }
       </div>
     </section>
 
-    <section class="h-fit rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <section
+      class="h-fit rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+    >
       <h2 class="text-xl font-semibold">Request a time</h2>
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Selected: {{ selectedServiceIds().length }} · {{ totalDuration() }} min · {{ totalPrice() | currency }}
+        Selected: {{ selectedServiceIds().length }} · {{ totalDuration() }} min ·
+        {{ totalPrice() | currency }}
       </p>
 
       @if (submitted()) {
-        <div class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300">
+        <div
+          class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300"
+        >
           Your request was sent. The admin team will confirm your appointment.
         </div>
       }
 
       <form [formGroup]="bookingForm" (ngSubmit)="submit()" class="mt-5 grid gap-4">
         <div class="grid gap-2">
-          <label for="clientName" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
+          <label for="clientName" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Name</label
+          >
           <input pInputText id="clientName" formControlName="clientName" />
         </div>
 
         <div class="grid gap-2">
-          <label for="clientEmail" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Email</label>
+          <label for="clientEmail" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Email</label
+          >
           <input pInputText id="clientEmail" type="email" formControlName="clientEmail" />
         </div>
 
         <div class="grid gap-2">
-          <label for="clientPhone" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone</label>
+          <label for="clientPhone" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Phone</label
+          >
           <input pInputText id="clientPhone" type="tel" formControlName="clientPhone" />
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="grid gap-2">
-            <label for="appointmentDate" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Date</label>
+            <label
+              for="appointmentDate"
+              class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+              >Date</label
+            >
             <input pInputText id="appointmentDate" type="date" formControlName="appointmentDate" />
           </div>
           <div class="grid gap-2">
-            <label for="startTime" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Time</label>
-            <input pInputText id="startTime" type="time" formControlName="startTime" />
+            <label for="startTime" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+              >Time</label
+            >
+            <p-select
+              formControlName="startTime"
+              [options]="availableSlots()"
+              optionLabel="startTime"
+              optionValue="startTime"
+              placeholder="Select an available time"
+              [loading]="loadingSlots()"
+              [disabled]="
+                !bookingForm.value.appointmentDate ||
+                selectedServiceIds().length === 0 ||
+                loadingSlots()
+              "
+            >
+              <ng-template #item let-slot>
+                <div class="flex items-center justify-between gap-4">
+                  <span class="font-semibold text-slate-500">{{ slot.startTime }}</span>
+                  <span class="font-semibold text-slate-500">{{ slot.endTime }}</span>
+                </div>
+              </ng-template>
+
+              <ng-template #selectedItem let-slot>
+                @if (slot) {
+                  <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
+                }
+              </ng-template>
+            </p-select>
           </div>
         </div>
 
         <div class="grid gap-2">
-          <label for="notes" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Notes</label>
+          <label for="notes" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Notes</label
+          >
           <textarea pTextarea id="notes" formControlName="notes" rows="4" class="w-full"></textarea>
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Reference images</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Reference images</label
+          >
           <div class="flex flex-wrap items-center gap-3">
             <p-fileUpload
               mode="basic"
@@ -98,17 +162,36 @@
               [customUpload]="true"
               chooseLabel="Choose images"
               chooseIcon="pi pi-image"
-              (onSelect)="onPhotosSelected($event)" />
+              (onSelect)="onPhotosSelected($event)"
+            />
             @if (selectedFiles().length) {
-              <button pButton type="button" label="Remove" icon="pi pi-times" class="p-button-text" (click)="clearSelectedPhotos()"></button>
+              <button
+                pButton
+                type="button"
+                label="Remove"
+                icon="pi pi-times"
+                class="p-button-text"
+                (click)="clearSelectedPhotos()"
+              ></button>
             }
           </div>
           @if (selectedFiles().length) {
-            <p class="text-sm text-slate-500 dark:text-slate-400">{{ selectedFiles().length }} image{{ selectedFiles().length === 1 ? '' : 's' }} selected.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ selectedFiles().length }} image{{
+                selectedFiles().length === 1 ? '' : 's'
+              }}
+              selected.
+            </p>
           }
         </div>
 
-        <button pButton type="submit" label="Request appointment" icon="pi pi-send" [loading]="submitting()"></button>
+        <button
+          pButton
+          type="submit"
+          label="Request appointment"
+          icon="pi pi-send"
+          [loading]="submitting()"
+        ></button>
       </form>
     </section>
   </main>

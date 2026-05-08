@@ -4,10 +4,11 @@ import {
   AppointmentAvailabilityFormValue,
   AppointmentAvailabilityQueryParams,
   AppointmentAvalabilityBlock,
+  AvailableAppointmentSlot,
 } from '../../types/availability';
 import { PaginatedResult } from '../../types/pagination';
 import { environment } from '../../../environments/environment';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +60,16 @@ export class AvailabilityService {
         this.availabilityBlocks.update((blocks) => blocks.filter(b => b.id !== Id))
       })
     )     
+  }
+
+  getAvailableAppointmentSlots(date: string, serviceIds: number[]){
+    const params = this.buildParams({ date, serviceIds: serviceIds.join(',') });
+    return this.http.get<AvailableAppointmentSlot[]>(this.baseUrl + 'appointmentavailability/slots', { params }).pipe(
+      map(slots => slots.map(slot => ({
+        startTime: slot.startTime.slice(0, 5),
+        endTime: slot.endTime.slice(0, 5)
+      })))
+    );
   }
 
 

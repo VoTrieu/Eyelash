@@ -125,4 +125,19 @@ public class AppointmentAvailabilityController(IUnitOfWork uow): BaseApiControll
         return BadRequest("Failed to delete availability block");
     }
 
+    [HttpGet("slots")]
+    public async Task<ActionResult<IReadOnlyList<AvailableAppointmentSlotDto>>> GetAvailableAppointmentSlots(
+        [FromQuery] DateOnly date, 
+        [FromQuery] List<int> serviceIds
+    )
+    {
+        if(serviceIds == null || serviceIds.Count == 0)
+        {
+            return BadRequest("At least one service ID must be provided");
+        }
+
+        var slots = await uow.AppointmentAvailabilityRepository.GetAvailableAppointmentSlotsAsync(date, serviceIds);
+        return Ok(slots);
+    }
+
 }

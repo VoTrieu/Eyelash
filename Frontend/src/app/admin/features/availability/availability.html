@@ -10,8 +10,8 @@
 
     <div class="flex flex-wrap items-center gap-3">
       <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="grid gap-3 sm:grid-cols-[170px_170px_auto_auto]">
-        <p-datepicker inputId="starttimedisplay" formControlName="fromDate" [showIcon]="true" placeholder="Start Date"></p-datepicker>
-        <p-datepicker inputId="starttimedisplay" formControlName="toDate" [showIcon]="true" placeholder="End Date"></p-datepicker>
+        <p-datepicker formControlName="fromDate" [showIcon]="true" placeholder="Start Date"></p-datepicker>
+        <p-datepicker formControlName="toDate" [showIcon]="true" placeholder="End Date"></p-datepicker>
         <button pButton type="submit" label="Filter" icon="pi pi-search"></button>
         <button pButton type="button" label="Clear" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clearFilters()"></button>
       </form>

@@ -29,3 +29,8 @@ export interface AppointmentAvailabilityFormValue{
     type: AvalabilityBlockType;
     isActive: boolean
 }
+
+export interface AvailableAppointmentSlot {
+    startTime: string;
+    endTime: string;
+}

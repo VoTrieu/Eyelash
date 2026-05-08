@@ -16,4 +16,6 @@ public interface IAppointmentAvailabilityRepository
     Task<PaginatedResult<AppointmentAvailabilityBlockDto>> GetAllAvailabilityBlocksAsync(AppointmentAvailabilityParams appointmentAvailabilityParams);
 
     Task<IReadOnlyList<AppointmentAvailabilityBlockDto>> GetAvailabilityBlocksAsync(DateOnly? date);
+    Task<IReadOnlyList<AvailableAppointmentSlotDto>> GetAvailableAppointmentSlotsAsync(DateOnly date, 
+        IReadOnlyList<int> serviceIds);
 }
