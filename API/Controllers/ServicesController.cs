@@ -74,6 +74,11 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
         service.DurationInMinutes = dto.DurationInMinutes;
         service.IsAvailable = dto.IsAvailable;
 
+        var photosToDelete = service.Photos.Where(p => dto.DeletePhotoIds.Contains(p.Id)).ToList();
+        foreach (var photo in photosToDelete){
+            service.Photos.Remove(photo);
+        }
+
         if (dto.Photos.Any())
         {
             var needsMainPhoto = !service.Photos.Any(p => p.IsMain);
@@ -87,6 +92,7 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
 
         if (!uow.HasChanges() || await uow.CompleteAsync())
         {
+            DeleteLocalPhotos(photosToDelete);
             var updatedService = await uow.ServicesRepository.GetServiceByIdAsync(id);
             return Ok(updatedService);
         }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -11,12 +11,12 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
-import { Service, ServiceDetail, ServiceFormValue, ServiceQueryParams } from '../../../types/service';
+import { Photo, Service, ServiceDetail, ServiceFormValue, ServiceQueryParams } from '../../../types/service';
 
 @Component({
   selector: 'app-admin-services',
@@ -44,6 +44,7 @@ export class AdminServices implements OnInit {
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
+  private fileUpload: Signal<FileUpload | undefined>= viewChild('uploadFile');
 
   services = this.servicesService.services;
   totalRecords = computed(() => this.servicesService.pagination()?.totalItems ?? 0);
@@ -57,6 +58,8 @@ export class AdminServices implements OnInit {
   editingId = signal<number | null>(null);
   selectedFiles = signal<File[]>([]);
   selectedService = signal<ServiceDetail | null>(null);
+  deletePhotoIds = signal<number[]>([]);
+  existingPhotos = signal<Photo[]>([]);
 
   rows = 10;
   first = 0;
@@ -138,6 +141,7 @@ export class AdminServices implements OnInit {
       durationInMinutes: 30,
       isAvailable: true,
     });
+    this.fileUpload()?.clear();
     this.displayDialog.set(true);
   }
 
@@ -145,14 +149,29 @@ export class AdminServices implements OnInit {
     this.isEditing.set(true);
     this.editingId.set(service.id);
     this.selectedFiles.set([]);
-    this.serviceForm.patchValue({
-      name: service.name,
-      price: service.price,
-      description: service.description,
-      durationInMinutes: service.durationInMinutes,
-      isAvailable: service.isAvailable,
+    this.existingPhotos.set([]);
+    this.deletePhotoIds.set([]);
+    this.fileUpload()?.clear();
+
+    this.servicesService.getService(service.id).subscribe({
+      next: (serviceDetail) => {
+        this.serviceForm.patchValue({
+          name: serviceDetail.name,
+          price: serviceDetail.price,
+          description: serviceDetail.description,
+          durationInMinutes: serviceDetail.durationInMinutes,
+          isAvailable: serviceDetail.isAvailable,
+        });
+        this.existingPhotos.set(serviceDetail.photos);
+        this.displayDialog.set(true);
+      },
+      error: () => this.toastService.showError('Could not load service details'),
     });
-    this.displayDialog.set(true);
+  }
+
+  removeExistingPhoto(photo: Photo) {
+    this.existingPhotos.update((photos) => photos.filter((p) => p.id !== photo.id));
+    this.deletePhotoIds.update((ids) => [...ids, photo.id]);
   }
 
   viewDetails(service: Service) {
@@ -169,12 +188,9 @@ export class AdminServices implements OnInit {
       });
   }
 
-  onPhotosSelected(event: { files: File[] }) {
-    this.selectedFiles.set(event.files ?? []);
-  }
-
-  clearSelectedPhotos() {
-    this.selectedFiles.set([]);
+  onPhotosSelected(event: any) {
+    const files = event.currentFiles || event.files || [];
+    this.selectedFiles.set([...files]);
   }
 
   deleteService(service: Service) {
@@ -200,7 +216,12 @@ export class AdminServices implements OnInit {
 
     const request =
       this.isEditing() && this.editingId() !== null
-        ? this.servicesService.updateService(this.editingId()!, formValue, this.selectedFiles())
+        ? this.servicesService.updateService(
+          this.editingId()!, 
+          formValue, 
+          this.selectedFiles(),
+          this.deletePhotoIds()
+        )
         : this.servicesService.createService(formValue, this.selectedFiles());
 
     request.pipe(finalize(() => this.saving.set(false))).subscribe({

@@ -10,5 +10,6 @@ public class UpdateServiceDto
     public byte DurationInMinutes { get; set; }
     public bool IsAvailable { get; set; } = true;
 
-    public List<IFormFile> Photos { get; set; } = new();
+    public List<IFormFile> Photos { get; set; } = [];
+    public List<int> DeletePhotoIds { get; set; } = [];
 }

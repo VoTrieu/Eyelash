@@ -42,8 +42,8 @@ export class ServicesService {
     );
   }
 
-  updateService(id: number, service: ServiceFormValue, photos: File[] = []) {
-    return this.http.put<ServiceDetail>(this.baseUrl + 'services/' + id, this.toFormData(service, photos)).pipe(
+  updateService(id: number, service: ServiceFormValue, photos: File[] = [], deletePhotoIds: number[] = []) {
+    return this.http.put<ServiceDetail>(this.baseUrl + 'services/' + id, this.toFormData(service, photos, deletePhotoIds)).pipe(
       tap((updatedService) => {
         this.services.update((services) =>
           services.map((s) => (s.id === id ? updatedService : s))
@@ -78,7 +78,7 @@ export class ServicesService {
     return query;
   }
 
-  private toFormData(service: ServiceFormValue, photos: File[]) {
+  private toFormData(service: ServiceFormValue, photos: File[], deletePhotoIds: number[] = []) {
     const formData = new FormData();
 
     formData.append('name', service.name);
@@ -86,6 +86,7 @@ export class ServicesService {
     formData.append('description', service.description);
     formData.append('durationInMinutes', String(service.durationInMinutes));
     formData.append('isAvailable', String(service.isAvailable));
+    deletePhotoIds.forEach((id) => formData.append('deletePhotoIds', String(id)));
 
     photos.forEach((photo) => formData.append('photos', photo));
 
