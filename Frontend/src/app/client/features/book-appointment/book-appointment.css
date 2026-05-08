@@ -1,3 +1,12 @@
 :host {
   display: block;
 }
+
+::ng-deep .p-fileupload .p-fileupload-file .p-fileupload-remove-button {
+  display: none !important;
+}
+
+::ng-deep .p-fileupload .p-fileupload-file .p-fileupload-file-badge {
+  display: none !important;
+} 
+

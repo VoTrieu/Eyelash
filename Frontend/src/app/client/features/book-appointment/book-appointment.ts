@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -17,6 +17,8 @@ import { Footer } from '../../layout/footer/footer';
 import { AvailabilityService } from '../../../core/services/availability-service';
 import { AvailableAppointmentSlot } from '../../../types/availability';
 import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+import { toDateOnly } from '../../../shared/helpers/date-time-helper';
 
 @Component({
   selector: 'app-book-appointment',
@@ -32,13 +34,14 @@ import { SelectModule } from 'primeng/select';
     TextareaModule,
     Header,
     Footer,
-    SelectModule
+    SelectModule,
+    DatePickerModule
   ],
   templateUrl: './book-appointment.html',
   styleUrls: ['./book-appointment.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookAppointment implements OnInit {
+export class BookAppointment implements OnInit, AfterViewChecked {
   private appointmentsService = inject(AppointmentsService);
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
@@ -66,7 +69,7 @@ export class BookAppointment implements OnInit {
     clientName: ['', Validators.required],
     clientEmail: ['', [Validators.required, Validators.email]],
     clientPhone: ['', [Validators.required, Validators.pattern(/^(\+1\s?)?(\(?[2-9][0-9]{2}\)?[\s.-]?)?[2-9][0-9]{2}[\s.-]?[0-9]{4}$/)]],
-    appointmentDate: ['', Validators.required],
+    appointmentDate: [new Date(), Validators.required],
     startTime: ['', Validators.required],
     notes: [''],
   });
@@ -80,6 +83,10 @@ export class BookAppointment implements OnInit {
         error: () => this.toastService.showError('Could not load services'),
       });
     this.bookingForm.controls.appointmentDate.valueChanges.subscribe(() => this.loadAvailableSlots());
+  }
+
+  ngAfterViewChecked(): void {
+    this.selectedFiles.set([]);
   }
 
   toggleService(serviceId: number, checked: boolean) {
@@ -96,12 +103,6 @@ export class BookAppointment implements OnInit {
   onPhotosSelected(event: any) {
   const files = event.currentFiles || event.files || [];
   this.selectedFiles.set([...files]);
-
-  console.log('Selected:', this.selectedFiles());
-  }
-
-  clearSelectedPhotos() {
-    this.selectedFiles.set([]);
   }
 
   submit() {
@@ -113,10 +114,13 @@ export class BookAppointment implements OnInit {
       return;
     }
 
+    const formValue = {...this.bookingForm.getRawValue(), 
+      appointmentDate: toDateOnly(this.bookingForm.value.appointmentDate)} as AppointmentFormValue;
+
     this.submitting.set(true);
     this.appointmentsService
       .createAppointment(
-        this.bookingForm.getRawValue() as AppointmentFormValue,
+        formValue,
         this.selectedServiceIds(),
         this.selectedFiles()
       )
@@ -149,7 +153,7 @@ export class BookAppointment implements OnInit {
   }
 
   loadAvailableSlots() {
-    const date = this.bookingForm.value.appointmentDate as string;
+    const date = toDateOnly(this.bookingForm.value.appointmentDate);
     const serviceIds = this.selectedServiceIds();
     if (!date || serviceIds.length === 0) {
       this.toastService.showWarn('Select at least one service and appointment date first');

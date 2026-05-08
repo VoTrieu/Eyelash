@@ -81,21 +81,27 @@
 
       <form [formGroup]="bookingForm" (ngSubmit)="submit()" class="mt-5 grid gap-4">
         <div class="grid gap-2">
-          <label for="clientName" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+          <label
+            for="clientName"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
             >Name</label
           >
           <input pInputText id="clientName" formControlName="clientName" />
         </div>
 
         <div class="grid gap-2">
-          <label for="clientEmail" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+          <label
+            for="clientEmail"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
             >Email</label
           >
           <input pInputText id="clientEmail" type="email" formControlName="clientEmail" />
         </div>
 
         <div class="grid gap-2">
-          <label for="clientPhone" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+          <label
+            for="clientPhone"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
             >Phone</label
           >
           <input pInputText id="clientPhone" type="tel" formControlName="clientPhone" />
@@ -105,13 +111,15 @@
           <div class="grid gap-2">
             <label
               for="appointmentDate"
-              class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+              class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
               >Date</label
             >
-            <input pInputText id="appointmentDate" type="date" formControlName="appointmentDate" />
+            <p-datepicker formControlName="appointmentDate" [showIcon]="true" inputId="appointmentDate"  />
           </div>
           <div class="grid gap-2">
-            <label for="startTime" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            <label
+              for="startTime"
+              class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
               >Time</label
             >
             <p-select
@@ -151,35 +159,31 @@
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300"
-            >Reference images</label
+          <label for="fileUpload" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+            >Deposit Proof Image</label
           >
-          <div class="flex flex-wrap items-center gap-3">
+         
             <p-fileUpload
-              mode="basic"
+              id="fileUpload"
+              mode="advanced"
               accept="image/*"
-              [multiple]="true"
               [customUpload]="true"
+              multiple="true"
+              maxFileSize="4194304"
               chooseLabel="Choose images"
               chooseIcon="pi pi-image"
+              showUploadButton="false"
+              showCancelButton="false"
+              class="flex-1"
+              fileLimit="2"
+              invalidFileSizeMessageSummary="File too large"
+              invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
               (onSelect)="onPhotosSelected($event)"
-            />
-            @if (selectedFiles().length) {
-              <button
-                pButton
-                type="button"
-                label="Remove"
-                icon="pi pi-times"
-                class="p-button-text"
-                (click)="clearSelectedPhotos()"
-              ></button>
-            }
-          </div>
+            ></p-fileUpload>
+    
           @if (selectedFiles().length) {
             <p class="text-sm text-slate-500 dark:text-slate-400">
-              {{ selectedFiles().length }} image{{
-                selectedFiles().length === 1 ? '' : 's'
-              }}
+              {{ selectedFiles().length }} image{{ selectedFiles().length === 1 ? '' : 's' }}
               selected.
             </p>
           }
@@ -190,6 +194,7 @@
           type="submit"
           label="Request appointment"
           icon="pi pi-send"
+          [disabled]="bookingForm.invalid || selectedServiceIds().length === 0 || submitting()"
           [loading]="submitting()"
         ></button>
       </form>
