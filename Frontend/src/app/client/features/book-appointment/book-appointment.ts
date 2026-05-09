@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
@@ -32,11 +33,9 @@ import { toDateOnly } from '../../../shared/helpers/date-time-helper';
     FileUploadModule,
     InputTextModule,
     TextareaModule,
-    Header,
-    Footer,
     SelectModule,
     DatePickerModule
-  ],
+],
   templateUrl: './book-appointment.html',
   styleUrls: ['./book-appointment.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +45,7 @@ export class BookAppointment implements OnInit {
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
   private availabilityService = inject(AvailabilityService);
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private fileUpload: Signal<FileUpload | undefined> = viewChild('fileUpload');
 
@@ -57,6 +57,13 @@ export class BookAppointment implements OnInit {
   submitted = signal(false);
   availableSlots = signal<AvailableAppointmentSlot[]>([]);
   loadingSlots = signal(false);
+  routeServiceIds = signal<number[]>([]);
+  visibleServices = computed(() => {
+    const ids = this.routeServiceIds();
+    if (!ids.length) return this.services();
+
+    return this.services().filter((service) => ids.includes(service.id));
+  });
 
   totalDuration = computed(() =>
     this.selectedServices().reduce((total, service) => total + service.durationInMinutes, 0)
@@ -76,11 +83,20 @@ export class BookAppointment implements OnInit {
   });
 
   ngOnInit() {
+    const routeIds = this.readServiceIdsFromRoute();
+    this.routeServiceIds.set(routeIds);
+    this.selectedServiceIds.set(routeIds);
+
     this.loadingServices.set(true);
     this.servicesService
       .loadServices({ pageNumber: 1, pageSize: 50, isAvailable: true, sortBy: 'name' })
       .pipe(finalize(() => this.loadingServices.set(false)))
       .subscribe({
+        next: () => {
+          if (routeIds.length) {
+            this.loadAvailableSlots();
+          }
+        },
         error: () => this.toastService.showError('Could not load services'),
       });
     this.bookingForm.controls.appointmentDate.valueChanges.subscribe(() => this.loadAvailableSlots());
@@ -148,6 +164,15 @@ export class BookAppointment implements OnInit {
   private selectedServices(): Service[] {
     const ids = this.selectedServiceIds();
     return this.services().filter((service) => ids.includes(service.id));
+  }
+
+  private readServiceIdsFromRoute() {
+    const values = this.route.snapshot.queryParamMap.getAll('serviceIds');
+
+    return values
+      .flatMap((value) => value.split(','))
+      .map((value) => Number(value))
+      .filter((value) => Number.isInteger(value) && value > 0);
   }
 
   loadAvailableSlots() {

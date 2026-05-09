@@ -1,0 +1,93 @@
+<div class="min-h-screen bg-white text-slate-950 dark:bg-slate-950 dark:text-slate-50">
+  <main class="mx-auto max-w-7xl px-4 py-10 lg:px-6">
+    <div class="mb-8 flex gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="mt-2 text-3xl font-semibold">Choose your lash look</h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Browse services, preview photos, and build a booking list before choosing your appointment
+          time.
+        </p>
+      </div>
+
+      <div class="flex gap-3 sm:min-w-96">
+        <p-button
+          type="button"
+          label="Book selected"
+          icon="pi pi-calendar-plus"
+          [disabled]="selectedCount() === 0"
+          (click)="bookSelected()"
+        >
+        </p-button>
+
+        <p-iconfield>
+          <p-inputicon class="pi pi-search" />
+          <input
+            type="text"
+            pInputText
+            placeholder="Search"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
+        </p-iconfield>
+      </div>
+    </div>
+
+    @if (selectedCount() > 0) {
+      <div
+        class="sticky top-0 z-20 mb-6 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-950 shadow-sm dark:border-rose-900 dark:bg-rose-950 dark:text-rose-100"
+      >
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <span
+            >{{ selectedCount() }} service{{ selectedCount() === 1 ? '' : 's' }} selected ·
+            {{ selectedTotal() | currency }}</span
+          >
+          <button
+            pButton
+            type="button"
+            label="Continue booking"
+            icon="pi pi-arrow-right"
+            class="p-button-sm"
+            (click)="bookSelected()"
+          ></button>
+        </div>
+      </div>
+    }
+
+    @if (loading()) {
+      <div
+        class="rounded-lg border border-slate-200 p-6 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
+      >
+        Loading services...
+      </div>
+    } @else {
+      <p-dataView
+        [value]="filteredServices()"
+        [paginator]="true"
+        [rows]="6"
+        [rowsPerPageOptions]="[4, 6, 10]"
+        emptyMessage="No services match your search."
+        styleClass="client-services-dataview">
+        <ng-template #list let-items>
+          <div class="grid">
+            @for (service of items; track service.id) {
+              <app-service-card
+                [service]="service"
+                [selected]="isSelected(service.id)"
+                (bookNow)="bookNow($event)"
+                (selectedChange)="setBookingListSelection($event)">
+              </app-service-card>
+            }
+          </div>
+        </ng-template>
+      </p-dataView>
+
+      @if (filteredServices().length === 0) {
+        <div
+          class="rounded-lg border border-slate-200 p-6 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
+        >
+          No services match your search.
+        </div>
+      }
+    }
+  </main>
+</div>

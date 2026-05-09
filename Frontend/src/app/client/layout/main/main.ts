@@ -3,11 +3,12 @@ import { Header } from '../header/header';
 import { Carousel } from '../../features/carousel/carousel';
 import { Footer } from '../footer/footer';
 import { Map } from '../../../shared/map/map';
+import { RouterOutlet } from '@angular/router';
 
 
 @Component({
   selector: 'app-main',
-  imports: [Header, Carousel, Footer, Map],
+  imports: [Header, Footer, RouterOutlet],
   templateUrl: './main.html',
   styleUrl: './main.css',
 })

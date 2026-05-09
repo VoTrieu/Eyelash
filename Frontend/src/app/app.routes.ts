@@ -6,10 +6,23 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./client/layout/main/main').then((m) => m.Main),
-  },
-  {
-    path: 'not-found',
-    loadComponent: () => import('./shared/not-found/not-found').then((m) => m.NotFoundComponent),
+    children: [
+      { path: '', loadComponent: () => import('./client/features/home/home').then((m) => m.Home) },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./shared/not-found/not-found').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'book-appointment',
+        loadComponent: () =>
+          import('./client/features/book-appointment/book-appointment').then((m) => m.BookAppointment),
+      },
+      {
+        path: 'services',
+        loadComponent: () =>
+          import('./client/features/services/client-services').then((m) => m.ClientServices),
+      },
+    ],
   },
   {
     path: 'login',
@@ -20,11 +33,6 @@ export const routes: Routes = [
     path: 'register',
     canActivate: [authGuard],
     loadComponent: () => import('./shared/register/register').then((m) => m.RegisterComponent),
-  },
-  {
-    path: 'book-appointment',
-    loadComponent: () =>
-      import('./client/features/book-appointment/book-appointment').then((m) => m.BookAppointment),
   },
   {
     path: 'admin',

@@ -1,6 +1,4 @@
 <div class="min-h-screen bg-white text-slate-950 dark:bg-slate-950 dark:text-slate-50">
-  <app-header></app-header>
-
   <main class="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-6">
     <section>
       <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">
@@ -21,7 +19,7 @@
           </div>
         }
 
-        @for (service of services(); track service.id) {
+        @for (service of visibleServices(); track service.id) {
           <button
             type="button"
             class="grid gap-4 rounded-lg border p-4 text-left shadow-sm transition hover:border-slate-400 dark:hover:border-slate-500 sm:grid-cols-[112px_1fr_auto]"
@@ -58,6 +56,12 @@
               [ngModelOptions]="{ standalone: true }"
             />
           </button>
+        }
+
+        @if (!loadingServices() && visibleServices().length === 0) {
+          <div class="rounded-lg border border-slate-200 p-5 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            No selected services were found. Please go back to the services page and choose a service.
+          </div>
         }
       </div>
     </section>
@@ -202,6 +206,4 @@
       </form>
     </section>
   </main>
-
-  <app-footer></app-footer>
 </div>
