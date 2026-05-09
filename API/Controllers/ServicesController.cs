@@ -3,6 +3,7 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -32,6 +33,7 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
     }
 
     //Create Service
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPost]
     public async Task<ActionResult<ServiceDetailDto>> CreateService([FromForm] CreateServiceDto dto)
     {
@@ -100,6 +102,7 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
         return BadRequest("Failed to update service");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteService(int id)
     {
@@ -119,6 +122,7 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
         return BadRequest("Failed to delete service");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     private async Task<List<Photo>> SaveServicePhotos(IEnumerable<IFormFile> files, bool markFirstAsMain)
     {
         var photos = new List<Photo>();

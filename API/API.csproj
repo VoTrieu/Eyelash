@@ -21,8 +21,10 @@
     <Folder Include="Data/" />
     <Folder Include="DTOs/" />
     <Folder Include="EmailTemplates/" />
+    <Folder Include="Errors/" />
     <Folder Include="Extensions/" />
     <Folder Include="Helpers/" />
+    <Folder Include="Middleware/" />
     <Folder Include="Repositories/" />
     <Folder Include="Services/" />
     <Folder Include="wwwroot/" />

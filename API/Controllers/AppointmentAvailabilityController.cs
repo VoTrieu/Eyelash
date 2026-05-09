@@ -2,6 +2,7 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -37,6 +38,7 @@ public class AppointmentAvailabilityController(IUnitOfWork uow): BaseApiControll
 
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPost]
     public async Task<ActionResult<AppointmentAvailabilityBlockDto>> CreateAvailabilityBlock(
         [FromBody] UpsertAppointmentAvailabilityBlockDto dto)
@@ -73,6 +75,7 @@ public class AppointmentAvailabilityController(IUnitOfWork uow): BaseApiControll
 
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<AppointmentAvailabilityBlockDto>> UpdateAvailabilityBlock(
         int id,
@@ -110,6 +113,7 @@ public class AppointmentAvailabilityController(IUnitOfWork uow): BaseApiControll
         return BadRequest("Failed to update availability block");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteAvailabilityBlock(int id)
     {

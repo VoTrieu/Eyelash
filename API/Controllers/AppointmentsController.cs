@@ -3,6 +3,7 @@ using API.Entities;
 using API.Helpers;
 using API.Hubs;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -77,6 +78,7 @@ public class AppointmentsController(
         return BadRequest("Failed to create appointment.");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{id:int}/confirm")]
     public async Task<ActionResult<AppointmentDto>> ConfirmAppointment(int id)
     {
@@ -99,6 +101,7 @@ public class AppointmentsController(
         return BadRequest("Failed to confirm appointment.");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{id:int}/cancel")]
     public async Task<ActionResult<AppointmentDto>> CancelAppointment(int id)
     {
@@ -120,6 +123,7 @@ public class AppointmentsController(
         return BadRequest("Failed to cancel appointment.");
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{id:int}/complete")]
     public async Task<ActionResult<AppointmentDto>> CompleteAppointment(int id)
     {
@@ -140,6 +144,7 @@ public class AppointmentsController(
         };
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("settings")]
     public async Task<ActionResult<AppointmentSettingsDto>> UpdateSettings(UpdateAppointmentSettingsDto dto)
     {

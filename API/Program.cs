@@ -2,6 +2,7 @@ using API.Data;
 using API.Entities;
 using API.Hubs;
 using API.Interfaces;
+using API.Middleware;
 using API.Repositories;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +47,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(
 )
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,6 +60,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 app.UseStaticFiles();
 
