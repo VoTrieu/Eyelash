@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
   AppointmentAvailabilityFormValue,
@@ -62,8 +62,11 @@ export class AvailabilityService {
     )     
   }
 
-  getAvailableAppointmentSlots(date: string, serviceIds: number[]){
-    const params = this.buildParams({ date, serviceIds: serviceIds.join(',') });
+  getAvailableAppointmentSlots(date: string, serviceIds: number[]){ 
+    const params = serviceIds.reduce(
+      (query, serviceId) => query.append('serviceIds', String(serviceId)),
+      new HttpParams().set('date', date)
+    );
     return this.http.get<AvailableAppointmentSlot[]>(this.baseUrl + 'appointmentavailability/slots', { params }).pipe(
       map(slots => slots.map(slot => ({
         startTime: slot.startTime.slice(0, 5),
@@ -72,8 +75,6 @@ export class AvailabilityService {
     );
   }
 
-
-
   private buildParams(params: object) {
     const query: Record<string, string> = {};
 
@@ -81,10 +82,9 @@ export class AvailabilityService {
       params as Record<string, string | number | null | undefined>,
     )) {
       if (value !== null && value !== undefined && value !== '') {
-        query[key] = String(value);
+          query[key] = String(value);
       }
     }
-
     return query;
   }
 }
