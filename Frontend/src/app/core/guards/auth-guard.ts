@@ -10,14 +10,13 @@ export const authGuard: CanActivateFn = (route, state) => {
   const isTokenValid = accountService.isTokenValid();
 
   if (user && isTokenValid) {
-    // User already logged in, redirect to admin dashboard
-    if (user.roles.includes('Admin') && state.url !== '/admin') {
-       router.navigate(['/admin']);
+    const returnUrl = route.queryParamMap.get('returnUrl');
+
+    if (user.roles.includes('Admin')) {
+      return router.parseUrl(returnUrl || '/admin');
     }
 
-    if (state.url !== '/') {
-       router.navigate(['/']);
-    }
+    return router.parseUrl(returnUrl || '/');
   }
 
   return true;

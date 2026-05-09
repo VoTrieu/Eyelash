@@ -5,8 +5,11 @@ using API.Interfaces;
 using API.Middleware;
 using API.Repositories;
 using API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +50,29 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(
 )
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        var tokenKey = builder.Configuration["TokenKey"] 
+            ?? throw new Exception("Cannot find TokenKey in configuration - Program.cs");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+            NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier
+        };
+    });
+
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 
@@ -61,6 +87,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 

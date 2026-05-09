@@ -10,6 +10,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 export class AccountService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
+  private mediaUrl = environment.apiUrl.replace(/api\/?$/, '');
   currentUser = signal<User | null>(this.getUserFromStorage());
 
   login(creds: LoginCreds){
@@ -41,6 +42,12 @@ export class AccountService {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     this.currentUser.set(null);
+  }
+
+  resolveImageUrl(url?: string | null) {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return this.mediaUrl + url.replace(/^\//, '');
   }
 
   isTokenValid(): boolean {

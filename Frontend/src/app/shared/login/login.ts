@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { AccountService } from '../../core/services/account-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { ToastService } from '../../core/services/toast-service';
 
@@ -20,6 +20,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   private accountService = inject(AccountService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
 
 
@@ -35,13 +36,13 @@ export class LoginComponent {
       this.accountService.login(this.loginForm.value).subscribe({
         next: user => {
           this.toastService.showSuccess('Login successful!');
-          const currentUser = this.accountService.currentUser();
-          if(currentUser && currentUser.roles.includes('Admin')){
-            this.router.navigate(['/admin']);
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+
+          if(user.roles.includes('Admin')){
+            this.router.navigateByUrl(returnUrl || '/admin');
           } else {
-            this.router.navigate(['/']);
+            this.router.navigateByUrl(returnUrl || '/');
           }
-          this.accountService.setCurrentUser(user);
         },
         error: err => {
           this.toastService.showError('Login failed. Please check your credentials.');
