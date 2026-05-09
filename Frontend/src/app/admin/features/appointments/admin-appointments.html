@@ -1,5 +1,5 @@
 <section class="mb-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+  <div class="flex flex-col gap-2 xl:flex-row xl:items-end xl:justify-between">
     <div>
       <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">Appointments</p>
       <h1 class="mt-1 text-2xl font-semibold text-slate-950 dark:text-slate-50">Manage bookings</h1>
@@ -8,11 +8,11 @@
       </p>
     </div>
 
-    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="grid gap-3 lg:grid-cols-[180px_150px_150px_150px_auto_auto]">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="grid gap-3 lg:grid-cols-[180px_150px_180px_180px_auto_auto]">
       <input pInputText type="search" formControlName="search" placeholder="Search client or service" />
       <p-select formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value" />
-      <input pInputText type="date" formControlName="fromDate" />
-      <input pInputText type="date" formControlName="toDate" />
+      <p-datepicker formControlName="fromDate" [showIcon]="true" placeholder="From Date"></p-datepicker>
+      <p-datepicker formControlName="toDate" [showIcon]="true" placeholder="To Date"></p-datepicker>
       <button pButton type="submit" label="Search" icon="pi pi-search"></button>
       <button pButton type="button" label="Clear" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clearFilters()"></button>
     </form>
@@ -64,8 +64,7 @@
     [totalRecords]="totalRecords()"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
     (onLazyLoad)="onTableLazyLoad($event)"
-    responsiveLayout="scroll"
-    styleClass="p-datatable-sm">
+    class="p-datatable-sm">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="appointmentDate">Date <p-sortIcon field="appointmentDate" /></th>

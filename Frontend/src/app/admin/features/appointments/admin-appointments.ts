@@ -13,6 +13,8 @@ import { AppointmentsService } from '../../../core/services/appointments-service
 import { ToastService } from '../../../core/services/toast-service';
 import { Appointment, AppointmentQueryParams, AppointmentSettings, AppointmentStatus } from '../../../types/appointment';
 import { ImageZoomGallery, ImageZoomGalleryItem } from '../../../shared/image-zoom-gallery/image-zoom-gallery';
+import { DatePickerModule } from 'primeng/datepicker';
+import { toDateOnly } from '../../../shared/helpers/date-time-helper';
 
 @Component({
   selector: 'app-admin-appointments',
@@ -28,6 +30,7 @@ import { ImageZoomGallery, ImageZoomGalleryItem } from '../../../shared/image-zo
     TableModule,
     TagModule,
     ImageZoomGallery,
+    DatePickerModule
   ],
   templateUrl: './admin-appointments.html',
   styleUrls: ['./admin-appointments.css'],
@@ -93,8 +96,8 @@ export class AdminAppointments implements OnInit, OnDestroy {
         pageSize: this.rows,
         search: this.filterForm.value.search?.trim(),
         status: this.filterForm.value.status,
-        fromDate: this.filterForm.value.fromDate,
-        toDate: this.filterForm.value.toDate,
+        fromDate: toDateOnly(this.filterForm.value.fromDate),
+        toDate: toDateOnly(this.filterForm.value.toDate),
         sortBy: this.sortBy,
         sortDirection: this.sortDirection,
         ...params,
