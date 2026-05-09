@@ -8,17 +8,22 @@
     ></div>
   }
 
-  <div class="pt-16">
-    <div class="relative">
+  <div class="flex min-h-screen flex-col pt-16">
+    <div class="relative flex min-h-0 flex-1 flex-col">
       <app-admin-sidebar></app-admin-sidebar>
       <main
-        class="content-area flex-1 p-4 sm:p-6"
-        [class.desktop-sidebar-open]="sidebarService.sidebarOpen()"
+        class="w-full flex-1 p-4 transition-[margin-left,width] duration-300 ease-in-out sm:p-6"
+        [ngClass]="sidebarService.sidebarOpen() ? 'lg:ml-80 lg:w-[calc(100%-20rem)]' : ''"
       >
         <router-outlet></router-outlet>
       </main>
-    </div>
 
-    <app-admin-footer></app-admin-footer>
+      <div
+        class="w-full transition-[margin-left,width] duration-300 ease-in-out"
+        [ngClass]="sidebarService.sidebarOpen() ? 'lg:ml-80 lg:w-[calc(100%-20rem)]' : ''"
+      >
+        <app-admin-footer></app-admin-footer>
+      </div>
+    </div>
   </div>
 </div>
