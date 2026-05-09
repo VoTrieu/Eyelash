@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .image-gallery-dialog .p-dialog-content {
+  padding: 0 1rem 1rem;
+}

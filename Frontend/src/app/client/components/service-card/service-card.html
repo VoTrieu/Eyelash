@@ -1,8 +1,13 @@
 <article
   class="grid gap-4 border-b border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-950 md:grid-cols-[220px_1fr_auto]">
   <div class="overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
-    @if (mainPhotoUrl(); as photoUrl) {
-      <img [src]="photoUrl" [alt]="service().name" class="h-52 w-full object-cover md:h-full" />
+    @if (mainImage(); as image) {
+      <button type="button" class="group relative block h-full w-full" (click)="openGallery(0)" aria-label="Open service images">
+        <img [src]="image.src" [alt]="image.alt || service().name" class="h-52 w-full object-cover transition duration-200 group-hover:scale-105 md:h-full" />
+        <span class="absolute inset-0 grid place-items-center bg-slate-950/0 text-white opacity-0 transition group-hover:bg-slate-950/35 group-hover:opacity-100">
+          <i class="pi pi-search-plus text-2xl"></i>
+        </span>
+      </button>
     } @else {
       <div class="grid h-52 place-items-center text-slate-400 md:h-full">
         <i class="pi pi-image text-3xl"></i>
@@ -29,8 +34,10 @@
 
     @if (previewPhotos().length) {
       <div class="mt-4 flex gap-2">
-        @for (photo of previewPhotos(); track photo.id) {
-          <img [src]="resolvePhotoUrl(photo.url)" [alt]="service().name" class="h-16 w-16 rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700" />
+        @for (image of previewPhotos(); track image.src; let index = $index) {
+          <button type="button" class="overflow-hidden rounded-md ring-1 ring-slate-200 transition hover:ring-2 hover:ring-rose-400 dark:ring-slate-700" (click)="openGallery(index + 1)" aria-label="Open service image">
+            <img [src]="image.src" [alt]="image.alt || service().name" class="h-16 w-16 object-cover" />
+          </button>
         }
       </div>
     }
@@ -45,3 +52,10 @@
     <button pButton type="button" label="Book now" icon="pi pi-calendar" class="p-button-sm" (click)="onBookNow()"></button>
   </div>
 </article>
+
+<app-image-gallery-dialog
+  [(visible)]="galleryVisible"
+  [(activeIndex)]="galleryActiveIndex"
+  [images]="images()"
+  [header]="service().name">
+</app-image-gallery-dialog>

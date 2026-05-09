@@ -1,0 +1,33 @@
+<p-dialog
+  [header]="header()"
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(1100px, 96vw)' }"
+  styleClass="image-gallery-dialog">
+  @if (images().length) {
+    <p-galleria
+      [value]="images()"
+      [activeIndex]="activeIndex()"
+      (activeIndexChange)="activeIndex.set($event)"
+      [responsiveOptions]="responsiveOptions"
+      [numVisible]="5"
+      [showItemNavigators]="images().length > 1"
+      [showItemNavigatorsOnHover]="true"
+      [showThumbnailNavigators]="images().length > 5"
+      thumbnailsPosition="bottom"
+      containerClass="w-full">
+      <ng-template #item let-item>
+        <div class="grid h-[min(680px,72vh)] place-items-center overflow-hidden rounded-md bg-slate-950">
+          <img [src]="item.src" [alt]="item.alt || 'Gallery image'" class="max-h-full max-w-full object-contain" />
+        </div>
+      </ng-template>
+
+      <ng-template #thumbnail let-item>
+        <img [src]="item.src" [alt]="item.alt || 'Gallery thumbnail'" class="h-16 w-20 rounded-md object-cover" />
+      </ng-template>
+    </p-galleria>
+  }
+</p-dialog>
