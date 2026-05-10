@@ -37,6 +37,11 @@ export class AdminSidebar {
       routerLink: ['/admin/availability']
     },
     {
+      label: 'Users',
+      icon: 'pi pi-fw pi-users',
+      routerLink: ['/admin/users']
+    },
+    {
       label: 'Content',
       icon: 'pi pi-fw pi-book',
       items: [
@@ -44,14 +49,7 @@ export class AdminSidebar {
         { label: 'Media', icon: 'pi pi-fw pi-image', routerLink: ['/admin'] }
       ]
     },
-    {
-      label: 'Users',
-      icon: 'pi pi-fw pi-users',
-      items: [
-        { label: 'Teams', icon: 'pi pi-fw pi-users', routerLink: ['/admin'] },
-        { label: 'Roles', icon: 'pi pi-fw pi-lock', routerLink: ['/admin'] }
-      ]
-    },
+    
     {
       label: 'Settings',
       icon: 'pi pi-fw pi-cog',

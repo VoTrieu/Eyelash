@@ -1,0 +1,221 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Admin</p>
+      <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Users</h1>
+      <p class="mt-2 text-slate-500 dark:text-slate-400">Search, create, update, deactivate, and delete user accounts.</p>
+    </div>
+
+    <button pButton type="button" label="New user" icon="pi pi-plus" (click)="openNew()"></button>
+  </div>
+
+  <form
+    [formGroup]="filterForm"
+    (ngSubmit)="applyFilters()"
+    class="grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:grid-cols-[1fr_220px_220px_auto_auto]"
+  >
+    <input
+      pInputText
+      formControlName="search"
+      placeholder="Search name, email, or phone"
+      class="w-full"
+    />
+
+    <p-select
+      formControlName="role"
+      [options]="roleOptions()"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="All roles"
+      [showClear]="true"
+    ></p-select>
+
+    <p-select
+      formControlName="isActive"
+      [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="All statuses"
+      [showClear]="true"
+    ></p-select>
+
+    <button pButton type="submit" label="Filter" icon="pi pi-search"></button>
+    <button pButton type="button" label="Clear" icon="pi pi-times" severity="secondary" (click)="clearFilters()"></button>
+  </form>
+
+  <p-table
+    [value]="users()"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="rows"
+    [first]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="loading()"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [tableStyle]="{ 'min-width': '70rem' }"
+    dataKey="id"
+    sortField="created"
+    [sortOrder]="-1"
+    (onLazyLoad)="onTableLazyLoad($event)"
+    class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="displayName">
+          Name <p-sortIcon field="displayName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="email">
+          Email <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th>Phone</th>
+        <th>Roles</th>
+        <th>Status</th>
+        <th pSortableColumn="created">
+          Created <p-sortIcon field="created"></p-sortIcon>
+        </th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>
+          <div class="font-semibold text-slate-900 dark:text-slate-100">{{ user.displayName }}</div>
+          <div class="text-xs text-slate-500">{{ user.gender || 'No gender' }}</div>
+        </td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phoneNumber || '-' }}</td>
+        <td>
+          <div class="flex flex-wrap gap-2">
+            @for (role of user.roles; track role) {
+              <p-tag [value]="role" [severity]="roleSeverity(role)"></p-tag>
+            }
+          </div>
+        </td>
+        <td>
+          <p-tag
+            [value]="user.isActive ? 'Active' : 'Inactive'"
+            [severity]="user.isActive ? 'success' : 'danger'"
+          ></p-tag>
+        </td>
+        <td>{{ user.created | date: 'mediumDate' }}</td>
+        <td>
+          <div class="flex justify-end gap-2">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text"
+              (click)="editUser(user)"
+            ></button>
+            <button
+              pButton
+              type="button"
+              [icon]="user.isActive ? 'pi pi-user-minus' : 'pi pi-user-plus'"
+              class="p-button-rounded p-button-text"
+              [severity]="user.isActive ? 'warn' : 'success'"
+              (click)="toggleStatus(user)"
+            ></button>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text"
+              severity="danger"
+              (click)="deleteUser(user)"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="py-10 text-center text-slate-500">No users found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  [header]="isEditing() ? 'Edit user' : 'Create user'"
+  [modal]="true"
+  [visible]="displayDialog()"
+  (visibleChange)="displayDialog.set($event)"
+  [style]="{ width: 'min(42rem, 95vw)' }"
+>
+  <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="grid gap-4">
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Display name</span>
+        <input pInputText formControlName="displayName" />
+      </label>
+
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Email</span>
+        <input pInputText formControlName="email" type="email" />
+      </label>
+
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+          Password {{ isEditing() ? '(leave blank to keep current)' : '' }}
+        </span>
+        <input pInputText formControlName="password" type="password" autocomplete="new-password" />
+      </label>
+
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Phone</span>
+        <input pInputText formControlName="phoneNumber" />
+      </label>
+
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Gender</span>
+        <input pInputText formControlName="gender" />
+      </label>
+
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Date of birth</span>
+        <p-datepicker
+          formControlName="dateOfBirth"
+          [showIcon]="true"
+          inputId="adminUserDateOfBirth"
+          styleClass="w-full"
+        ></p-datepicker>
+      </label>
+    </div>
+
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Address</span>
+      <input pInputText formControlName="address" />
+    </label>
+
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Roles</span>
+      <p-multiSelect
+        formControlName="roles"
+        [options]="roleOptions()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select roles"
+        display="chip"
+      ></p-multiSelect>
+    </label>
+
+    <label class="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 dark:bg-slate-800">
+      <p-checkbox formControlName="isActive" [binary]="true"></p-checkbox>
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">User is active</span>
+    </label>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button pButton type="button" label="Cancel" severity="secondary" (click)="displayDialog.set(false)"></button>
+      <button
+        pButton
+        type="submit"
+        [label]="isEditing() ? 'Save changes' : 'Create user'"
+        icon="pi pi-save"
+        [loading]="saving()"
+        [disabled]="userForm.invalid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

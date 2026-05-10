@@ -16,6 +16,8 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     {
         var user = await userManager.FindByEmailAsync(loginDto.Email);
         if (user == null) return Unauthorized("Invalid email or password");
+        if (await userManager.IsLockedOutAsync(user)) return Unauthorized("Invalid email or password");
+
         var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
         if (!result) return Unauthorized("Invalid email or password");
         await SetRefreshTokenCookie(user);

@@ -65,6 +65,11 @@ export const routes: Routes = [
               import('./admin/features/availability/availability').then((m) => m.Availability),
           },
           {
+            path: 'users',
+            loadComponent: () =>
+              import('./admin/features/users/admin-users').then((m) => m.AdminUsers),
+          },
+          {
             path: 'profile',
             loadComponent: () =>
               import('./admin/features/profile/admin-profile').then((m) => m.AdminProfile),
