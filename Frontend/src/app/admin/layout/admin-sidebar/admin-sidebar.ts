@@ -37,6 +37,11 @@ export class AdminSidebar {
       routerLink: ['/admin/availability']
     },
     {
+      label: 'Reviews',
+      icon: 'pi pi-fw pi-star',
+      routerLink: ['/admin/reviews']
+    },
+    {
       label: 'Users',
       icon: 'pi pi-fw pi-users',
       routerLink: ['/admin/users']

@@ -27,7 +27,9 @@ public class MappingProfiles: Profile
         CreateMap<Photo, PhotoDto>();
 
         // Review
-         CreateMap<Review, ReviewDto>();
+         CreateMap<Review, ReviewDto>()
+            .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.ClientName))
+            .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.Name));
 
         // Appointment
         CreateMap<Appointment, AppointmentDto>()

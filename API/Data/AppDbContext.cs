@@ -46,13 +46,15 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .HasOne(r => r.Client)
             .WithMany(u => u.Reviews)
             .HasForeignKey(r => r.ClientId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict); 
 
-        // Review -> Appointment (1-to-1)
+        // Review -> Appointment (optional 1-to-1)
         builder.Entity<Review>()
             .HasOne(r => r.Appointment)
             .WithOne(a => a.Review)
             .HasForeignKey<Review>(r => r.AppointmentId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Review -> Service

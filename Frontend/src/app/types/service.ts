@@ -1,3 +1,5 @@
+import type { Review } from './review';
+
 export interface Service {
   id: number;
   name: string;
@@ -13,15 +15,6 @@ export interface Photo {
   id: number;
   url: string;
   isMain: boolean;
-}
-
-export interface Review {
-  id: number;
-  rating: number;
-  comment?: string | null;
-  created: string;
-  displayName: string;
-  photos: Photo[];
 }
 
 export interface ServiceDetail extends Service {

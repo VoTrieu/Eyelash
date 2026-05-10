@@ -22,6 +22,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./client/features/services/client-services').then((m) => m.ClientServices),
       },
+      {
+        path: 'reviews',
+        loadComponent: () =>
+          import('./client/features/reviews/client-reviews').then((m) => m.ClientReviews),
+      },
     ],
   },
   {
@@ -63,6 +68,11 @@ export const routes: Routes = [
             path: 'availability',
             loadComponent: () =>
               import('./admin/features/availability/availability').then((m) => m.Availability),
+          },
+          {
+            path: 'reviews',
+            loadComponent: () =>
+              import('./admin/features/reviews/admin-reviews').then((m) => m.AdminReviews),
           },
           {
             path: 'users',
