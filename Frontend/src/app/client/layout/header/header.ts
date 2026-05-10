@@ -49,11 +49,11 @@ export class Header implements AfterViewInit {
 
   navButtonClass(): string {
     if (!this.isScrolled()) {
-      return 'text-white hover:bg-gray-800';
+      return 'text-white hover:bg-gray-800 text-sm';
     }
 
     return this.themeService.mode() === 'dark'
-      ? 'text-white hover:bg-slate-800'
-      : 'text-black hover:bg-gray-200';
+      ? 'text-white hover:bg-slate-800 text-sm'
+      : 'text-black hover:bg-gray-200 text-sm';
   }
 }

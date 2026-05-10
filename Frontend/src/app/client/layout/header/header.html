@@ -5,16 +5,16 @@
   [class.bg-slate-950]="isScrolled() && themeService.mode() === 'dark'"
 >
   <div class="card container">
-    <p-toolbar class="border-0 bg-transparent h-40">
+    <p-toolbar class="border-0 bg-transparent min-h-24">
       <ng-template #start>
         <img
           [src]="isScrolled() && themeService.mode() === 'light' ? './logo.png' : './logo3.png'"
           alt="Brand logo"
-          class="logo-image h-36 w-36"
+          class="logo-image h-20 w-20 object-contain"
         />
       </ng-template>
       <ng-template #center class="">
-        <div class="items-center gap-2 pr-40">
+        <div class="items-center gap-1 lg:pr-16">
             <p-button 
                 [styleClass]="navButtonClass()"
                 routerLink="/"

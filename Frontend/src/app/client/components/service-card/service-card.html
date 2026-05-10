@@ -1,31 +1,31 @@
 <article
-  class="grid gap-4 border-b border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-950 md:grid-cols-[220px_1fr_auto]">
+  class="grid gap-4 border-b border-slate-200 bg-white py-5 dark:border-slate-800 dark:bg-slate-950 md:grid-cols-[180px_1fr_auto]">
   <div class="overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
     @if (mainImage(); as image) {
       <button type="button" class="group relative block h-full w-full" (click)="openGallery(0)" aria-label="Open service images">
-        <img [src]="image.src" [alt]="image.alt || service().name" class="h-52 w-full object-cover transition duration-200 group-hover:scale-105 md:h-full" />
+        <img [src]="image.src" [alt]="image.alt || service().name" class="h-44 w-full object-cover transition duration-200 group-hover:scale-105 md:h-full" />
         <span class="absolute inset-0 grid place-items-center bg-slate-950/0 text-white opacity-0 transition group-hover:bg-slate-950/35 group-hover:opacity-100">
-          <i class="pi pi-search-plus text-2xl"></i>
+          <i class="pi pi-search-plus text-xl"></i>
         </span>
       </button>
     } @else {
-      <div class="grid h-52 place-items-center text-slate-400 md:h-full">
-        <i class="pi pi-image text-3xl"></i>
+      <div class="grid h-44 place-items-center text-slate-400 md:h-full">
+        <i class="pi pi-image text-2xl"></i>
       </div>
     }
   </div>
 
-  <div class="min-w-0 flex flex-col gap-4">
+  <div class="min-w-0 flex flex-col gap-3">
     <div class="flex items-start gap-3 flex-1">
       <div class="min-w-0 flex-1">
-        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-50">{{ service().name }}</h2>
+        <h2 class="text-lg font-semibold text-slate-950 dark:text-slate-50">{{ service().name }}</h2>
         <p class="mt-2 line-clamp-4 text-sm leading-6 text-slate-500 dark:text-slate-400">
           {{ service().description }}
         </p>
       </div>
 
-      <div class="rounded-md bg-slate-50 px-4 py-3 text-right dark:bg-slate-900">
-        <div class="text-lg font-semibold">{{ service().price | currency }}</div>
+      <div class="rounded-md bg-slate-50 px-3 py-2 text-right dark:bg-slate-900">
+        <div class="text-base font-semibold">{{ service().price | currency }}</div>
         <div class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {{ service().durationInMinutes }} min
         </div>
@@ -33,10 +33,10 @@
     </div>
 
     @if (previewPhotos().length) {
-      <div class="mt-4 flex gap-2">
+      <div class="mt-2 flex gap-2">
         @for (image of previewPhotos(); track image.src; let index = $index) {
           <button type="button" class="overflow-hidden rounded-md ring-1 ring-slate-200 transition hover:ring-2 hover:ring-rose-400 dark:ring-slate-700" (click)="openGallery(index + 1)" aria-label="Open service image">
-            <img [src]="image.src" [alt]="image.alt || service().name" class="h-16 w-16 object-cover" />
+            <img [src]="image.src" [alt]="image.alt || service().name" class="h-14 w-14 object-cover" />
           </button>
         }
       </div>

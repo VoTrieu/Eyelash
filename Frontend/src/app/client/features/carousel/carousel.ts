@@ -9,7 +9,7 @@ import { TagModule } from 'primeng/tag';
   templateUrl: './carousel.html',
   styleUrl: './carousel.css',
   host: {
-    class: 'flex items-center justify-center my-8',
+    class: 'flex items-center justify-center my-6',
   },
 })
 export class Carousel {

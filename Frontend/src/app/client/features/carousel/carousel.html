@@ -1,7 +1,7 @@
 <div>
   <div class="flex flex-col items-center justify-center">
-      <img src="./DefineYourLook.png" alt="Define Your Look" class="w-1/4">
-      <h1 class="text-6xl text-black font-bold text-center mb-6 mt-4"> Effortless Beauty </h1>
+      <img src="./DefineYourLook.png" alt="Define Your Look" class="w-40 max-w-[45vw]">
+      <h1 class="mb-4 mt-3 text-center text-4xl font-semibold text-black md:text-5xl">Effortless Beauty</h1>
   </div>
   <div class="card container">
     <p-carousel
@@ -19,7 +19,7 @@
               <img
                 [src]="product.image"
                 [alt]="product.title"
-                class="w-full rounded-border"
+                class="aspect-4/3 w-full rounded-lg object-cover"
               />
               <p-tag
                 [value]="product.inventoryStatus"
@@ -27,7 +27,7 @@
               />
             </div>
           </div>
-          <div class="mb-4 font-medium">{{ product.title }}</div>
+          <div class="mb-3 mt-2 text-sm font-medium text-slate-700">{{ product.title }}</div>
          
         </div>
       </ng-template>
