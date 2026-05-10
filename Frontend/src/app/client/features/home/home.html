@@ -1,2 +1,43 @@
-  <app-carousel></app-carousel>
-  <app-map></app-map>
+<app-carousel></app-carousel>
+
+<section class="bg-white px-6 py-16 text-slate-950 dark:bg-slate-950 dark:text-white">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-rose-500">Recent reviews</p>
+        <h2 class="mt-3 text-3xl font-semibold leading-tight md:text-4xl">
+          Fresh notes from our clients
+        </h2>
+      </div>
+
+      <a
+        routerLink="/reviews"
+        class="inline-flex w-fit items-center justify-center rounded-full border border-rose-200 px-5 py-3 text-sm font-semibold text-rose-600 transition hover:border-rose-500 hover:bg-rose-50 dark:border-rose-400/40 dark:text-rose-200 dark:hover:bg-rose-400/10"
+      >
+        View all reviews
+      </a>
+    </div>
+
+    @if (loadingReviews()) {
+      <div class="grid min-h-48 place-items-center rounded-3xl border border-stone-200 bg-stone-50 text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        Loading reviews...
+      </div>
+    } @else if (reviewsError()) {
+      <div class="grid min-h-48 place-items-center rounded-3xl border border-stone-200 bg-stone-50 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        Reviews are unavailable right now.
+      </div>
+    } @else if (homeReviews().length) {
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        @for (review of homeReviews(); track review.id) {
+          <app-review-card [review]="review"></app-review-card>
+        }
+      </div>
+    } @else {
+      <div class="grid min-h-48 place-items-center rounded-3xl border border-stone-200 bg-stone-50 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        No reviews yet.
+      </div>
+    }
+  </div>
+</section>
+
+<app-map></app-map>
