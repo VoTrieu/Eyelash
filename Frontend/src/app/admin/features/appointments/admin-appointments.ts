@@ -54,7 +54,7 @@ export class AdminAppointments implements OnInit, OnDestroy {
   rows = 10;
   first = 0;
   sortBy = 'appointmentDate';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  sortDirection: 'asc' | 'desc' = 'desc';
 
   statusOptions = [
     { label: 'All statuses', value: null },
