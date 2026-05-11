@@ -12,7 +12,8 @@ namespace API.Controllers;
 [Authorize(Policy = "RequireAdminRole")]
 public class AdminUsersController(
     UserManager<AppUser> userManager,
-    RoleManager<IdentityRole> roleManager) : BaseApiController
+    RoleManager<IdentityRole> roleManager,
+    IWebHostEnvironment env) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PaginatedResult<AdminUserDto>>> GetUsers(
@@ -90,7 +91,7 @@ public class AdminUsersController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<AdminUserDto>> CreateUser(UpsertAdminUserDto dto)
+    public async Task<ActionResult<AdminUserDto>> CreateUser([FromForm] UpsertAdminUserDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Password))
         {
@@ -120,11 +121,18 @@ public class AdminUsersController(
         result = await userManager.AddToRolesAsync(user, roles.Count > 0 ? roles : ["Client"]);
         if (!result.Succeeded) return ValidationProblemFromIdentity(result);
 
+        if (dto.Avatar is { Length: > 0 })
+        {
+            user.ImageUrl = await SaveAvatar(dto.Avatar);
+            result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded) return ValidationProblemFromIdentity(result);
+        }
+
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, await ToAdminUserDto(user));
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<AdminUserDto>> UpdateUser(string id, UpsertAdminUserDto dto)
+    public async Task<ActionResult<AdminUserDto>> UpdateUser(string id, [FromForm] UpsertAdminUserDto dto)
     {
         var user = await userManager.FindByIdAsync(id);
         if (user == null) return NotFound();
@@ -164,6 +172,17 @@ public class AdminUsersController(
         result = await userManager.AddToRolesAsync(user, roles.Count > 0 ? roles : ["Client"]);
         if (!result.Succeeded) return ValidationProblemFromIdentity(result);
 
+        if (dto.Avatar is { Length: > 0 })
+        {
+            var previousImageUrl = user.ImageUrl;
+            user.ImageUrl = await SaveAvatar(dto.Avatar);
+
+            result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded) return ValidationProblemFromIdentity(result);
+
+            DeleteLocalAvatar(previousImageUrl);
+        }
+
         return Ok(await ToAdminUserDto(user));
     }
 
@@ -192,8 +211,11 @@ public class AdminUsersController(
         var user = await userManager.FindByIdAsync(id);
         if (user == null) return NotFound();
 
+        var imageUrl = user.ImageUrl;
         var result = await userManager.DeleteAsync(user);
         if (!result.Succeeded) return ValidationProblemFromIdentity(result);
+
+        DeleteLocalAvatar(imageUrl);
 
         return NoContent();
     }
@@ -217,6 +239,44 @@ public class AdminUsersController(
             IsActive = !user.LockoutEnd.HasValue || user.LockoutEnd <= DateTimeOffset.UtcNow,
             Roles = roles.ToList()
         };
+    }
+
+    private async Task<string> SaveAvatar(IFormFile file)
+    {
+        var imagesPath = GetImagesPath();
+        Directory.CreateDirectory(imagesPath);
+
+        var extension = Path.GetExtension(file.FileName);
+        var fileName = $"{Guid.NewGuid()}{extension}";
+        var filePath = Path.Combine(imagesPath, fileName);
+
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await file.CopyToAsync(stream);
+
+        return $"/Images/{fileName}";
+    }
+
+    private void DeleteLocalAvatar(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl) ||
+            !imageUrl.StartsWith("/Images/", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var fileName = Path.GetFileName(imageUrl);
+        var filePath = Path.Combine(GetImagesPath(), fileName);
+
+        if (System.IO.File.Exists(filePath))
+        {
+            System.IO.File.Delete(filePath);
+        }
+    }
+
+    private string GetImagesPath()
+    {
+        var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        return Path.Combine(webRoot, "Images");
     }
 
     private async Task<List<string>> ValidateRoles(IEnumerable<string> roleNames)

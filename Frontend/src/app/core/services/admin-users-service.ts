@@ -35,16 +35,16 @@ export class AdminUsersService {
     );
   }
 
-  createUser(user: AdminUserFormValue) {
-    return this.http.post<AdminUser>(this.baseUrl + 'adminusers', user).pipe(
+  createUser(user: AdminUserFormValue, avatar?: File | null) {
+    return this.http.post<AdminUser>(this.baseUrl + 'adminusers', this.toFormData(user, avatar)).pipe(
       tap((createdUser) => {
         this.users.update((users) => [createdUser, ...users]);
       })
     );
   }
 
-  updateUser(id: string, user: AdminUserFormValue) {
-    return this.http.put<AdminUser>(this.baseUrl + `adminusers/${id}`, user).pipe(
+  updateUser(id: string, user: AdminUserFormValue, avatar?: File | null) {
+    return this.http.put<AdminUser>(this.baseUrl + `adminusers/${id}`, this.toFormData(user, avatar)).pipe(
       tap((updatedUser) => {
         this.users.update((users) =>
           users.map((user) => (user.id === id ? updatedUser : user))
@@ -81,5 +81,25 @@ export class AdminUsersService {
     }
 
     return query;
+  }
+
+  private toFormData(user: AdminUserFormValue, avatar?: File | null) {
+    const formData = new FormData();
+
+    formData.append('displayName', user.displayName);
+    formData.append('email', user.email);
+    formData.append('phoneNumber', user.phoneNumber ?? '');
+    formData.append('password', user.password ?? '');
+    formData.append('gender', user.gender ?? '');
+    formData.append('address', user.address ?? '');
+    formData.append('dateOfBirth', user.dateOfBirth ?? '');
+    formData.append('isActive', String(user.isActive));
+    user.roles.forEach((role) => formData.append('roles', role));
+
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
+
+    return formData;
   }
 }

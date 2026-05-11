@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ElementRef, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ThemeService } from '../../../core/services/theme-service';
 import { RouterLink } from '@angular/router';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-header',
@@ -20,9 +21,13 @@ import { RouterLink } from '@angular/router';
 })
 export class Header implements AfterViewInit {
   private elementRef = inject(ElementRef<HTMLElement>);
+  private accountService = inject(AccountService);
 
   protected isScrolled = signal(false);
   protected isFixed = signal(false);
+  protected currentUser = this.accountService.currentUser;
+  protected avatarUrl = computed(() => this.accountService.resolveImageUrl(this.currentUser()?.imageUrl));
+  protected avatarLabel = computed(() => this.currentUser()?.displayName?.charAt(0).toUpperCase() || 'U');
   private headerHeight = 0;
 
   constructor(public themeService: ThemeService) {}

@@ -20,4 +20,5 @@ public class UpsertAdminUserDto
     public DateTime? DateOfBirth { get; set; }
     public bool IsActive { get; set; } = true;
     public List<string> Roles { get; set; } = [];
+    public IFormFile? Avatar { get; set; }
 }

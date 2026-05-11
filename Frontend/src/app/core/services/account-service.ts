@@ -44,6 +44,15 @@ export class AccountService {
     this.currentUser.set(null);
   }
 
+  updateCurrentUser(value: Partial<Pick<User, 'displayName' | 'email' | 'imageUrl'>>) {
+    const user = this.currentUser();
+    if (!user) return;
+
+    const updatedUser = { ...user, ...value };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    this.currentUser.set(updatedUser);
+  }
+
   resolveImageUrl(url?: string | null) {
     if (!url) return '';
     if (url.startsWith('http')) return url;

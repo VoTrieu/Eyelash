@@ -80,8 +80,17 @@
     <ng-template pTemplate="body" let-user>
       <tr>
         <td>
-          <div class="font-semibold text-slate-900 dark:text-slate-100">{{ user.displayName }}</div>
-          <div class="text-xs text-slate-500">{{ user.gender || 'No gender' }}</div>
+          <div class="flex items-center gap-3">
+            @if (avatarUrl(user)) {
+              <p-avatar [image]="avatarUrl(user)" shape="circle"></p-avatar>
+            } @else {
+              <p-avatar [label]="avatarLabel(user)" shape="circle"></p-avatar>
+            }
+            <div>
+              <div class="font-semibold text-slate-900 dark:text-slate-100">{{ user.displayName }}</div>
+              <div class="text-xs text-slate-500">{{ user.gender || 'No gender' }}</div>
+            </div>
+          </div>
         </td>
         <td>{{ user.email }}</td>
         <td>{{ user.phoneNumber || '-' }}</td>
@@ -141,10 +150,45 @@
   [header]="isEditing() ? 'Edit user' : 'Create user'"
   [modal]="true"
   [visible]="displayDialog()"
-  (visibleChange)="displayDialog.set($event)"
+  (visibleChange)="onDialogVisibleChange($event)"
   [style]="{ width: 'min(42rem, 95vw)' }"
 >
   <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="grid gap-4">
+    <div class="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800 sm:flex-row sm:items-center">
+      @if (currentAvatarPreview()) {
+        <p-avatar [image]="currentAvatarPreview()" shape="circle" [style]="{ width: '72px', height: '72px' }"></p-avatar>
+      } @else {
+        <p-avatar [label]="avatarLabel()" shape="circle" [style]="{ width: '72px', height: '72px', 'font-size': '1.5rem' }"></p-avatar>
+      }
+
+      <div class="grid flex-1 gap-2">
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Avatar</span>
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          [customUpload]="true"
+          [auto]="false"
+          chooseLabel="Choose avatar"
+          chooseIcon="pi pi-image"
+          maxFileSize="4194304"
+          invalidFileSizeMessageSummary="File too large"
+          invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
+          (onSelect)="onAvatarSelected($event)"
+        ></p-fileUpload>
+        @if (selectedAvatar()) {
+          <button
+            pButton
+            type="button"
+            label="Remove selected avatar"
+            icon="pi pi-times"
+            severity="secondary"
+            class="p-button-sm w-fit"
+            (click)="clearAvatarSelection()"
+          ></button>
+        }
+      </div>
+    </div>
+
     <div class="grid gap-4 md:grid-cols-2">
       <label class="grid gap-2">
         <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Display name</span>
@@ -207,7 +251,7 @@
     </label>
 
     <div class="flex justify-end gap-2 pt-2">
-      <button pButton type="button" label="Cancel" severity="secondary" (click)="displayDialog.set(false)"></button>
+      <button pButton type="button" label="Cancel" severity="secondary" (click)="onDialogVisibleChange(false)"></button>
       <button
         pButton
         type="submit"

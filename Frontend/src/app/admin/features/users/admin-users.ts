@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
+import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -12,6 +14,7 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
 import { AdminUsersService } from '../../../core/services/admin-users-service';
+import { AccountService } from '../../../core/services/account-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { AdminUser, AdminUserFormValue, AdminUserQueryParams } from '../../../types/admin-user';
 import { toDateOnly } from '../../../shared/helpers/date-time-helper';
@@ -21,11 +24,13 @@ import { toDateOnly } from '../../../shared/helpers/date-time-helper';
   standalone: true,
   imports: [
     CommonModule,
+    AvatarModule,
     ReactiveFormsModule,
     ButtonModule,
     CheckboxModule,
     DialogModule,
     DatePickerModule,
+    FileUploadModule,
     InputTextModule,
     MultiSelectModule,
     SelectModule,
@@ -38,6 +43,7 @@ import { toDateOnly } from '../../../shared/helpers/date-time-helper';
 })
 export class AdminUsers implements OnInit {
   private adminUsersService = inject(AdminUsersService);
+  private accountService = inject(AccountService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
@@ -50,6 +56,9 @@ export class AdminUsers implements OnInit {
   displayDialog = signal(false);
   isEditing = signal(false);
   editingId = signal<string | null>(null);
+  selectedAvatar = signal<File | null>(null);
+  avatarPreviewUrl = signal<string | null>(null);
+  existingAvatarUrl = signal<string | null>(null);
 
   rows = 10;
   first = 0;
@@ -149,6 +158,8 @@ export class AdminUsers implements OnInit {
     });
     this.userForm.controls.password.addValidators(Validators.required);
     this.userForm.controls.password.updateValueAndValidity();
+    this.clearAvatarSelection();
+    this.existingAvatarUrl.set(null);
     this.displayDialog.set(true);
   }
 
@@ -168,6 +179,8 @@ export class AdminUsers implements OnInit {
       isActive: user.isActive,
       roles: user.roles,
     });
+    this.clearAvatarSelection();
+    this.existingAvatarUrl.set(user.imageUrl ?? null);
     this.displayDialog.set(true);
   }
 
@@ -179,13 +192,22 @@ export class AdminUsers implements OnInit {
 
     const value = this.normalizeFormValue();
     const request = this.isEditing() && this.editingId() !== null
-      ? this.adminUsersService.updateUser(this.editingId()!, value)
-      : this.adminUsersService.createUser(value);
+      ? this.adminUsersService.updateUser(this.editingId()!, value, this.selectedAvatar())
+      : this.adminUsersService.createUser(value, this.selectedAvatar());
 
     this.saving.set(true);
     request.pipe(finalize(() => this.saving.set(false))).subscribe({
-      next: () => {
+      next: (savedUser) => {
+        if (savedUser.id === this.accountService.currentUser()?.id) {
+          this.accountService.updateCurrentUser({
+            displayName: savedUser.displayName,
+            email: savedUser.email,
+            imageUrl: savedUser.imageUrl ?? undefined,
+          });
+        }
+
         this.displayDialog.set(false);
+        this.clearAvatarSelection();
         this.toastService.showSuccess(this.isEditing() ? 'User updated' : 'User created');
         this.loadUsers();
       },
@@ -221,6 +243,45 @@ export class AdminUsers implements OnInit {
 
   roleSeverity(role: string) {
     return role === 'Admin' ? 'danger' : role === 'Moderator' ? 'warn' : 'info';
+  }
+
+  avatarUrl(user: AdminUser) {
+    return this.accountService.resolveImageUrl(user.imageUrl);
+  }
+
+  currentAvatarPreview() {
+    return this.avatarPreviewUrl() ?? this.accountService.resolveImageUrl(this.existingAvatarUrl());
+  }
+
+  avatarLabel(user?: AdminUser | null) {
+    return user?.displayName?.charAt(0).toUpperCase() || this.userForm.value.displayName?.charAt(0).toUpperCase() || 'U';
+  }
+
+  onAvatarSelected(event: { files?: File[]; currentFiles?: File[] }) {
+    const file = event.currentFiles?.[0] ?? event.files?.[0] ?? null;
+    if (!file) return;
+
+    this.clearAvatarSelection();
+    this.selectedAvatar.set(file);
+    this.avatarPreviewUrl.set(URL.createObjectURL(file));
+  }
+
+  clearAvatarSelection() {
+    const previewUrl = this.avatarPreviewUrl();
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    this.selectedAvatar.set(null);
+    this.avatarPreviewUrl.set(null);
+  }
+
+  onDialogVisibleChange(visible: boolean) {
+    this.displayDialog.set(visible);
+
+    if (!visible) {
+      this.clearAvatarSelection();
+    }
   }
 
   private normalizeFormValue(): AdminUserFormValue {

@@ -40,10 +40,21 @@
             plain
             (onClick)="themeService.toggle()" />
           <p-button label="Share" severity="contrast" size="small" />
-          <p-avatar
-            image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-            [style]="{ width: '32px', height: '32px' }"
-          />
+          @if (currentUser()) {
+            @if (avatarUrl()) {
+              <p-avatar
+                [image]="avatarUrl()"
+                shape="circle"
+                [style]="{ width: '32px', height: '32px' }"
+              />
+            } @else {
+              <p-avatar
+                [label]="avatarLabel()"
+                shape="circle"
+                [style]="{ width: '32px', height: '32px' }"
+              />
+            }
+          }
         </div>
       </ng-template>
     </p-toolbar>
