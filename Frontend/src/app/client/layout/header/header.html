@@ -40,21 +40,7 @@
             plain
             (onClick)="themeService.toggle()" />
           <p-button label="Share" severity="contrast" size="small" />
-          @if (currentUser()) {
-            @if (avatarUrl()) {
-              <p-avatar
-                [image]="avatarUrl()"
-                shape="circle"
-                [style]="{ width: '32px', height: '32px' }"
-              />
-            } @else {
-              <p-avatar
-                [label]="avatarLabel()"
-                shape="circle"
-                [style]="{ width: '32px', height: '32px' }"
-              />
-            }
-          }
+        
         </div>
       </ng-template>
     </p-toolbar>

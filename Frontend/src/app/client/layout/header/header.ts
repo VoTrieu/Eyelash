@@ -21,13 +21,9 @@ import { AccountService } from '../../../core/services/account-service';
 })
 export class Header implements AfterViewInit {
   private elementRef = inject(ElementRef<HTMLElement>);
-  private accountService = inject(AccountService);
 
   protected isScrolled = signal(false);
   protected isFixed = signal(false);
-  protected currentUser = this.accountService.currentUser;
-  protected avatarUrl = computed(() => this.accountService.resolveImageUrl(this.currentUser()?.imageUrl));
-  protected avatarLabel = computed(() => this.currentUser()?.displayName?.charAt(0).toUpperCase() || 'U');
   private headerHeight = 0;
 
   constructor(public themeService: ThemeService) {}
