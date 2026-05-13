@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
@@ -46,6 +46,7 @@ export class BookAppointment implements OnInit {
   private toastService = inject(ToastService);
   private availabilityService = inject(AvailabilityService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
   private fileUpload: Signal<FileUpload | undefined> = viewChild('fileUpload');
 
@@ -139,13 +140,14 @@ export class BookAppointment implements OnInit {
       )
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
-        next: () => {
+        next: (appointment) => {
           this.submitted.set(true);
           this.bookingForm.reset();
           this.selectedServiceIds.set([]);
           this.selectedFiles.set([]);
           this.fileUpload()?.clear();
           this.toastService.showSuccess('Appointment request sent');
+          void this.router.navigate(['/appointment-requested', appointment.id]);
         },
         error: () => this.toastService.showError('Could not send appointment request'),
       });

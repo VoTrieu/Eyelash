@@ -1,0 +1,103 @@
+<section class="relative overflow-hidden bg-stone-100 px-4 py-16 text-slate-950 dark:bg-slate-950 dark:text-white sm:px-6">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(244,114,182,0.22),transparent_34%),radial-gradient(circle_at_85%_20%,rgba(251,191,36,0.18),transparent_30%)]"></div>
+
+  <div class="relative mx-auto max-w-5xl">
+    @if (loading()) {
+      <div class="grid min-h-96 place-items-center rounded-[2rem] border border-white/70 bg-white/80 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900">
+        <div class="text-center text-slate-500 dark:text-slate-400">
+          <i class="pi pi-spin pi-spinner text-3xl"></i>
+          <p class="mt-3">Loading appointment request...</p>
+        </div>
+      </div>
+    } @else if (appointment(); as item) {
+      <div class="rounded-[2.5rem] border border-white/80 bg-white/90 p-6 shadow-xl backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 md:p-10">
+        <div class="grid gap-8 lg:grid-cols-[1fr_0.75fr]">
+          <div>
+            <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
+              <i class="pi pi-check"></i>
+            </div>
+
+            <p class="text-sm font-semibold uppercase tracking-[0.35em] text-rose-500">
+              Request received
+            </p>
+            <h1 class="mt-4 text-4xl font-semibold leading-tight md:text-5xl">
+              Thank you, {{ item.clientName }}.
+            </h1>
+            <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+              Your appointment request has been sent successfully. Eyelash will review your selected time and confirm your appointment soon by email or phone.
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button pButton type="button" label="Book another appointment" icon="pi pi-calendar-plus" routerLink="/book-appointment"></button>
+              <button pButton type="button" label="View services" icon="pi pi-sparkles" severity="secondary" routerLink="/services"></button>
+            </div>
+          </div>
+
+          <aside class="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+            <div class="mb-5 flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Request number</p>
+                <h2 class="text-2xl font-semibold">#{{ item.id }}</h2>
+              </div>
+              <p-tag [value]="item.status" [severity]="statusSeverity(item.status)"></p-tag>
+            </div>
+
+            <div class="grid gap-4 text-sm">
+              <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+                <p class="font-semibold text-slate-500 dark:text-slate-400">Date and time</p>
+                <p class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">
+                  {{ item.appointmentDate | date: 'fullDate' }}
+                </p>
+                <p class="text-slate-600 dark:text-slate-300">
+                  {{ item.startTime.slice(0, 5) }} - {{ item.endTime.slice(0, 5) }}
+                </p>
+              </div>
+
+              <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+                <p class="font-semibold text-slate-500 dark:text-slate-400">Selected services</p>
+                <p class="mt-1 font-semibold text-slate-950 dark:text-white">{{ servicesLabel() }}</p>
+                <p class="mt-1 text-slate-600 dark:text-slate-300">
+                  {{ totalDuration() }} min · {{ totalPrice() | currency }}
+                </p>
+              </div>
+
+              <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+                <p class="font-semibold text-slate-500 dark:text-slate-400">Contact</p>
+                <p class="mt-1 text-slate-950 dark:text-white">{{ item.clientEmail }}</p>
+                <p class="text-slate-600 dark:text-slate-300">{{ item.clientPhone || 'No phone provided' }}</p>
+              </div>
+
+              @if (item.notes) {
+                <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+                  <p class="font-semibold text-slate-500 dark:text-slate-400">Notes</p>
+                  <p class="mt-1 leading-6 text-slate-600 dark:text-slate-300">{{ item.notes }}</p>
+                </div>
+              }
+            </div>
+          </aside>
+        </div>
+
+        <div class="mt-8 rounded-[2rem] border border-amber-200 bg-amber-50 p-5 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+          <div class="flex gap-3">
+            <i class="pi pi-info-circle mt-1"></i>
+            <div>
+              <h3 class="font-semibold">This is not confirmed yet</h3>
+              <p class="mt-1 text-sm leading-6">
+                Please wait for Eyelash to confirm the appointment before arriving. If the requested time is unavailable, we will contact you with another option.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="grid min-h-96 place-items-center rounded-[2rem] border border-white/70 bg-white/80 text-center shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900">
+        <div>
+          <i class="pi pi-calendar-times text-4xl text-slate-300"></i>
+          <h1 class="mt-4 text-2xl font-semibold">Appointment request not found</h1>
+          <p class="mt-2 text-slate-500 dark:text-slate-400">Please check the link or request a new appointment.</p>
+          <button class="mt-5" pButton type="button" label="Book appointment" routerLink="/book-appointment"></button>
+        </div>
+      </div>
+    }
+  </div>
+</section>

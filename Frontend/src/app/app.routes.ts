@@ -18,6 +18,11 @@ export const routes: Routes = [
           import('./client/features/book-appointment/book-appointment').then((m) => m.BookAppointment),
       },
       {
+        path: 'appointment-requested/:id',
+        loadComponent: () =>
+          import('./client/features/appointment-requested/appointment-requested').then((m) => m.AppointmentRequested),
+      },
+      {
         path: 'services',
         loadComponent: () =>
           import('./client/features/services/client-services').then((m) => m.ClientServices),
