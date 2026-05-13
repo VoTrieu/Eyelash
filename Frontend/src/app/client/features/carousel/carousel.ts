@@ -15,32 +15,32 @@ import { TagModule } from 'primeng/tag';
 export class Carousel {
   products = [
     {
-      image: './image.png',
-      title: 'Product',
+      image: '/brand/kims-brow-lash-client-hero.png',
+      title: "Kim's Brow & Lash Studio",
     },
     {
-      image: './image1.png',
-      title: 'Product 1',
+      image: '/brand/kims-brow-lash-service-result.png',
+      title: 'Brow & Lash Results',
     },
     {
-      image: './image2.png',
-      title: 'Product 2',
+      image: '/brand/kims-brow-lash-logo.png',
+      title: 'Luxury Beauty Care',
     },
     {
       image: './image3.png',
-      title: 'Product 3',
+      title: 'Soft Lash Styling',
     },
     {
       image: './image4.png',
-      title: 'Product 4',
+      title: 'Defined Brows',
     },
     {
       image: './image5.png',
-      title: 'Product 5',
+      title: 'Natural Enhancements',
     },
     {
       image: './image6.png',
-      title: 'Product 6',
+      title: 'Beauty Details',
     },
   ];
 

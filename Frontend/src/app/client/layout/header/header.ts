@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, computed, ElementRef, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ThemeService } from '../../../core/services/theme-service';
 import { RouterLink } from '@angular/router';
-import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-header',
