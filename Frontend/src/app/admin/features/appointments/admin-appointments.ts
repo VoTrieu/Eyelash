@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -36,7 +36,7 @@ import { toDateOnly } from '../../../shared/helpers/date-time-helper';
   styleUrls: ['./admin-appointments.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminAppointments implements OnInit, OnDestroy {
+export class AdminAppointments implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
@@ -80,11 +80,6 @@ export class AdminAppointments implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadAppointments();
     this.loadSettings();
-    void this.appointmentsService.startRealtime();
-  }
-
-  ngOnDestroy() {
-    void this.appointmentsService.stopRealtime();
   }
 
   loadAppointments(params: Partial<AppointmentQueryParams> = {}) {

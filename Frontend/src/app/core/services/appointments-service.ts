@@ -25,6 +25,8 @@ export class AppointmentsService {
   pagination = signal<PaginatedResult<Appointment>['metadata'] | null>(null);
   settings = signal<AppointmentSettings | null>(null);
   realtimeConnected = signal(false);
+  realtimeAppointmentVersion = signal(0);
+
 
   loadAppointments(params: AppointmentQueryParams = {}) {
     return this.http
@@ -98,10 +100,12 @@ export class AppointmentsService {
 
     this.hubConnection.on('AppointmentCreated', (appointment: Appointment) => {
       this.upsertAppointment(appointment);
+      this.realtimeAppointmentVersion.update((v) => v + 1);
     });
 
     this.hubConnection.on('AppointmentUpdated', (appointment: Appointment) => {
       this.upsertAppointment(appointment);
+      this.realtimeAppointmentVersion.update((v) => v + 1);
     });
 
     this.hubConnection.on('AppointmentSettingsUpdated', (settings: AppointmentSettings) => {

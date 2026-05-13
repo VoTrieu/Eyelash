@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +7,7 @@ import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
 import { AdminFooter } from '../admin-footer/admin-footer';
 import { SidebarService } from '../../../core/services/sidebar-service';
 import { RouterOutlet } from '@angular/router';
+import { AppointmentsService } from '../../../core/services/appointments-service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -20,7 +21,15 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './admin-layout.html',
   styleUrls: ['./admin-layout.css']
 })
-export class AdminLayout {
+export class AdminLayout implements OnInit, OnDestroy {
   protected readonly sidebarService = inject(SidebarService);
+  private readonly appointmentsService = inject(AppointmentsService);
 
+  ngOnInit() {
+    void this.appointmentsService.startRealtime();
+  }
+
+  ngOnDestroy() {
+    void this.appointmentsService.stopRealtime();
+  }
 }
