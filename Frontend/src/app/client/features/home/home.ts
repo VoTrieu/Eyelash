@@ -1,14 +1,21 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { Carousel } from "../carousel/carousel";
-import { Map } from "../../../shared/map/map";
-import { ReviewCard } from "../../components/review-card/review-card";
 import { ReviewsService } from "../../../core/services/reviews-service";
+import { HomeGallerySection } from "../../components/home-gallery-section/home-gallery-section";
+import { HomeHero } from "../../components/home-hero/home-hero";
+import { HomeReviewsPreview } from "../../components/home-reviews-preview/home-reviews-preview";
+import { HomeServicesPreview } from "../../components/home-services-preview/home-services-preview";
+import { HomeVisitSection } from "../../components/home-visit-section/home-visit-section";
 
 @Component({
   selector: 'app-home',
-  imports: [Carousel, Map, ReviewCard, RouterLink],
+  imports: [
+    HomeHero,
+    HomeServicesPreview,
+    HomeGallerySection,
+    HomeReviewsPreview,
+    HomeVisitSection
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
