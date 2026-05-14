@@ -102,6 +102,7 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager);
+    await Seed.SeedServices(context);
 }
 catch (Exception ex)
 {
