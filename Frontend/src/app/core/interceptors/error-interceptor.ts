@@ -25,6 +25,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
+      if (error.status === 500) {
+        toastService.showError('The server had a problem. Please try again later.');
+        void router.navigate(['/server-error']);
+        return throwError(() => error);
+      }
+
       toastService.showError(getErrorMessage(error));
       return throwError(() => error);
     })

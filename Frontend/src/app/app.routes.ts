@@ -13,6 +13,11 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/not-found/not-found').then((m) => m.NotFoundComponent),
       },
       {
+        path: 'server-error',
+        loadComponent: () =>
+          import('./shared/server-error/server-error').then((m) => m.ServerErrorComponent),
+      },
+      {
         path: 'book-appointment',
         loadComponent: () =>
           import('./client/features/book-appointment/book-appointment').then((m) => m.BookAppointment),
