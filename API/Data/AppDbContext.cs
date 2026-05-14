@@ -55,7 +55,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .WithOne(a => a.Review)
             .HasForeignKey<Review>(r => r.AppointmentId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         // Review -> Service
         builder.Entity<Review>()
@@ -69,25 +69,25 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             .HasOne(p => p.User)
             .WithMany(u => u.Photos)
             .HasForeignKey(p => p.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Photo>()
             .HasOne(p => p.Service)
             .WithMany(s => s.Photos)
             .HasForeignKey(p => p.ServiceId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Photo>()
             .HasOne(p => p.Review)
             .WithMany(r => r.Photos)
             .HasForeignKey(p => p.ReviewId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Photo>()
             .HasOne(p => p.Appointment)
             .WithMany(a => a.Photos)
             .HasForeignKey(p => p.AppointmentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         // Appointment <-> Service (Many-to-Many)
         builder.Entity<Appointment>()
