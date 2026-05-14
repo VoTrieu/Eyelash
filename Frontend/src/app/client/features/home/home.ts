@@ -22,8 +22,7 @@ import { HomeVisitSection } from "../../components/home-visit-section/home-visit
 export class Home implements OnInit {
   private reviewsService = inject(ReviewsService);
 
-  reviews = this.reviewsService.reviews;
-  homeReviews = computed(() => this.reviews().slice(0, 5));
+  homeReviews = this.reviewsService.reviews;
   loadingReviews = signal(false);
   reviewsError = signal(false);
 

@@ -25,7 +25,7 @@
         Reviews are unavailable right now.
       </div>
     } @else if (reviews().length) {
-      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div class="grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
         @for (review of reviews(); track review.id) {
           <app-review-card [review]="review"></app-review-card>
         }
