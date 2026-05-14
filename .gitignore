@@ -485,3 +485,4 @@ API/appsettings.json
 API/eyelash.db-wal
 API/eyelash.db-shm
 API/wwwroot
+API/appsettings.Development.json
