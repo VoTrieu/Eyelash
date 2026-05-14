@@ -103,6 +103,7 @@ try
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager);
     await Seed.SeedServices(context);
+    await Seed.SeedReviews(context);
 }
 catch (Exception ex)
 {

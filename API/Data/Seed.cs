@@ -143,6 +143,149 @@ public class Seed
         await context.SaveChangesAsync();
     }
 
+    public static async Task SeedReviews(AppDbContext context)
+    {
+        var servicesByName = await context.Services
+            .Select(s => new { s.Id, s.Name })
+            .ToDictionaryAsync(s => s.Name, s => s.Id);
+
+        var existingReviews = await context.Reviews
+            .Select(r => new { r.ClientEmail, r.ServiceId, r.Comment })
+            .ToListAsync();
+
+        var existingReviewKeys = existingReviews
+            .Select(r => $"{r.ClientEmail}|{r.ServiceId}|{r.Comment}")
+            .ToList();
+
+        var reviews = new List<Review>();
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Classic Lash Set",
+            clientName: "Mia Nguyen",
+            clientEmail: "mia.nguyen@example.com",
+            rating: 5,
+            comment: "My classic set looked soft and natural, exactly what I wanted for work every day. Kim was gentle, detailed, and explained aftercare clearly.",
+            created: new DateTime(2026, 5, 2, 14, 30, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-service-result.png", IsMain = true }
+            ]);
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Hybrid Lash Set",
+            clientName: "Samantha Lee",
+            clientEmail: "samantha.lee@example.com",
+            rating: 5,
+            comment: "The hybrid lashes gave me the perfect mix of natural and glam. I received so many compliments and the retention was amazing.",
+            created: new DateTime(2026, 5, 4, 17, 10, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-client-hero.png", IsMain = true },
+                new Photo { Url = "/brand/kims-brow-lash-service-result.png" }
+            ]);
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Volume Lash Set",
+            clientName: "Jessica Tran",
+            clientEmail: "jessica.tran@example.com",
+            rating: 5,
+            comment: "Beautiful fluffy volume without feeling heavy. The shape opened my eyes so nicely and still felt comfortable.",
+            created: new DateTime(2026, 5, 6, 19, 45, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-service-result.png", IsMain = true }
+            ]);
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Lash Lift & Tint",
+            clientName: "Emily Carter",
+            clientEmail: "emily.carter@example.com",
+            rating: 4,
+            comment: "I wanted something low maintenance and the lift made my natural lashes look much longer. The tint was a lovely bonus.",
+            created: new DateTime(2026, 5, 7, 15, 0, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-client-hero.png", IsMain = true }
+            ]);
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Brow Lamination",
+            clientName: "Olivia Brown",
+            clientEmail: "olivia.brown@example.com",
+            rating: 5,
+            comment: "My brows finally look full and tidy without makeup. The lamination result was polished but still natural.",
+            created: new DateTime(2026, 5, 9, 16, 20, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-service-result.png", IsMain = true }
+            ]);
+
+        AddReview(
+            servicesByName,
+            existingReviewKeys,
+            reviews,
+            serviceName: "Brow Tint & Shape",
+            clientName: "Rachel Kim",
+            clientEmail: "rachel.kim@example.com",
+            rating: 5,
+            comment: "The tint and shaping made my brows look so much more balanced. Booking was easy and the studio felt calm and clean.",
+            created: new DateTime(2026, 5, 10, 18, 5, 0, DateTimeKind.Utc),
+            photos:
+            [
+                new Photo { Url = "/brand/kims-brow-lash-client-hero.png", IsMain = true }
+            ]);
+
+        if (reviews.Count == 0) return;
+
+        context.Reviews.AddRange(reviews);
+        await context.SaveChangesAsync();
+    }
+
+    private static void AddReview(
+        Dictionary<string, int> servicesByName,
+        List<string> existingReviewKeys,
+        List<Review> reviews,
+        string serviceName,
+        string clientName,
+        string clientEmail,
+        byte rating,
+        string comment,
+        DateTime created,
+        List<Photo> photos)
+    {
+        if (!servicesByName.TryGetValue(serviceName, out var serviceId)) return;
+
+        var reviewKey = $"{clientEmail}|{serviceId}|{comment}";
+        if (existingReviewKeys.Contains(reviewKey)) return;
+
+        existingReviewKeys.Add(reviewKey);
+        reviews.Add(new Review
+        {
+            ServiceId = serviceId,
+            ClientName = clientName,
+            ClientEmail = clientEmail,
+            Rating = rating,
+            Comment = comment,
+            Created = created,
+            Photos = photos
+        });
+    }
+
     public static async Task SeedUsers(UserManager<AppUser> userManager)
     {
         if (await userManager.Users.AnyAsync()) return;
