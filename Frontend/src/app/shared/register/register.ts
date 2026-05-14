@@ -84,9 +84,6 @@ export class RegisterComponent {
         next: user => {
           this.toastService.showSuccess('Registration successful!');
           this.router.navigate(['/']);
-        },
-        error: err => {
-          this.toastService.showError('Registration failed. Please try again.');
         }
       });
     } else {

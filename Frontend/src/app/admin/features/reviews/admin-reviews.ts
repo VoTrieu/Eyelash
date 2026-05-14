@@ -111,15 +111,11 @@ export class AdminReviews implements OnInit {
         ...params,
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        error: () => this.toastService.showError('Could not load reviews'),
-      });
+      .subscribe();
   }
 
   loadServices() {
-    this.servicesService.loadServices({ pageSize: 50, sortBy: 'name', sortDirection: 'asc' }).subscribe({
-      error: () => this.toastService.showError('Could not load services'),
-    });
+    this.servicesService.loadServices({ pageSize: 50, sortBy: 'name', sortDirection: 'asc' }).subscribe();
   }
 
   onTableLazyLoad(event: TableLazyLoadEvent) {
@@ -213,8 +209,7 @@ export class AdminReviews implements OnInit {
         this.displayDialog.set(false);
         this.toastService.showSuccess(this.isEditing() ? 'Review updated' : 'Review created');
         this.loadReviews();
-      },
-      error: () => this.toastService.showError('Could not save review'),
+      }
     });
   }
 
@@ -233,8 +228,7 @@ export class AdminReviews implements OnInit {
       next: () => {
         this.toastService.showSuccess('Review deleted');
         this.loadReviews();
-      },
-      error: () => this.toastService.showError('Could not delete review'),
+      }
     });
   }
 

@@ -7,7 +7,6 @@ import { finalize } from 'rxjs';
 import { ReviewCard } from '../../components/review-card/review-card';
 import { ReviewsService } from '../../../core/services/reviews-service';
 import { ServicesService } from '../../../core/services/services-service';
-import { ToastService } from '../../../core/services/toast-service';
 import { Service } from '../../../types/service';
 
 @Component({
@@ -21,7 +20,6 @@ import { Service } from '../../../types/service';
 export class ClientReviews implements OnInit {
   private reviewsService = inject(ReviewsService);
   private servicesService = inject(ServicesService);
-  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   reviews = this.reviewsService.reviews;
@@ -60,9 +58,7 @@ export class ClientReviews implements OnInit {
         sortDirection: 'desc',
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        error: () => this.toastService.showError('Could not load reviews'),
-      });
+      .subscribe();
   }
 
   loadServices() {

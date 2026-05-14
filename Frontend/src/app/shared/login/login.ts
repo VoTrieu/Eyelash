@@ -43,9 +43,6 @@ export class LoginComponent {
           } else {
             this.router.navigateByUrl(returnUrl || '/');
           }
-        },
-        error: err => {
-          this.toastService.showError('Login failed. Please check your credentials.');
         }
       });
     }

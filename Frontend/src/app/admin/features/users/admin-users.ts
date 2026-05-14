@@ -111,15 +111,11 @@ export class AdminUsers implements OnInit {
         ...params,
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        error: () => this.toastService.showError('Could not load users'),
-      });
+      .subscribe();
   }
 
   loadRoles() {
-    this.adminUsersService.loadRoles().subscribe({
-      error: () => this.toastService.showError('Could not load roles'),
-    });
+    this.adminUsersService.loadRoles().subscribe();
   }
 
   onTableLazyLoad(event: TableLazyLoadEvent) {
@@ -212,8 +208,7 @@ export class AdminUsers implements OnInit {
         this.clearAvatarSelection();
         this.toastService.showSuccess(this.isEditing() ? 'User updated' : 'User created');
         this.loadUsers();
-      },
-      error: () => this.toastService.showError('Could not save user'),
+      }
     });
   }
 
@@ -233,8 +228,7 @@ export class AdminUsers implements OnInit {
     if (!confirmed) return;
 
     this.adminUsersService.updateUserStatus(user.id, !user.isActive).subscribe({
-      next: () => this.toastService.showSuccess(`User ${user.isActive ? 'deactivated' : 'reactivated'}`),
-      error: () => this.toastService.showError(`Could not ${action} user`),
+      next: () => this.toastService.showSuccess(`User ${user.isActive ? 'deactivated' : 'reactivated'}`)
     });
   }
 
@@ -253,8 +247,7 @@ export class AdminUsers implements OnInit {
       next: () => {
         this.toastService.showSuccess('User deleted');
         this.loadUsers();
-      },
-      error: () => this.toastService.showError('Could not delete user'),
+      }
     });
   }
 

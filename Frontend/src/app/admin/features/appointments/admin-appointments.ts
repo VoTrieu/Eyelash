@@ -98,15 +98,12 @@ export class AdminAppointments implements OnInit {
         ...params,
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        error: () => this.toastService.showError('Could not load appointments'),
-      });
+      .subscribe();
   }
 
   loadSettings() {
     this.appointmentsService.loadSettings().subscribe({
-      next: (settings) => this.settingsForm.patchValue(settings),
-      error: () => this.toastService.showError('Could not load appointment settings'),
+      next: (settings) => this.settingsForm.patchValue(settings)
     });
   }
 
@@ -138,8 +135,7 @@ export class AdminAppointments implements OnInit {
       .updateSettings(this.settingsForm.getRawValue() as AppointmentSettings)
       .pipe(finalize(() => this.savingSettings.set(false)))
       .subscribe({
-        next: () => this.toastService.showSuccess('Appointment settings updated'),
-        error: () => this.toastService.showError('Could not update appointment settings'),
+        next: () => this.toastService.showSuccess('Appointment settings updated')
       });
   }
 
@@ -148,8 +144,7 @@ export class AdminAppointments implements OnInit {
       next: (updated) => {
         this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
         this.toastService.showSuccess('Appointment confirmed');
-      },
-      error: () => this.toastService.showError('Could not confirm appointment'),
+      }
     });
   }
 
@@ -158,8 +153,7 @@ export class AdminAppointments implements OnInit {
       next: (updated) => {
         this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
         this.toastService.showSuccess('Appointment cancelled');
-      },
-      error: () => this.toastService.showError('Could not cancel appointment'),
+      }
     });
   }
 
@@ -168,8 +162,7 @@ export class AdminAppointments implements OnInit {
       next: (updated) => {
         this.selectedAppointment.update((selected) => selected?.id === updated.id ? updated : selected);
         this.toastService.showSuccess('Appointment completed');
-      },
-      error: () => this.toastService.showError('Could not complete appointment'),
+      }
     });
   }
 

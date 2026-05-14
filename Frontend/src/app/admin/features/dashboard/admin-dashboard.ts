@@ -77,8 +77,7 @@ export class AdminDashboard implements OnInit {
           this.pendingAppointmentCount.set(pendingAppointments.metadata.totalItems);
           this.latestReviews.set(latestReviews.items);
           this.averageLatestRating.set(this.getAverageRating(latestReviews.items));
-        },
-        error: () => this.toastService.showError('Could not load dashboard'),
+        }
       });
   }
 
@@ -92,8 +91,7 @@ export class AdminDashboard implements OnInit {
           this.pendingAppointmentCount.update((count) => Math.max(0, count - 1));
         }
         this.toastService.showSuccess('Appointment confirmed');
-      },
-      error: () => this.toastService.showError('Could not confirm appointment'),
+      }
     });
   }
 

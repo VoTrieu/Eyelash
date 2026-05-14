@@ -55,8 +55,7 @@ export class AppointmentRequested implements OnInit {
       .getAppointment(appointmentId)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (appointment) => this.appointment.set(appointment),
-        error: () => this.toastService.showError('Could not load appointment details'),
+        next: (appointment) => this.appointment.set(appointment)
       });
   }
 

@@ -88,9 +88,7 @@ export class AdminServices implements OnInit {
         ...params,
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        error: () => this.toastService.showError('Could not load services'),
-      });
+      .subscribe();
   }
 
   onTableLazyLoad(event: TableLazyLoadEvent) {
@@ -129,8 +127,7 @@ export class AdminServices implements OnInit {
       next: (serviceDetail) => {
         this.editingService.set(serviceDetail);
         this.displayDialog.set(true);
-      },
-      error: () => this.toastService.showError('Could not load service details'),
+      }
     });
   }
 
@@ -143,8 +140,7 @@ export class AdminServices implements OnInit {
       .getService(service.id)
       .pipe(finalize(() => this.detailsLoading.set(false)))
       .subscribe({
-        next: (serviceDetail) => this.selectedService.set(serviceDetail),
-        error: () => this.toastService.showError('Could not load service details'),
+        next: (serviceDetail) => this.selectedService.set(serviceDetail)
       });
   }
 
@@ -172,8 +168,7 @@ export class AdminServices implements OnInit {
       next: () => {
         this.toastService.showSuccess('Service deleted');
         this.loadServices();
-      },
-      error: () => this.toastService.showError('Could not delete service'),
+      }
     });
   }
 
@@ -198,8 +193,7 @@ export class AdminServices implements OnInit {
         this.isEditing.set(false);
         this.toastService.showSuccess(wasEditing ? 'Service updated' : 'Service created');
         this.loadServices();
-      },
-      error: () => this.toastService.showError('Could not save service'),
+      }
     });
   }
 

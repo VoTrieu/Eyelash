@@ -89,8 +89,7 @@ export class BookAppointment implements OnInit {
           if (routeIds.length) {
             this.loadAvailableSlots();
           }
-        },
-        error: () => this.toastService.showError('Could not load services'),
+        }
       });
     this.bookingForm.controls.appointmentDate.valueChanges.subscribe(() => this.loadAvailableSlots());
   }
@@ -130,8 +129,7 @@ export class BookAppointment implements OnInit {
           this.selectedFiles.set([]);
           this.toastService.showSuccess('Appointment request sent');
           void this.router.navigate(['/appointment-requested', appointment.id]);
-        },
-        error: () => this.toastService.showError('Could not send appointment request'),
+        }
       });
   }
 
@@ -165,8 +163,7 @@ export class BookAppointment implements OnInit {
           if (slots.length === 0) {
             this.toastService.showInfo('No available slots for the selected date and services');
           }
-        },
-        error: () => this.toastService.showError('Could not load available slots'),
+        }
       });
   }
 }

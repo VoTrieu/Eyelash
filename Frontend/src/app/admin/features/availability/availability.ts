@@ -80,9 +80,7 @@ export class Availability implements OnInit{
       ...params
     })
     .pipe(finalize(() => this.loading.set(false)))
-    .subscribe({
-      error: () => this.toasteService.showError('Could not load availability blocks')
-     })
+    .subscribe();
   }
 
   onTableLazyLoad(event: TableLazyLoadEvent){
@@ -169,8 +167,7 @@ export class Availability implements OnInit{
           this.editorVisible.set(false);
           this.loadAvailabilityBlocks();
           this.toasteService.showSuccess(editing ? 'Availability block updated' : 'Availability block created' );
-        },
-        error: () => this.toasteService.showError('Could not save availability block')  
+        }
       });
   }
 
@@ -190,9 +187,6 @@ export class Availability implements OnInit{
       next: () => {
         this.loadAvailabilityBlocks();
         this.toasteService.showSuccess('Availability block deleted');
-      },
-      error: () => {
-        this.toasteService.showError('Could not delete availability block');  
       }
     });
   }

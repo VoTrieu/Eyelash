@@ -9,7 +9,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 import { ServicesService } from '../../../core/services/services-service';
-import { ToastService } from '../../../core/services/toast-service';
 import { ServiceDetail } from '../../../types/service';
 import { ServiceCard } from '../../components/service-card/service-card';
 
@@ -23,7 +22,6 @@ import { ServiceCard } from '../../components/service-card/service-card';
 })
 export class ClientServices implements OnInit {
   private servicesService = inject(ServicesService);
-  private toastService = inject(ToastService);
   private router = inject(Router);
 
   services = signal<ServiceDetail[]>([]);
@@ -65,8 +63,7 @@ export class ClientServices implements OnInit {
         finalize(() => this.loading.set(false))
       )
       .subscribe({
-        next: (services) => this.services.set(services),
-        error: () => this.toastService.showError('Could not load services'),
+        next: (services) => this.services.set(services)
       });
   }
 
