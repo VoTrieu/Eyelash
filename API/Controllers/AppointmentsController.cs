@@ -11,7 +11,7 @@ namespace API.Controllers;
 
 public class AppointmentsController(
     IUnitOfWork uow,
-    IWebHostEnvironment env,
+    IPhotoService photoService,
     IHubContext<AppointmentHub> appointmentHub,
     IAppointmentNotificationService notificationService) : BaseApiController
 {
@@ -190,31 +190,24 @@ public class AppointmentsController(
     private async Task<List<Photo>> SaveAppointmentPhotos(IEnumerable<IFormFile> files)
     {
         var photos = new List<Photo>();
-        var imagesPath = GetImagesPath();
-
-        Directory.CreateDirectory(imagesPath);
-
         foreach (var file in files.Where(f => f.Length > 0))
         {
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(imagesPath, fileName);
+            var uploadResult = await photoService.UploadPhotoAsync(file);
+            var photoUrl = uploadResult.SecureUrl?.AbsoluteUri ?? uploadResult.Url?.AbsoluteUri;
 
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            if (uploadResult.Error != null || string.IsNullOrWhiteSpace(photoUrl))
+            {
+                throw new Exception(uploadResult.Error?.Message ?? "Cloudinary photo upload failed.");
+            }
 
             photos.Add(new Photo
             {
-                Url = $"/Images/{fileName}",
+                Url = photoUrl,
+                PublicId = uploadResult.PublicId,
                 IsMain = photos.Count == 0
             });
         }
 
         return photos;
-    }
-
-    private string GetImagesPath()
-    {
-        var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        return Path.Combine(webRoot, "Images");
     }
 }

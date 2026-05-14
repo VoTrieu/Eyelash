@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseApiController
+public class ServicesController(IUnitOfWork uow, IPhotoService photoService): BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PaginatedResult<ServiceDto>>> GetServices([FromQuery] ServiceParams serviceParams)
@@ -94,7 +94,7 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
 
         if (!uow.HasChanges() || await uow.CompleteAsync())
         {
-            DeleteLocalPhotos(photosToDelete);
+            await DeleteCloudinaryPhotos(photosToDelete);
             var updatedService = await uow.ServicesRepository.GetServiceByIdAsync(id);
             return Ok(updatedService);
         }
@@ -115,32 +115,30 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
 
         if (await uow.CompleteAsync())
         {
-            DeleteLocalPhotos(photos);
+            await DeleteCloudinaryPhotos(photos);
             return NoContent();
         }
 
         return BadRequest("Failed to delete service");
     }
 
-    [Authorize(Policy = "RequireAdminRole")]
     private async Task<List<Photo>> SaveServicePhotos(IEnumerable<IFormFile> files, bool markFirstAsMain)
     {
         var photos = new List<Photo>();
-        var imagesPath = GetImagesPath();
-
-        Directory.CreateDirectory(imagesPath);
-
         foreach (var file in files.Where(f => f.Length > 0))
         {
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(imagesPath, fileName);
+            var uploadResult = await photoService.UploadPhotoAsync(file);
+            var photoUrl = uploadResult.SecureUrl?.AbsoluteUri ?? uploadResult.Url?.AbsoluteUri;
 
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            if (uploadResult.Error != null || string.IsNullOrWhiteSpace(photoUrl))
+            {
+                throw new Exception(uploadResult.Error?.Message ?? "Cloudinary photo upload failed.");
+            }
 
             photos.Add(new Photo
             {
-                Url = $"/Images/{fileName}",
+                Url = photoUrl,
+                PublicId = uploadResult.PublicId,
                 IsMain = markFirstAsMain && photos.Count == 0
             });
         }
@@ -148,23 +146,11 @@ public class ServicesController(IUnitOfWork uow, IWebHostEnvironment env): BaseA
         return photos;
     }
 
-    private void DeleteLocalPhotos(IEnumerable<Photo> photos)
+    private async Task DeleteCloudinaryPhotos(IEnumerable<Photo> photos)
     {
-        foreach (var photo in photos.Where(p => p.Url.StartsWith("/Images/", StringComparison.OrdinalIgnoreCase)))
+        foreach (var photo in photos.Where(p => !string.IsNullOrWhiteSpace(p.PublicId)))
         {
-            var fileName = Path.GetFileName(photo.Url);
-            var filePath = Path.Combine(GetImagesPath(), fileName);
-
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
+            await photoService.DeletePhotoAsync(photo.PublicId!);
         }
-    }
-
-    private string GetImagesPath()
-    {
-        var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        return Path.Combine(webRoot, "Images");
     }
 }

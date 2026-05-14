@@ -2,6 +2,7 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace API.Controllers;
 public class AdminUsersController(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager,
-    IWebHostEnvironment env) : BaseApiController
+    IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PaginatedResult<AdminUserDto>>> GetUsers(
@@ -180,7 +181,7 @@ public class AdminUsersController(
             result = await userManager.UpdateAsync(user);
             if (!result.Succeeded) return ValidationProblemFromIdentity(result);
 
-            DeleteLocalAvatar(previousImageUrl);
+            await DeleteCloudinaryAvatar(previousImageUrl);
         }
 
         return Ok(await ToAdminUserDto(user));
@@ -215,7 +216,7 @@ public class AdminUsersController(
         var result = await userManager.DeleteAsync(user);
         if (!result.Succeeded) return ValidationProblemFromIdentity(result);
 
-        DeleteLocalAvatar(imageUrl);
+        await DeleteCloudinaryAvatar(imageUrl);
 
         return NoContent();
     }
@@ -243,40 +244,49 @@ public class AdminUsersController(
 
     private async Task<string> SaveAvatar(IFormFile file)
     {
-        var imagesPath = GetImagesPath();
-        Directory.CreateDirectory(imagesPath);
+        var uploadResult = await photoService.UploadPhotoAsync(file);
+        var photoUrl = uploadResult.SecureUrl?.AbsoluteUri ?? uploadResult.Url?.AbsoluteUri;
 
-        var extension = Path.GetExtension(file.FileName);
-        var fileName = $"{Guid.NewGuid()}{extension}";
-        var filePath = Path.Combine(imagesPath, fileName);
+        if (uploadResult.Error != null || string.IsNullOrWhiteSpace(photoUrl))
+        {
+            throw new Exception(uploadResult.Error?.Message ?? "Cloudinary photo upload failed.");
+        }
 
-        await using var stream = new FileStream(filePath, FileMode.Create);
-        await file.CopyToAsync(stream);
-
-        return $"/Images/{fileName}";
+        return photoUrl;
     }
 
-    private void DeleteLocalAvatar(string? imageUrl)
+    private async Task DeleteCloudinaryAvatar(string? imageUrl)
+    {
+        var publicId = GetCloudinaryPublicId(imageUrl);
+        if (string.IsNullOrWhiteSpace(publicId)) return;
+
+        await photoService.DeletePhotoAsync(publicId);
+    }
+
+    private static string? GetCloudinaryPublicId(string? imageUrl)
     {
         if (string.IsNullOrWhiteSpace(imageUrl) ||
-            !imageUrl.StartsWith("/Images/", StringComparison.OrdinalIgnoreCase))
+            !Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri) ||
+            !uri.Host.Contains("cloudinary.com", StringComparison.OrdinalIgnoreCase))
         {
-            return;
+            return null;
         }
 
-        var fileName = Path.GetFileName(imageUrl);
-        var filePath = Path.Combine(GetImagesPath(), fileName);
+        var uploadIndex = uri.AbsolutePath.IndexOf("/upload/", StringComparison.OrdinalIgnoreCase);
+        if (uploadIndex < 0) return null;
 
-        if (System.IO.File.Exists(filePath))
+        var publicPath = uri.AbsolutePath[(uploadIndex + "/upload/".Length)..].TrimStart('/');
+        var pathParts = publicPath.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+        if (pathParts.Count > 0 && pathParts[0].StartsWith('v') && pathParts[0].Skip(1).All(char.IsDigit))
         {
-            System.IO.File.Delete(filePath);
+            pathParts.RemoveAt(0);
         }
-    }
 
-    private string GetImagesPath()
-    {
-        var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        return Path.Combine(webRoot, "Images");
+        if (pathParts.Count == 0) return null;
+
+        var publicIdWithExtension = string.Join('/', pathParts);
+        return Path.ChangeExtension(publicIdWithExtension, null);
     }
 
     private async Task<List<string>> ValidateRoles(IEnumerable<string> roleNames)

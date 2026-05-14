@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Hubs;
 using API.Interfaces;
 using API.Middleware;
@@ -35,6 +36,8 @@ builder.Services.AddCors(opt =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.Configure<CloudinarySetting>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddAutoMapper(cfg => {}, AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
