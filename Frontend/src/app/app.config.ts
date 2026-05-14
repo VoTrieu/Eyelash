@@ -7,13 +7,14 @@ import { routes } from './app.routes';
 import { Noir } from './app.theme';
 import { MessageService } from 'primeng/api';
 import { jwtInterceptor } from './core/interceptors/jwt-interceptor';
+import { errorInterceptor } from './core/interceptors/error-interceptor';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     providePrimeNG({
       theme: {
