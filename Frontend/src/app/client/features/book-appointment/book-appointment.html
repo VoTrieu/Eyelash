@@ -1,209 +1,33 @@
-<div class="min-h-screen bg-white text-slate-950 dark:bg-slate-950 dark:text-slate-50">
-  <main class="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-6">
-    <section>
-      <p class="text-sm font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">
-        Book an appointment
-      </p>
-      <h1 class="mt-2 text-3xl font-semibold">Choose your lash service</h1>
-      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
-        Pick the services you want, add reference images, and send your preferred time for
-        confirmation.
-      </p>
+<div class="min-h-screen overflow-hidden bg-[#fffaf7] text-slate-950 dark:bg-slate-950 dark:text-slate-50">
+  <main class="relative">
+    <app-booking-hero
+      [selectedCount]="selectedServiceIds().length"
+      [totalDuration]="totalDuration()"
+      [totalPrice]="totalPrice()"
+    />
 
-      <div class="mt-6 grid gap-4">
-        @if (loadingServices()) {
-          <div
-            class="rounded-lg border border-slate-200 p-5 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
-          >
-            Loading services...
-          </div>
-        }
+    <section class="mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_430px]">
+      <app-booking-service-selector
+        [services]="visibleServices()"
+        [selectedServiceIds]="selectedServiceIds()"
+        [loading]="loadingServices()"
+        (serviceToggled)="toggleService($event.serviceId, $event.checked)"
+      />
 
-        @for (service of visibleServices(); track service.id) {
-          <button
-            type="button"
-            class="grid gap-4 rounded-lg border p-4 text-left shadow-sm transition hover:border-slate-400 dark:hover:border-slate-500 sm:grid-cols-[112px_1fr_auto]"
-            [ngClass]="serviceCardClass(service.id)"
-            (click)="toggleService(service.id, !isSelected(service.id))"
-          >
-            @if (service.mainPhotoUrl) {
-              <img
-                [src]="imageUrl(service.mainPhotoUrl)"
-                [alt]="service.name"
-                class="h-28 w-full rounded-md object-cover sm:w-28"
-              />
-            } @else {
-              <div
-                class="flex h-28 w-full items-center justify-center rounded-md bg-slate-100 text-slate-400 dark:bg-slate-800 sm:w-28"
-              >
-                <i class="pi pi-image text-2xl"></i>
-              </div>
-            }
-
-            <div>
-              <h2 class="font-semibold text-slate-950 dark:text-slate-50">{{ service.name }}</h2>
-              <p class="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
-                {{ service.description }}
-              </p>
-              <p class="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                {{ service.price | currency }} · {{ service.durationInMinutes }} min
-              </p>
-            </div>
-
-            <p-checkbox
-              [binary]="true"
-              [ngModel]="isSelected(service.id)"
-              [ngModelOptions]="{ standalone: true }"
-            />
-          </button>
-        }
-
-        @if (!loadingServices() && visibleServices().length === 0) {
-          <div class="rounded-lg border border-slate-200 p-5 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
-            No selected services were found. Please go back to the services page and choose a service.
-          </div>
-        }
-      </div>
-    </section>
-
-    <section
-      class="h-fit rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-    >
-      <h2 class="text-xl font-semibold">Request a time</h2>
-      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Selected: {{ selectedServiceIds().length }} · {{ totalDuration() }} min ·
-        {{ totalPrice() | currency }}
-      </p>
-
-      @if (submitted()) {
-        <div
-          class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300"
-        >
-          Your request was sent. The admin team will confirm your appointment.
-        </div>
-      }
-
-      <form [formGroup]="bookingForm" (ngSubmit)="submit()" class="mt-5 grid gap-4">
-        <div class="grid gap-2">
-          <label
-            for="clientName"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-            >Name</label
-          >
-          <input pInputText id="clientName" formControlName="clientName" />
-        </div>
-
-        <div class="grid gap-2">
-          <label
-            for="clientEmail"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-            >Email</label
-          >
-          <input pInputText id="clientEmail" type="email" formControlName="clientEmail" />
-        </div>
-
-        <div class="grid gap-2">
-          <label
-            for="clientPhone"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-            >Phone</label
-          >
-          <input pInputText id="clientPhone" type="tel" formControlName="clientPhone" />
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="grid gap-2">
-            <label
-              for="appointmentDate"
-              class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-              >Date</label
-            >
-            <p-datepicker formControlName="appointmentDate" [showIcon]="true" inputId="appointmentDate"  />
-          </div>
-          <div class="grid gap-2">
-            <label
-              for="startTime"
-              class="text-sm font-semibold text-slate-700 dark:text-slate-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-              >Time</label
-            >
-            <p-select
-              formControlName="startTime"
-              [options]="availableSlots()"
-              optionLabel="startTime"
-              optionValue="startTime"
-              placeholder="Select an available time"
-              [loading]="loadingSlots()"
-              [disabled]="
-                !bookingForm.value.appointmentDate ||
-                selectedServiceIds().length === 0 ||
-                loadingSlots()
-              "
-            >
-              <ng-template #item let-slot>
-                <div class="flex items-center justify-between gap-4">
-                  <span class="font-semibold text-slate-500">{{ slot.startTime }}</span>
-                  <span class="font-semibold text-slate-500">{{ slot.endTime }}</span>
-                </div>
-              </ng-template>
-
-              <ng-template #selectedItem let-slot>
-                @if (slot) {
-                  <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
-                }
-              </ng-template>
-            </p-select>
-          </div>
-        </div>
-
-        <div class="grid gap-2">
-          <label for="notes" class="text-sm font-semibold text-slate-700 dark:text-slate-300"
-            >Notes</label
-          >
-          <textarea pTextarea id="notes" formControlName="notes" rows="4" class="w-full"></textarea>
-        </div>
-
-        <div class="grid gap-2">
-          <label for="fileUpload" class="text-sm font-semibold text-slate-700
-           dark:text-slate-300 "
-            >Deposit Proof Image</label
-          >
-         
-            <p-fileUpload
-              id="fileUpload"
-              #fileUpload
-              mode="advanced"
-              accept="image/*"
-              [customUpload]="true"
-              multiple="true"
-              maxFileSize="4194304"
-              chooseLabel="Choose images"
-              chooseIcon="pi pi-image"
-              showUploadButton="false"
-              showCancelButton="false"
-              class="flex-1"
-              fileLimit="2"
-              invalidFileSizeMessageSummary="File too large"
-              invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
-              (onSelect)="onPhotosSelected($event)"
-            ></p-fileUpload>
-    
-          @if (selectedFiles().length) {
-            <p class="text-sm text-slate-500 dark:text-slate-400">
-              {{ selectedFiles().length }} image{{ selectedFiles().length === 1 ? '' : 's' }}
-              selected.
-            </p>
-          }
-        </div>
-
-        <button
-          pButton
-          type="submit"
-          label="Request appointment"
-          icon="pi pi-send"
-          [disabled]="bookingForm.invalid || selectedServiceIds().length === 0 || submitting()"
-          [loading]="submitting()"
-        ></button>
-      </form>
+      <app-booking-request-form
+        [form]="bookingForm"
+        [selectedServiceIds]="selectedServiceIds()"
+        [selectedServices]="selectedServices()"
+        [availableSlots]="availableSlots()"
+        [minAppointmentDate]="minAppointmentDate"
+        [selectedFilesCount]="selectedFiles().length"
+        [loadingSlots]="loadingSlots()"
+        [submitting]="submitting()"
+        [submitted]="submitted()"
+        (submittedForm)="submit()"
+        (serviceRemoved)="toggleService($event, false)"
+        (photosSelected)="selectedFiles.set($event)"
+      />
     </section>
   </main>
 </div>

@@ -1,41 +1,28 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { FileUpload, FileUploadModule } from 'primeng/fileupload';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs';
 import { AppointmentsService } from '../../../core/services/appointments-service';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { AppointmentFormValue } from '../../../types/appointment';
-import { Service } from '../../../types/service';
-import { Header } from '../../layout/header/header';
-import { Footer } from '../../layout/footer/footer';
 import { AvailabilityService } from '../../../core/services/availability-service';
 import { AvailableAppointmentSlot } from '../../../types/availability';
-import { SelectModule } from 'primeng/select';
-import { DatePickerModule } from 'primeng/datepicker';
 import { toDateOnly } from '../../../shared/helpers/date-time-helper';
+import { BookingHero } from './components/booking-hero/booking-hero';
+import { BookingServiceSelector } from './components/booking-service-selector/booking-service-selector';
+import { BookingRequestForm } from './components/booking-request-form/booking-request-form';
 
 @Component({
   selector: 'app-book-appointment',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    CheckboxModule,
-    FileUploadModule,
-    InputTextModule,
-    TextareaModule,
-    SelectModule,
-    DatePickerModule
-],
+    BookingHero,
+    BookingServiceSelector,
+    BookingRequestForm,
+  ],
   templateUrl: './book-appointment.html',
   styleUrls: ['./book-appointment.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +35,6 @@ export class BookAppointment implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private fileUpload: Signal<FileUpload | undefined> = viewChild('fileUpload');
 
   services = this.servicesService.services;
   selectedServiceIds = signal<number[]>([]);
@@ -59,10 +45,16 @@ export class BookAppointment implements OnInit {
   availableSlots = signal<AvailableAppointmentSlot[]>([]);
   loadingSlots = signal(false);
   routeServiceIds = signal<number[]>([]);
+  minAppointmentDate = new Date();
   visibleServices = computed(() => {
     const ids = this.routeServiceIds();
     if (!ids.length) return this.services();
 
+    return this.services().filter((service) => ids.includes(service.id));
+  });
+
+  selectedServices = computed(() => {
+    const ids = this.selectedServiceIds();
     return this.services().filter((service) => ids.includes(service.id));
   });
 
@@ -110,15 +102,6 @@ export class BookAppointment implements OnInit {
     this.loadAvailableSlots();
   }
 
-  isSelected(serviceId: number) {
-    return this.selectedServiceIds().includes(serviceId);
-  }
-
-  onPhotosSelected(event: any) {
-  const files = event.currentFiles || event.files || [];
-  this.selectedFiles.set([...files]);
-  }
-
   submit() {
     if (this.bookingForm.invalid || this.selectedServiceIds().length === 0) {
       this.bookingForm.markAllAsTouched();
@@ -145,27 +128,11 @@ export class BookAppointment implements OnInit {
           this.bookingForm.reset();
           this.selectedServiceIds.set([]);
           this.selectedFiles.set([]);
-          this.fileUpload()?.clear();
           this.toastService.showSuccess('Appointment request sent');
           void this.router.navigate(['/appointment-requested', appointment.id]);
         },
         error: () => this.toastService.showError('Could not send appointment request'),
       });
-  }
-
-  imageUrl(url?: string | null) {
-    return this.servicesService.resolvePhotoUrl(url);
-  }
-
-  serviceCardClass(serviceId: number) {
-    return this.isSelected(serviceId)
-      ? 'border-rose-500 dark:border-rose-400'
-      : 'border-slate-200 dark:border-slate-800';
-  }
-
-  private selectedServices(): Service[] {
-    const ids = this.selectedServiceIds();
-    return this.services().filter((service) => ids.includes(service.id));
   }
 
   private readServiceIdsFromRoute() {
