@@ -27,19 +27,19 @@ export class Carousel {
       title: 'Luxury Beauty Care',
     },
     {
-      image: './image3.png',
+      image: '/brand/kims-brow-lash-client-hero.png',
       title: 'Soft Lash Styling',
     },
     {
-      image: './image4.png',
+      image: '/brand/kims-brow-lash-service-result.png',
       title: 'Defined Brows',
     },
     {
-      image: './image5.png',
+      image: '/brand/kims-brow-lash-logo.png',
       title: 'Natural Enhancements',
     },
     {
-      image: './image6.png',
+      image: '/brand/kims-brow-lash-client-hero.png',
       title: 'Beauty Details',
     },
   ];
