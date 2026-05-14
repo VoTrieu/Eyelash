@@ -45,23 +45,6 @@ export class AdminSidebar {
       label: 'Users',
       icon: 'pi pi-fw pi-users',
       routerLink: ['/admin/users']
-    },
-    {
-      label: 'Content',
-      icon: 'pi pi-fw pi-book',
-      items: [
-        { label: 'Pages', icon: 'pi pi-fw pi-file', routerLink: ['/admin'] },
-        { label: 'Media', icon: 'pi pi-fw pi-image', routerLink: ['/admin'] }
-      ]
-    },
-    
-    {
-      label: 'Settings',
-      icon: 'pi pi-fw pi-cog',
-      items: [
-        { label: 'Preferences', icon: 'pi pi-fw pi-sliders-h', routerLink: ['/admin'] },
-        { label: 'Billing', icon: 'pi pi-fw pi-credit-card', routerLink: ['/admin'] }
-      ]
     }
   ];
 }
