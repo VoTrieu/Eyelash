@@ -1,5 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
+import { HomePageSettingsService } from '../../../core/services/home-page-settings-service';
 import { ReviewsService } from "../../../core/services/reviews-service";
 import { HomeGallerySection } from "../../components/home-gallery-section/home-gallery-section";
 import { HomeHero } from "../../components/home-hero/home-hero";
@@ -21,13 +22,20 @@ import { HomeVisitSection } from "../../components/home-visit-section/home-visit
 })
 export class Home implements OnInit {
   private reviewsService = inject(ReviewsService);
+  private homePageSettingsService = inject(HomePageSettingsService);
 
   homeReviews = this.reviewsService.reviews;
+  homeSettings = this.homePageSettingsService.settings;
   loadingReviews = signal(false);
   reviewsError = signal(false);
 
   ngOnInit() {
+    this.loadHomeSettings();
     this.loadReviews();
+  }
+
+  private loadHomeSettings() {
+    this.homePageSettingsService.loadSettings().subscribe();
   }
 
   private loadReviews() {

@@ -90,6 +90,11 @@ export const routes: Routes = [
               import('./admin/features/users/admin-users').then((m) => m.AdminUsers),
           },
           {
+            path: 'settings',
+            loadComponent: () =>
+              import('./admin/features/settings/admin-home-settings').then((m) => m.AdminHomeSettings),
+          },
+          {
             path: 'profile',
             loadComponent: () =>
               import('./admin/features/profile/admin-profile').then((m) => m.AdminProfile),

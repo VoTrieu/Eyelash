@@ -45,6 +45,11 @@ export class AdminSidebar {
       label: 'Users',
       icon: 'pi pi-fw pi-users',
       routerLink: ['/admin/users']
+    },
+    {
+      label: 'Settings',
+      icon: 'pi pi-fw pi-cog',
+      routerLink: ['/admin/settings']
     }
   ];
 }

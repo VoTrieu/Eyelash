@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     public DbSet<Service> Services { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Photo> Photos { get; set; }
+    public DbSet<HomePageSettings> HomePageSettings { get; set; }
     
     public DbSet<AppointmentAvailabilityBlock> AppointmentAvailabilityBlocks { get; set; }
     
@@ -39,6 +40,37 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             SendEmail = true,
             SendSms = false,
             UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc)
+        });
+
+        builder.Entity<HomePageSettings>().HasData(new HomePageSettings
+        {
+            Id = 1,
+            HeroEyebrow = "Brows, lashes, and soft-glam confidence",
+            HeroTitle = "Effortless beauty, shaped with intention.",
+            HeroSubtitle = "Kim's Brow & Lash creates polished brows and refined lash looks with a calm studio experience, thoughtful timing, and results designed around your natural features.",
+            PrimaryButtonLabel = "Explore services",
+            PrimaryButtonLink = "/services",
+            SecondaryButtonLabel = "Book an appointment",
+            SecondaryButtonLink = "/book-appointment",
+            HeroMainImageUrl = "/brand/kims-brow-lash-client-hero.png",
+            HeroMainImagePublicId = null,
+            HeroSecondaryImageUrl = "/brand/kims-brow-lash-service-result.png",
+            HeroSecondaryImagePublicId = null,
+            HeroLogoUrl = "/brand/kims-brow-lash-mark.svg",
+            HeroLogoPublicId = null,
+            StatOneValue = "5★",
+            StatOneLabel = "Reviews",
+            StatTwoValue = "1:1",
+            StatTwoLabel = "Styling",
+            StatThreeValue = "Soft",
+            StatThreeLabel = "Finish",
+            SignatureTitle = "Signature detail",
+            SignatureBody = "Clean mapping, balanced brows, and lash looks that feel elevated without feeling heavy.",
+            ShowServicesSection = true,
+            ShowGallerySection = true,
+            ShowReviewsSection = true,
+            ShowVisitSection = true,
+            UpdatedAt = new DateTime(2026, 5, 14, 0, 0, 0, DateTimeKind.Utc)
         });
 
         // Review -> AppUser (Client)

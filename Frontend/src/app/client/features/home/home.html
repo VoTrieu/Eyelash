@@ -1,9 +1,21 @@
-<app-home-hero></app-home-hero>
-<app-home-services-preview></app-home-services-preview>
-<app-home-gallery-section></app-home-gallery-section>
-<app-home-reviews-preview
-  [reviews]="homeReviews()"
-  [loading]="loadingReviews()"
-  [error]="reviewsError()"
-></app-home-reviews-preview>
-<app-home-visit-section></app-home-visit-section>
+<app-home-hero [settings]="homeSettings()"></app-home-hero>
+
+@if (homeSettings().showServicesSection) {
+  <app-home-services-preview></app-home-services-preview>
+}
+
+@if (homeSettings().showGallerySection) {
+  <app-home-gallery-section></app-home-gallery-section>
+}
+
+@if (homeSettings().showReviewsSection) {
+  <app-home-reviews-preview
+    [reviews]="homeReviews()"
+    [loading]="loadingReviews()"
+    [error]="reviewsError()"
+  ></app-home-reviews-preview>
+}
+
+@if (homeSettings().showVisitSection) {
+  <app-home-visit-section></app-home-visit-section>
+}

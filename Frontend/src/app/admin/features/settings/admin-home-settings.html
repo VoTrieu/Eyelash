@@ -1,0 +1,253 @@
+<section class="space-y-5">
+  <div class="overflow-hidden rounded-4xl border border-rose-100 bg-linear-to-br from-rose-50 via-white to-amber-50 p-6 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-rose-500">Client home page</p>
+        <h1 class="mt-3 text-3xl font-bold text-slate-950 dark:text-white">Home Page Settings</h1>
+        <p class="mt-2 max-w-2xl text-slate-600 dark:text-slate-300">
+          Update the first impression clients see when they visit Kim's Brow & Lash.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button
+          pButton
+          type="button"
+          label="Reload"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [loading]="loading()"
+          (click)="loadSettings()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Save settings"
+          icon="pi pi-save"
+          [loading]="saving()"
+          (click)="saveSettings()"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+    <div class="space-y-5">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="px-5 pt-5">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Hero copy</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">These fields control the main text and buttons.</p>
+          </div>
+        </ng-template>
+
+        <div class="grid gap-4">
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Eyebrow</span>
+            <input pInputText formControlName="heroEyebrow" />
+          </label>
+
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Title</span>
+            <input pInputText formControlName="heroTitle" />
+          </label>
+
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Subtitle</span>
+            <textarea pTextarea formControlName="heroSubtitle" rows="4"></textarea>
+          </label>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <label class="grid gap-2">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Primary button label</span>
+              <input pInputText formControlName="primaryButtonLabel" />
+            </label>
+            <label class="grid gap-2">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Primary button link</span>
+              <input pInputText formControlName="primaryButtonLink" placeholder="/services" />
+            </label>
+            <label class="grid gap-2">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Secondary button label</span>
+              <input pInputText formControlName="secondaryButtonLabel" />
+            </label>
+            <label class="grid gap-2">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Secondary button link</span>
+              <input pInputText formControlName="secondaryButtonLink" placeholder="/book-appointment" />
+            </label>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="px-5 pt-5">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Stats and signature</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Small details that make the hero feel polished.</p>
+          </div>
+        </ng-template>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 1 value</span>
+            <input pInputText formControlName="statOneValue" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 2 value</span>
+            <input pInputText formControlName="statTwoValue" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 3 value</span>
+            <input pInputText formControlName="statThreeValue" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 1 label</span>
+            <input pInputText formControlName="statOneLabel" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 2 label</span>
+            <input pInputText formControlName="statTwoLabel" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 3 label</span>
+            <input pInputText formControlName="statThreeLabel" />
+          </label>
+        </div>
+
+        <div class="mt-4 grid gap-4">
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Signature title</span>
+            <input pInputText formControlName="signatureTitle" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Signature body</span>
+            <textarea pTextarea formControlName="signatureBody" rows="3"></textarea>
+          </label>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="space-y-5">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="px-5 pt-5">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Hero images</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Preview the current images and choose replacements. New uploads are saved to Cloudinary when you save.
+            </p>
+          </div>
+        </ng-template>
+
+        <div class="space-y-5">
+          <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+            <div class="h-52 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+              <img
+                [src]="previewImage(form.controls.heroMainImageUrl.value, heroMainPreview())"
+                alt="Main hero preview"
+                class="h-full w-full object-cover"
+              />
+            </div>
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="font-semibold text-slate-950 dark:text-white">Main hero image</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Best as a wide lifestyle or studio image.
+                </p>
+              </div>
+              <p-fileUpload
+                mode="basic"
+                accept="image/*"
+                chooseLabel="Replace"
+                chooseIcon="pi pi-image"
+                [auto]="false"
+                [customUpload]="true"
+                (onSelect)="onHeroImageSelected('main', $event)"
+              />
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+            <div class="h-40 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+              <img
+                [src]="previewImage(form.controls.heroSecondaryImageUrl.value, heroSecondaryPreview())"
+                alt="Secondary hero preview"
+                class="h-full w-full object-cover"
+              />
+            </div>
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="font-semibold text-slate-950 dark:text-white">Secondary hero image</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Best as a close-up brow or lash result.
+                </p>
+              </div>
+              <p-fileUpload
+                mode="basic"
+                accept="image/*"
+                chooseLabel="Replace"
+                chooseIcon="pi pi-image"
+                [auto]="false"
+                [customUpload]="true"
+                (onSelect)="onHeroImageSelected('secondary', $event)"
+              />
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+            <div class="grid h-32 place-items-center rounded-2xl bg-rose-50 dark:bg-slate-800">
+              <img
+                [src]="previewImage(form.controls.heroLogoUrl.value, heroLogoPreview())"
+                alt="Logo preview"
+                class="h-20 w-20 object-contain"
+              />
+            </div>
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="font-semibold text-slate-950 dark:text-white">Hero logo mark</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Use a transparent PNG or SVG-style mark.
+                </p>
+              </div>
+              <p-fileUpload
+                mode="basic"
+                accept="image/*"
+                chooseLabel="Replace"
+                chooseIcon="pi pi-image"
+                [auto]="false"
+                [customUpload]="true"
+                (onSelect)="onHeroImageSelected('logo', $event)"
+              />
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="px-5 pt-5">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Visible sections</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Turn home page sections on or off.</p>
+          </div>
+        </ng-template>
+
+        <div class="grid gap-4">
+          <label class="flex items-center gap-3">
+            <p-checkbox formControlName="showServicesSection" [binary]="true"></p-checkbox>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Show services preview</span>
+          </label>
+          <label class="flex items-center gap-3">
+            <p-checkbox formControlName="showGallerySection" [binary]="true"></p-checkbox>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Show gallery</span>
+          </label>
+          <label class="flex items-center gap-3">
+            <p-checkbox formControlName="showReviewsSection" [binary]="true"></p-checkbox>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Show reviews preview</span>
+          </label>
+          <label class="flex items-center gap-3">
+            <p-checkbox formControlName="showVisitSection" [binary]="true"></p-checkbox>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Show visit/contact section</span>
+          </label>
+        </div>
+      </p-card>
+    </div>
+  </form>
+</section>
