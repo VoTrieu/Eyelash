@@ -15,6 +15,7 @@ import { finalize } from 'rxjs';
 import { ReviewsService } from '../../../core/services/reviews-service';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
 import { Review, ReviewFormValue, ReviewQueryParams } from '../../../types/review';
 import { Photo, Service } from '../../../types/service';
 
@@ -44,6 +45,7 @@ export class AdminReviews implements OnInit {
   private reviewsService = inject(ReviewsService);
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
   private fileUpload: Signal<FileUpload | undefined> = viewChild('uploadFile');
 
@@ -216,8 +218,16 @@ export class AdminReviews implements OnInit {
     });
   }
 
-  deleteReview(review: Review) {
-    if (!confirm(`Delete review from ${review.clientName}?`)) return;
+  async deleteReview(review: Review) {
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete review?',
+      message: `Delete the review from ${review.clientName}?`,
+      details: 'The review and its uploaded photos will be removed permanently.',
+      confirmLabel: 'Delete review',
+      severity: 'danger',
+    });
+
+    if (!confirmed) return;
 
     this.reviewsService.deleteReview(review.id).subscribe({
       next: () => {

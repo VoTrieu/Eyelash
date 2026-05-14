@@ -18,6 +18,7 @@ import { AccountService } from '../../../core/services/account-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { AdminUser, AdminUserFormValue, AdminUserQueryParams } from '../../../types/admin-user';
 import { toDateOnly } from '../../../shared/helpers/date-time-helper';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
 
 @Component({
   selector: 'app-admin-users',
@@ -45,6 +46,7 @@ export class AdminUsers implements OnInit {
   private adminUsersService = inject(AdminUsersService);
   private accountService = inject(AccountService);
   private toastService = inject(ToastService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
 
   users = this.adminUsersService.users;
@@ -215,9 +217,20 @@ export class AdminUsers implements OnInit {
     });
   }
 
-  toggleStatus(user: AdminUser) {
+  async toggleStatus(user: AdminUser) {
     const action = user.isActive ? 'deactivate' : 'reactivate';
-    if (!confirm(`Are you sure you want to ${action} ${user.displayName}?`)) return;
+    const confirmed = await this.confirmDialogService.confirm({
+      title: user.isActive ? 'Deactivate user?' : 'Reactivate user?',
+      message: `Are you sure you want to ${action} ${user.displayName}?`,
+      details: user.isActive
+        ? 'This user will no longer be able to sign in until reactivated.'
+        : 'This user will be able to sign in again.',
+      confirmLabel: user.isActive ? 'Deactivate' : 'Reactivate',
+      severity: user.isActive ? 'warn' : 'success',
+      icon: user.isActive ? 'pi pi-user-minus' : 'pi pi-user-plus',
+    });
+
+    if (!confirmed) return;
 
     this.adminUsersService.updateUserStatus(user.id, !user.isActive).subscribe({
       next: () => this.toastService.showSuccess(`User ${user.isActive ? 'deactivated' : 'reactivated'}`),
@@ -225,8 +238,16 @@ export class AdminUsers implements OnInit {
     });
   }
 
-  deleteUser(user: AdminUser) {
-    if (!confirm(`Delete ${user.displayName}? This cannot be undone.`)) return;
+  async deleteUser(user: AdminUser) {
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete user?',
+      message: `Delete ${user.displayName}?`,
+      details: 'This cannot be undone. The user account will be permanently removed.',
+      confirmLabel: 'Delete user',
+      severity: 'danger',
+    });
+
+    if (!confirmed) return;
 
     this.adminUsersService.deleteUser(user.id).subscribe({
       next: () => {

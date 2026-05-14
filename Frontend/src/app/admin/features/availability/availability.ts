@@ -14,6 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { toDateFromTimeString, toDateOnly, toTimeOnly } from '../../../shared/helpers/date-time-helper';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
 
 @Component({
   selector: 'app-availability',
@@ -25,6 +26,7 @@ import { toDateFromTimeString, toDateOnly, toTimeOnly } from '../../../shared/he
 export class Availability implements OnInit{
   private availabilityService = inject(AvailabilityService);
   private toasteService = inject(ToastService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
 
   availabilityBlocks = this.availabilityService.availabilityBlocks;
@@ -172,7 +174,18 @@ export class Availability implements OnInit{
       });
   }
 
-  delete(block: AppointmentAvalabilityBlock){
+  async delete(block: AppointmentAvalabilityBlock){
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete availability block?',
+      message: `Delete the ${block.type.toLowerCase()} block for ${block.date}?`,
+      details: 'This removes the availability rule and may change which appointment slots clients can request.',
+      confirmLabel: 'Delete block',
+      severity: 'danger',
+      icon: 'pi pi-trash',
+    });
+
+    if (!confirmed) return;
+
     this.availabilityService.deleteAvailabilityBlock(block.id).subscribe({
       next: () => {
         this.loadAvailabilityBlocks();

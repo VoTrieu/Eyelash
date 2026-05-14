@@ -17,6 +17,7 @@ import { finalize } from 'rxjs';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { Photo, Service, ServiceDetail, ServiceFormValue, ServiceQueryParams } from '../../../types/service';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
 
 @Component({
   selector: 'app-admin-services',
@@ -43,6 +44,7 @@ import { Photo, Service, ServiceDetail, ServiceFormValue, ServiceQueryParams } f
 export class AdminServices implements OnInit {
   private servicesService = inject(ServicesService);
   private toastService = inject(ToastService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
   private fileUpload: Signal<FileUpload | undefined>= viewChild('uploadFile');
 
@@ -193,8 +195,16 @@ export class AdminServices implements OnInit {
     this.selectedFiles.set([...files]);
   }
 
-  deleteService(service: Service) {
-    if (!confirm(`Delete ${service.name}?`)) return;
+  async deleteService(service: Service) {
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete service?',
+      message: `Delete ${service.name}?`,
+      details: 'This removes the service from the menu and cannot be undone.',
+      confirmLabel: 'Delete service',
+      severity: 'danger',
+    });
+
+    if (!confirmed) return;
 
     this.servicesService.deleteService(service.id).subscribe({
       next: () => {
