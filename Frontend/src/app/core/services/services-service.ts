@@ -63,6 +63,7 @@ export class ServicesService {
   resolvePhotoUrl(url?: string | null) {
     if (!url) return '';
     if (url.startsWith('http')) return url;
+    if (url.startsWith('/brand/')) return url;
     return this.mediaUrl + url.replace(/^\//, '');
   }
 

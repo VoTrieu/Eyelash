@@ -1,46 +1,66 @@
-<div class="min-h-screen bg-white text-slate-950 dark:bg-slate-950 dark:text-slate-50">
-  <main class="mx-auto max-w-7xl px-4 py-10 lg:px-6">
-    <div class="mb-8 flex gap-4 lg:flex-row lg:items-end lg:justify-between">
+<div class="min-h-screen bg-[#fff8f3] text-slate-950 dark:bg-slate-950 dark:text-slate-50">
+  <section class="relative isolate overflow-hidden px-4 py-16 sm:px-6 lg:py-20">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(244,114,182,0.22),transparent_32%),radial-gradient(circle_at_78%_0%,rgba(216,175,114,0.22),transparent_30%)]"></div>
+    <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_0.7fr] lg:items-center">
       <div>
-        <h1 class="mt-2 text-3xl font-semibold">Choose your lash look</h1>
-        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
-          Browse services, preview photos, and build a booking list before choosing your appointment
-          time.
+        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-rose-500">Service menu</p>
+        <h1 class="mt-4 max-w-4xl font-serif text-5xl font-semibold leading-[0.95] md:text-6xl">
+          Choose the brow and lash look that fits your day.
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+          Browse services, preview result photos, and build a booking list before choosing your appointment time.
         </p>
+
+        <div class="mt-8 grid gap-3 rounded-4xl border border-white/80 bg-white/80 p-3 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80 md:grid-cols-[1fr_auto]">
+          <p-iconfield>
+            <p-inputicon class="pi pi-search" />
+            <input
+              type="text"
+              pInputText
+              placeholder="Search classic, volume, brow..."
+              class="w-full rounded-2xl"
+              [ngModel]="searchTerm()"
+              (ngModelChange)="onSearch($event)"
+            />
+          </p-iconfield>
+
+          <p-button
+            type="button"
+            label="Book selected"
+            icon="pi pi-calendar-plus"
+            styleClass="w-full md:w-auto"
+            [disabled]="selectedCount() === 0"
+            (click)="bookSelected()"
+          ></p-button>
+        </div>
       </div>
 
-      <div class="flex gap-3 sm:min-w-96">
-        <p-button
-          type="button"
-          label="Book selected"
-          icon="pi pi-calendar-plus"
-          [disabled]="selectedCount() === 0"
-          (click)="bookSelected()"
-        >
-        </p-button>
-
-        <p-iconfield>
-          <p-inputicon class="pi pi-search" />
-          <input
-            type="text"
-            pInputText
-            placeholder="Search"
-            [ngModel]="searchTerm()"
-            (ngModelChange)="onSearch($event)"
-          />
-        </p-iconfield>
+      <div class="relative hidden min-h-96 lg:block">
+        <div class="absolute right-0 top-0 h-80 w-[82%] overflow-hidden rounded-[3rem] shadow-2xl shadow-rose-950/15">
+          <img src="/brand/kims-brow-lash-service-result.png" alt="Kim's Brow & Lash result" class="h-full w-full object-cover" />
+        </div>
+        <div class="absolute bottom-0 left-0 rounded-4xl border border-white/80 bg-white/90 p-5 shadow-xl backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
+          <p class="text-xs font-semibold uppercase tracking-[0.25em] text-rose-500">Build your visit</p>
+          <p class="mt-2 text-3xl font-bold">{{ selectedCount() }}</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">selected services</p>
+        </div>
       </div>
     </div>
+  </section>
 
+  <main class="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
     @if (selectedCount() > 0) {
-      <div
-        class="sticky top-0 z-20 mb-6 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-950 shadow-sm dark:border-rose-900 dark:bg-rose-950 dark:text-rose-100"
-      >
+      <div class="sticky top-24 z-20 mb-6 overflow-hidden rounded-4xl border
+       border-rose-200 bg-rose-50/95 p-4 text-sm text-rose-950 shadow-lg 
+       shadow-rose-950/5 backdrop-blur dark:border-rose-900 dark:bg-rose-950/95
+        dark:text-rose-100">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <span
-            >{{ selectedCount() }} service{{ selectedCount() === 1 ? '' : 's' }} selected ·
-            {{ selectedTotal() | currency }}</span
-          >
+          <div>
+            <p class="font-semibold">
+              {{ selectedCount() }} service{{ selectedCount() === 1 ? '' : 's' }} selected
+            </p>
+            <p class="text-rose-700 dark:text-rose-200">{{ selectedTotal() | currency }} estimated total before confirmation</p>
+          </div>
           <button
             pButton
             type="button"
@@ -53,11 +73,26 @@
       </div>
     }
 
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">
+          {{ filteredServices().length }} available service{{ filteredServices().length === 1 ? '' : 's' }}
+        </p>
+        @if (searchTerm()) {
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Search results for “{{ searchTerm() }}”</p>
+        }
+      </div>
+      @if (searchTerm()) {
+        <button pButton type="button" label="Clear search" icon="pi pi-times" severity="secondary" class="p-button-sm" (click)="onSearch('')"></button>
+      }
+    </div>
+
     @if (loading()) {
-      <div
-        class="rounded-lg border border-slate-200 p-6 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
-      >
-        Loading services...
+      <div class="grid min-h-80 place-items-center rounded-4xl border border-white/80 bg-white/80 text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        <div class="text-center">
+          <i class="pi pi-spin pi-spinner text-3xl"></i>
+          <p class="mt-3">Loading services...</p>
+        </div>
       </div>
     } @else {
       <p-dataView
@@ -66,9 +101,9 @@
         [rows]="6"
         [rowsPerPageOptions]="[4, 6, 10]"
         emptyMessage="No services match your search."
-        styleClass="client-services-dataview">
+        class="client-services-dataview">
         <ng-template #list let-items>
-          <div class="grid">
+          <div class="grid gap-5">
             @for (service of items; track service.id) {
               <app-service-card
                 [service]="service"
@@ -82,10 +117,12 @@
       </p-dataView>
 
       @if (filteredServices().length === 0) {
-        <div
-          class="rounded-lg border border-slate-200 p-6 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400"
-        >
-          No services match your search.
+        <div class="grid min-h-80 place-items-center rounded-4xl border border-white/80 bg-white/80 text-center text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+          <div>
+            <i class="pi pi-search text-3xl text-slate-300"></i>
+            <h2 class="mt-3 text-xl font-semibold text-slate-800 dark:text-slate-100">No matching services</h2>
+            <p class="mt-1">Try a different keyword or clear your search.</p>
+          </div>
         </div>
       }
     }

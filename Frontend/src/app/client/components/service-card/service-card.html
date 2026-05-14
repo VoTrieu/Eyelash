@@ -1,55 +1,95 @@
 <article
-  class="grid gap-4 border-b border-slate-200 bg-white py-5 dark:border-slate-800 dark:bg-slate-950 md:grid-cols-[180px_1fr_auto]">
-  <div class="overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
-    @if (mainImage(); as image) {
-      <button type="button" class="group relative block h-full w-full" (click)="openGallery(0)" aria-label="Open service images">
-        <img [src]="image.src" [alt]="image.alt || service().name" class="h-44 w-full object-cover transition duration-200 group-hover:scale-105 md:h-full" />
-        <span class="absolute inset-0 grid place-items-center bg-slate-950/0 text-white opacity-0 transition group-hover:bg-slate-950/35 group-hover:opacity-100">
-          <i class="pi pi-search-plus text-xl"></i>
-        </span>
-      </button>
-    } @else {
-      <div class="grid h-44 place-items-center text-slate-400 md:h-full">
-        <i class="pi pi-image text-2xl"></i>
-      </div>
-    }
-  </div>
-
-  <div class="min-w-0 flex flex-col gap-3">
-    <div class="flex items-start gap-3 flex-1">
-      <div class="min-w-0 flex-1">
-        <h2 class="text-lg font-semibold text-slate-950 dark:text-slate-50">{{ service().name }}</h2>
-        <p class="mt-2 line-clamp-4 text-sm leading-6 text-slate-500 dark:text-slate-400">
-          {{ service().description }}
-        </p>
-      </div>
-
-      <div class="rounded-md bg-slate-50 px-3 py-2 text-right dark:bg-slate-900">
-        <div class="text-base font-semibold">{{ service().price | currency }}</div>
-        <div class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          {{ service().durationInMinutes }} min
+  class="group overflow-hidden rounded-4xl border bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-slate-900"
+  [ngClass]="selected() ? 'border-rose-300 ring-2 ring-rose-200 dark:border-rose-500 dark:ring-rose-500/30' : 'border-white/80 dark:border-slate-800'"
+>
+  <div class="grid gap-0 lg:grid-cols-[280px_1fr]">
+    <div class="relative min-h-72 overflow-hidden bg-stone-100 dark:bg-slate-800">
+      @if (mainImage(); as image) {
+        <button type="button" class="group/image relative block h-full w-full" (click)="openGallery(0)" aria-label="Open service images">
+          <img
+            [src]="image.src"
+            [alt]="image.alt || service().name"
+            class="h-full min-h-72 w-full object-cover transition duration-500 group-hover/image:scale-105"
+          />
+          <span class="absolute inset-0 grid place-items-center bg-slate-950/0 text-white opacity-0 transition group-hover/image:bg-slate-950/35 group-hover/image:opacity-100">
+            <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold backdrop-blur">
+              <i class="pi pi-search-plus mr-2"></i>
+              View photos
+            </span>
+          </span>
+        </button>
+      } @else {
+        <div class="grid h-full min-h-72 place-items-center text-slate-400">
+          <i class="pi pi-image text-3xl"></i>
         </div>
+      }
+
+      <div class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 shadow-sm backdrop-blur dark:bg-slate-950/90 dark:text-rose-300">
+        Kim's menu
       </div>
     </div>
 
-    @if (previewPhotos().length) {
-      <div class="mt-2 flex gap-2">
-        @for (image of previewPhotos(); track image.src; let index = $index) {
-          <button type="button" class="overflow-hidden rounded-md ring-1 ring-slate-200 transition hover:ring-2 hover:ring-rose-400 dark:ring-slate-700" (click)="openGallery(index + 1)" aria-label="Open service image">
-            <img [src]="image.src" [alt]="image.alt || service().name" class="h-14 w-14 object-cover" />
-          </button>
-        }
+    <div class="grid gap-5 p-5 sm:p-6">
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div class="min-w-0">
+          <h2 class="font-serif text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
+            {{ service().name }}
+          </h2>
+          <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
+            {{ service().description }}
+          </p>
+        </div>
+
+        <div class="shrink-0 rounded-3xl bg-[#fff8f3] px-5 py-4 text-right dark:bg-slate-950">
+          <div class="text-2xl font-bold text-slate-950 dark:text-white">{{ service().price | currency }}</div>
+          <div class="mt-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            {{ service().durationInMinutes }} min
+          </div>
+        </div>
       </div>
-    }
-  </div>
 
-  <div class="flex items-center justify-between gap-4 md:flex-col md:items-end md:justify-center">
-    <label class="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-      Add to booking List
-      <p-checkbox [binary]="true" [ngModel]="selected()" (onChange)="onSelectedChange($event)" />
-    </label>
+      @if (previewPhotos().length) {
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          @for (image of previewPhotos(); track image.src; let index = $index) {
+            <button
+              type="button"
+              class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl ring-1 ring-stone-200 transition hover:ring-2 hover:ring-rose-400 dark:ring-slate-700"
+              (click)="openGallery(index + 1)"
+              aria-label="Open service image"
+            >
+              <img [src]="image.src" [alt]="image.alt || service().name" class="h-full w-full object-cover" />
+            </button>
+          }
+        </div>
+      }
 
-    <button pButton type="button" label="Book now" icon="pi pi-calendar" class="p-button-sm" (click)="onBookNow()"></button>
+      <div class="flex flex-col gap-3 border-t border-stone-100 pt-5 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+        <label class="flex cursor-pointer items-center gap-3 rounded-2xl bg-stone-50 px-4 py-3 text-sm font-semibold text-slate-700 dark:bg-slate-950 dark:text-slate-300">
+          <p-checkbox [binary]="true" [ngModel]="selected()" (onChange)="onSelectedChange($event)" />
+          Add to booking list
+        </label>
+
+        <div class="flex flex-wrap gap-2">
+          <button
+            pButton
+            type="button"
+            label="Book now"
+            icon="pi pi-calendar"
+            (click)="onBookNow()"
+          ></button>
+          @if (images().length) {
+            <button
+              pButton
+              type="button"
+              label="Photos"
+              icon="pi pi-images"
+              severity="secondary"
+              (click)="openGallery(0)"
+            ></button>
+          }
+        </div>
+      </div>
+    </div>
   </div>
 </article>
 
