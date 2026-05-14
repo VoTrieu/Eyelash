@@ -1,0 +1,111 @@
+<p-dialog
+  header="Service details"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: 'min(760px, 94vw)' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  @if (loading()) {
+    <div class="flex justify-center py-10">
+      <p-progressSpinner ariaLabel="Loading service details" />
+    </div>
+  } @else if (service(); as service) {
+    <div class="grid gap-5">
+      <div class="flex flex-col gap-4 md:flex-row">
+        @if (service.mainPhotoUrl) {
+          <img
+            [src]="imageUrl(service.mainPhotoUrl)"
+            [alt]="service.name"
+            class="h-40 w-full rounded-lg object-cover md:w-56"
+          />
+        } @else {
+          <div
+            class="flex h-40 w-full items-center justify-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500 md:w-56"
+          >
+            <i class="pi pi-image text-2xl"></i>
+          </div>
+        }
+
+        <div class="min-w-0 flex-1">
+          <div class="mb-2 flex flex-wrap items-center gap-2">
+            <h3 class="text-xl font-semibold text-slate-950 dark:text-slate-50">
+              {{ service.name }}
+            </h3>
+            <p-tag
+              [value]="service.isAvailable ? 'Available' : 'Unavailable'"
+              [severity]="service.isAvailable ? 'success' : 'danger'"
+            />
+          </div>
+          <p class="text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {{ service.description }}
+          </p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+              <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                Price
+              </div>
+              <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">
+                {{ service.price | currency }}
+              </div>
+            </div>
+            <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+              <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                Duration
+              </div>
+              <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">
+                {{ service.durationInMinutes }} min
+              </div>
+            </div>
+            <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
+              <div class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                Created
+              </div>
+              <div class="mt-1 font-semibold text-slate-950 dark:text-slate-50">
+                {{ service.created | date: 'mediumDate' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (service.photos.length) {
+        <div>
+          <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Photos</h4>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @for (photo of service.photos; track photo.id) {
+              <img
+                [src]="imageUrl(photo.url)"
+                [alt]="service.name"
+                class="aspect-square rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+              />
+            }
+          </div>
+        </div>
+      }
+
+      <div>
+        <h4 class="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Reviews</h4>
+        @if (service.reviews.length) {
+          <div class="grid gap-2">
+            @for (review of service.reviews; track review.id) {
+              <div class="rounded-md border border-slate-200 p-3 dark:border-slate-800">
+                <div class="font-semibold text-slate-950 dark:text-slate-50">
+                  {{ review.rating }}/5
+                </div>
+                <p class="text-sm text-slate-600 dark:text-slate-300">{{ review.comment }}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p
+            class="rounded-md bg-slate-50 p-3 text-sm text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+          >
+            No reviews yet.
+          </p>
+        }
+      </div>
+    </div>
+  }
+</p-dialog>

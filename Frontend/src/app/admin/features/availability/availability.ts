@@ -59,8 +59,8 @@ export class Availability implements OnInit{
     startTime: [null as Date | null],                      
     endTime: [null as Date | null],  
     notes: [''],
-    type: ['Blocked' as AvalabilityBlockType, Validators.required],
-    isActive: [true, Validators.required]
+    type: ['Blocked' as AvalabilityBlockType],
+    isActive: [true]
   })
 
   ngOnInit(): void {

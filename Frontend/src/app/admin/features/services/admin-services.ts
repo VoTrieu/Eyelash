@@ -1,23 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TableLazyLoadEvent } from 'primeng/types/table';
-import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
-import { TextareaModule } from 'primeng/textarea';
-import { FileUpload, FileUploadModule } from 'primeng/fileupload';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
-import { Photo, Service, ServiceDetail, ServiceFormValue, ServiceQueryParams } from '../../../types/service';
+import { Service, ServiceDetail, ServiceQueryParams } from '../../../types/service';
 import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
+import {
+  ServiceEditorDialog,
+  ServiceEditorSaveEvent,
+} from './components/service-editor-dialog/service-editor-dialog';
+import { ServiceDetailsDialog } from './components/service-details-dialog/service-details-dialog';
 
 @Component({
   selector: 'app-admin-services',
@@ -27,15 +26,11 @@ import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dia
     ReactiveFormsModule,
     ButtonModule,
     TableModule,
-    DialogModule,
     InputTextModule,
-    InputNumberModule,
-    CheckboxModule,
     SelectModule,
     TagModule,
-    TextareaModule,
-    FileUploadModule,
-    ProgressSpinnerModule,
+    ServiceEditorDialog,
+    ServiceDetailsDialog,
   ],
   templateUrl: './admin-services.html',
   styleUrls: ['./admin-services.css'],
@@ -46,7 +41,6 @@ export class AdminServices implements OnInit {
   private toastService = inject(ToastService);
   private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
-  private fileUpload: Signal<FileUpload | undefined>= viewChild('uploadFile');
 
   services = this.servicesService.services;
   totalRecords = computed(() => this.servicesService.pagination()?.totalItems ?? 0);
@@ -57,11 +51,8 @@ export class AdminServices implements OnInit {
   displayDialog = signal(false);
   detailsDialog = signal(false);
   isEditing = signal(false);
-  editingId = signal<number | null>(null);
-  selectedFiles = signal<File[]>([]);
+  editingService = signal<ServiceDetail | null>(null);
   selectedService = signal<ServiceDetail | null>(null);
-  deletePhotoIds = signal<number[]>([]);
-  existingPhotos = signal<Photo[]>([]);
 
   rows = 10;
   first = 0;
@@ -77,14 +68,6 @@ export class AdminServices implements OnInit {
   filterForm = this.fb.group({
     search: [''],
     isAvailable: [null as boolean | null],
-  });
-
-  serviceForm = this.fb.group({
-    name: ['', Validators.required],
-    price: [0, [Validators.required, Validators.min(0)]],
-    description: ['', Validators.required],
-    durationInMinutes: [30, [Validators.required, Validators.min(1)]],
-    isAvailable: [true],
   });
 
   ngOnInit() {
@@ -134,46 +117,21 @@ export class AdminServices implements OnInit {
 
   openNew() {
     this.isEditing.set(false);
-    this.editingId.set(null);
-    this.selectedFiles.set([]);
-    this.serviceForm.reset({
-      name: '',
-      price: 0,
-      description: '',
-      durationInMinutes: 30,
-      isAvailable: true,
-    });
-    this.fileUpload()?.clear();
+    this.editingService.set(null);
     this.displayDialog.set(true);
   }
 
   editService(service: Service) {
     this.isEditing.set(true);
-    this.editingId.set(service.id);
-    this.selectedFiles.set([]);
-    this.existingPhotos.set([]);
-    this.deletePhotoIds.set([]);
-    this.fileUpload()?.clear();
+    this.editingService.set(null);
 
     this.servicesService.getService(service.id).subscribe({
       next: (serviceDetail) => {
-        this.serviceForm.patchValue({
-          name: serviceDetail.name,
-          price: serviceDetail.price,
-          description: serviceDetail.description,
-          durationInMinutes: serviceDetail.durationInMinutes,
-          isAvailable: serviceDetail.isAvailable,
-        });
-        this.existingPhotos.set(serviceDetail.photos);
+        this.editingService.set(serviceDetail);
         this.displayDialog.set(true);
       },
       error: () => this.toastService.showError('Could not load service details'),
     });
-  }
-
-  removeExistingPhoto(photo: Photo) {
-    this.existingPhotos.update((photos) => photos.filter((p) => p.id !== photo.id));
-    this.deletePhotoIds.update((ids) => [...ids, photo.id]);
   }
 
   viewDetails(service: Service) {
@@ -190,9 +148,13 @@ export class AdminServices implements OnInit {
       });
   }
 
-  onPhotosSelected(event: any) {
-    const files = event.currentFiles || event.files || [];
-    this.selectedFiles.set([...files]);
+  onEditorVisibleChange(visible: boolean) {
+    this.displayDialog.set(visible);
+
+    if (!visible) {
+      this.isEditing.set(false);
+      this.editingService.set(null);
+    }
   }
 
   async deleteService(service: Service) {
@@ -215,29 +177,26 @@ export class AdminServices implements OnInit {
     });
   }
 
-  saveService() {
-    if (this.serviceForm.invalid) {
-      this.serviceForm.markAllAsTouched();
-      return;
-    }
-
-    const formValue = this.serviceForm.getRawValue() as ServiceFormValue;
+  saveService(event: ServiceEditorSaveEvent) {
+    const wasEditing = this.isEditing();
     this.saving.set(true);
 
     const request =
-      this.isEditing() && this.editingId() !== null
+      wasEditing && this.editingService()
         ? this.servicesService.updateService(
-          this.editingId()!, 
-          formValue, 
-          this.selectedFiles(),
-          this.deletePhotoIds()
+          this.editingService()!.id,
+          event.value,
+          event.photos,
+          event.deletePhotoIds
         )
-        : this.servicesService.createService(formValue, this.selectedFiles());
+        : this.servicesService.createService(event.value, event.photos);
 
     request.pipe(finalize(() => this.saving.set(false))).subscribe({
       next: () => {
         this.displayDialog.set(false);
-        this.toastService.showSuccess(this.isEditing() ? 'Service updated' : 'Service created');
+        this.editingService.set(null);
+        this.isEditing.set(false);
+        this.toastService.showSuccess(wasEditing ? 'Service updated' : 'Service created');
         this.loadServices();
       },
       error: () => this.toastService.showError('Could not save service'),
