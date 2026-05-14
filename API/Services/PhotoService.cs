@@ -9,6 +9,7 @@ namespace API.Services;
 
 public class PhotoService: IPhotoService
 {
+    private const string UploadFolder = "KimsEyeAndLash";
     private readonly Cloudinary _cloudinary;
     public PhotoService(IOptions<CloudinarySetting> config)
     {
@@ -38,7 +39,7 @@ public class PhotoService: IPhotoService
             {
                 File = new FileDescription(file.FileName, stream),
                 Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
-                Folder = "da-ang20"
+                Folder = UploadFolder
             };
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
         }

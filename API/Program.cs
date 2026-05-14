@@ -79,6 +79,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 
+var webRootPath = builder.Environment.WebRootPath
+    ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+Directory.CreateDirectory(webRootPath);
+builder.Environment.WebRootPath = webRootPath;
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
