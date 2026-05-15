@@ -1,3 +1,20 @@
 :host {
   display: block;
 }
+
+.settings-form label.grid > span::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+:host ::ng-deep .settings-form.was-submitted input.ng-invalid,
+:host ::ng-deep .settings-form.was-submitted textarea.ng-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25) !important;
+}
+
+:host ::ng-deep .settings-form.was-submitted input.ng-invalid:focus,
+:host ::ng-deep .settings-form.was-submitted textarea.ng-invalid:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+}

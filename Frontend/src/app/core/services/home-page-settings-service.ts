@@ -30,6 +30,12 @@ export class HomePageSettingsService {
       heroMainImage?: File | null;
       heroSecondaryImage?: File | null;
       heroLogoImage?: File | null;
+      galleryImageOne?: File | null;
+      galleryImageTwo?: File | null;
+      galleryImageThree?: File | null;
+      galleryImageFour?: File | null;
+      galleryImageFive?: File | null;
+      galleryImageSix?: File | null;
     } = {}
   ) {
     return this.http.put<HomePageSettings>(this.baseUrl + 'homepagesettings', this.toFormData(settings, files)).pipe(
@@ -50,6 +56,12 @@ export class HomePageSettingsService {
       heroMainImage?: File | null;
       heroSecondaryImage?: File | null;
       heroLogoImage?: File | null;
+      galleryImageOne?: File | null;
+      galleryImageTwo?: File | null;
+      galleryImageThree?: File | null;
+      galleryImageFour?: File | null;
+      galleryImageFive?: File | null;
+      galleryImageSix?: File | null;
     }
   ) {
     const formData = new FormData();
@@ -75,6 +87,30 @@ export class HomePageSettingsService {
 
     if (files.heroLogoImage) {
       formData.append('heroLogoImage', files.heroLogoImage);
+    }
+
+    if (files.galleryImageOne) {
+      formData.append('galleryImageOne', files.galleryImageOne);
+    }
+
+    if (files.galleryImageTwo) {
+      formData.append('galleryImageTwo', files.galleryImageTwo);
+    }
+
+    if (files.galleryImageThree) {
+      formData.append('galleryImageThree', files.galleryImageThree);
+    }
+
+    if (files.galleryImageFour) {
+      formData.append('galleryImageFour', files.galleryImageFour);
+    }
+
+    if (files.galleryImageFive) {
+      formData.append('galleryImageFive', files.galleryImageFive);
+    }
+
+    if (files.galleryImageSix) {
+      formData.append('galleryImageSix', files.galleryImageSix);
     }
 
     return formData;

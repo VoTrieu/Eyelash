@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Header } from '../header/header';
-import { Carousel } from '../../features/carousel/carousel';
+import { Carousel } from '../../components/carousel/carousel';
 import { Footer } from '../footer/footer';
 import { Map } from '../../../shared/map/map';
 import { RouterOutlet } from '@angular/router';

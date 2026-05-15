@@ -1,0 +1,96 @@
+<p-card [formGroup]="form()">
+  <ng-template pTemplate="header">
+    <div class="px-5 pt-5">
+      <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Hero images</h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Preview the current images and choose replacements. New uploads are saved to Cloudinary when you save.
+      </p>
+    </div>
+  </ng-template>
+
+  <div class="space-y-5">
+    <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+      <div class="h-52 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+        <img
+          [src]="previewImage()(form().get('heroMainImageUrl')?.value, heroMainPreview())"
+          alt="Main hero preview"
+          class="h-full w-full object-cover"
+        />
+      </div>
+      <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="font-semibold text-slate-950 dark:text-white">Main hero image</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Best as a wide lifestyle or studio image.</p>
+        </div>
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          maxFileSize="4194304"
+          invalidFileSizeMessageSummary="File too large"
+          invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
+          chooseLabel="Replace"
+          chooseIcon="pi pi-image"
+          [auto]="false"
+          [customUpload]="true"
+          (onSelect)="selectImage('main', $event)"
+        />
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+      <div class="h-40 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+        <img
+          [src]="previewImage()(form().get('heroSecondaryImageUrl')?.value, heroSecondaryPreview())"
+          alt="Secondary hero preview"
+          class="h-full w-full object-cover"
+        />
+      </div>
+      <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="font-semibold text-slate-950 dark:text-white">Secondary hero image</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Best as a close-up brow or lash result.</p>
+        </div>
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          maxFileSize="4194304"
+          invalidFileSizeMessageSummary="File too large"
+          invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
+          chooseLabel="Replace"
+          chooseIcon="pi pi-image"
+          [auto]="false"
+          [customUpload]="true"
+          (onSelect)="selectImage('secondary', $event)"
+        />
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 p-3 dark:border-slate-800">
+      <div class="grid h-32 place-items-center rounded-2xl bg-rose-50 dark:bg-slate-800">
+        <img
+          [src]="previewImage()(form().get('heroLogoUrl')?.value, heroLogoPreview())"
+          alt="Logo preview"
+          class="h-20 w-20 object-contain"
+        />
+      </div>
+      <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="font-semibold text-slate-950 dark:text-white">Hero logo mark</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Use a transparent PNG or SVG-style mark.</p>
+        </div>
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          maxFileSize="4194304"
+          invalidFileSizeMessageSummary="File too large"
+          invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
+          chooseLabel="Replace"
+          chooseIcon="pi pi-image"
+          [auto]="false"
+          [customUpload]="true"
+          (onSelect)="selectImage('logo', $event)"
+        />
+      </div>
+    </div>
+  </div>
+</p-card>

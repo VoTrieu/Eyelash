@@ -5,7 +5,7 @@
 }
 
 @if (homeSettings().showGallerySection) {
-  <app-home-gallery-section></app-home-gallery-section>
+  <app-home-gallery-section [settings]="homeSettings()"></app-home-gallery-section>
 }
 
 @if (homeSettings().showReviewsSection) {

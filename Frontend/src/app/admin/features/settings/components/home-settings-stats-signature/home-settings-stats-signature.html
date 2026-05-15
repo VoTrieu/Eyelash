@@ -1,0 +1,46 @@
+<p-card [formGroup]="form()">
+  <ng-template pTemplate="header">
+    <div class="px-5 pt-5">
+      <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Stats and signature</h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Small details that make the hero feel polished.</p>
+    </div>
+  </ng-template>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 1 value</span>
+      <input pInputText formControlName="statOneValue" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 2 value</span>
+      <input pInputText formControlName="statTwoValue" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 3 value</span>
+      <input pInputText formControlName="statThreeValue" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 1 label</span>
+      <input pInputText formControlName="statOneLabel" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 2 label</span>
+      <input pInputText formControlName="statTwoLabel" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Stat 3 label</span>
+      <input pInputText formControlName="statThreeLabel" />
+    </label>
+  </div>
+
+  <div class="mt-4 grid gap-4">
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Signature title</span>
+      <input pInputText formControlName="signatureTitle" />
+    </label>
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Signature body</span>
+      <textarea pTextarea formControlName="signatureBody" rows="3"></textarea>
+    </label>
+  </div>
+</p-card>

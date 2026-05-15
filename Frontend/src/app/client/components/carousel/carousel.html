@@ -5,7 +5,7 @@
   </div>
   <div class="card container">
     <p-carousel
-      [value]="products"
+      [value]="galleryItems()"
       [numVisible]="2"
       [numScroll]="1"
       [circular]="true"
@@ -17,7 +17,7 @@
           <div class="">
             <div class="relative mx-auto">
               <img
-                [src]="product.image"
+                [src]="imageUrl(product.image)"
                 [alt]="product.title"
                 class="aspect-4/3 w-full rounded-lg object-cover"
               />

@@ -13,6 +13,24 @@ export interface HomePageSettings {
   heroSecondaryImagePublicId?: string | null;
   heroLogoUrl: string;
   heroLogoPublicId?: string | null;
+  galleryImageOneUrl: string;
+  galleryImageOnePublicId?: string | null;
+  galleryImageOneTitle: string;
+  galleryImageTwoUrl: string;
+  galleryImageTwoPublicId?: string | null;
+  galleryImageTwoTitle: string;
+  galleryImageThreeUrl: string;
+  galleryImageThreePublicId?: string | null;
+  galleryImageThreeTitle: string;
+  galleryImageFourUrl: string;
+  galleryImageFourPublicId?: string | null;
+  galleryImageFourTitle: string;
+  galleryImageFiveUrl: string;
+  galleryImageFivePublicId?: string | null;
+  galleryImageFiveTitle: string;
+  galleryImageSixUrl: string;
+  galleryImageSixPublicId?: string | null;
+  galleryImageSixTitle: string;
   statOneValue: string;
   statOneLabel: string;
   statTwoValue: string;
@@ -35,6 +53,12 @@ export type UpdateHomePageSettings = Omit<
   | 'heroMainImagePublicId'
   | 'heroSecondaryImagePublicId'
   | 'heroLogoPublicId'
+  | 'galleryImageOnePublicId'
+  | 'galleryImageTwoPublicId'
+  | 'galleryImageThreePublicId'
+  | 'galleryImageFourPublicId'
+  | 'galleryImageFivePublicId'
+  | 'galleryImageSixPublicId'
 >;
 
 export const defaultHomePageSettings: HomePageSettings = {
@@ -53,6 +77,24 @@ export const defaultHomePageSettings: HomePageSettings = {
   heroSecondaryImagePublicId: null,
   heroLogoUrl: '/brand/kims-brow-lash-mark.svg',
   heroLogoPublicId: null,
+  galleryImageOneUrl: '/brand/kims-brow-lash-client-hero.png',
+  galleryImageOnePublicId: null,
+  galleryImageOneTitle: "Kim's Brow & Lash Studio",
+  galleryImageTwoUrl: '/brand/kims-brow-lash-service-result.png',
+  galleryImageTwoPublicId: null,
+  galleryImageTwoTitle: 'Brow & Lash Results',
+  galleryImageThreeUrl: '/brand/kims-brow-lash-logo.png',
+  galleryImageThreePublicId: null,
+  galleryImageThreeTitle: 'Luxury Beauty Care',
+  galleryImageFourUrl: '/brand/kims-brow-lash-client-hero.png',
+  galleryImageFourPublicId: null,
+  galleryImageFourTitle: 'Soft Lash Styling',
+  galleryImageFiveUrl: '/brand/kims-brow-lash-service-result.png',
+  galleryImageFivePublicId: null,
+  galleryImageFiveTitle: 'Defined Brows',
+  galleryImageSixUrl: '/brand/kims-brow-lash-logo.png',
+  galleryImageSixPublicId: null,
+  galleryImageSixTitle: 'Natural Enhancements',
   statOneValue: '5★',
   statOneLabel: 'Reviews',
   statTwoValue: '1:1',
