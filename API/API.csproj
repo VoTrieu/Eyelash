@@ -36,4 +36,17 @@
     <Content Include="EmailTemplates\*.html" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <Target Name="BuildFrontend" BeforeTargets="ComputeFilesToPublish">
+    <Exec WorkingDirectory="..\Frontend" Command="npm ci" />
+    <Exec WorkingDirectory="..\Frontend" Command="npm run build -- --configuration production --localize=en-CA --output-path dist/azure --base-href /" />
+
+    <ItemGroup>
+      <FrontendDist Include="..\Frontend\dist\azure\browser\**\*" />
+      <ResolvedFileToPublish Include="@(FrontendDist->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
 </Project>

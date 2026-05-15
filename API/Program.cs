@@ -101,6 +101,27 @@ app.UseStaticFiles();
 
 app.MapControllers();
 app.MapHub<AppointmentHub>("/hubs/appointments");
+app.MapFallback(async context =>
+{
+    var requestPath = context.Request.Path;
+    if (requestPath.StartsWithSegments("/api")
+        || requestPath.StartsWithSegments("/hubs")
+        || Path.HasExtension(requestPath.Value))
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+
+    var indexPath = Path.Combine(app.Environment.WebRootPath, "index.html");
+    if (!File.Exists(indexPath))
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync(indexPath);
+});
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
