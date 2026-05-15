@@ -17,5 +17,5 @@
 }
 
 @if (homeSettings().showVisitSection) {
-  <app-home-visit-section></app-home-visit-section>
+  <app-home-visit-section [settings]="homeSettings()"></app-home-visit-section>
 }

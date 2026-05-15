@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
@@ -8,27 +8,28 @@ import { GoogleMapsModule } from '@angular/google-maps';
   styleUrl: './map.css',
 })
 export class Map{
-  center: google.maps.LatLngLiteral = {
-    lat: 43.768588,
-    lng: -79.4159027,
-  };
+  address = input('5150 Yonge St, North York, ON M2N 6L8');
+  latitude = input(43.768588);
+  longitude = input(-79.4159027);
+
+  center = computed<google.maps.LatLngLiteral>(() => ({
+    lat: this.latitude(),
+    lng: this.longitude(),
+  }));
 
   zoom = 15;
 
   markerOptions: google.maps.MarkerOptions = {
-    position: this.center,
     title: 'Location',
   };
 
-  address = '5150 Yonge St, North York, ON M2N 6L8'; // Example address
-
   openInGoogleMaps() {
-    const url = `https://www.google.com/maps?q=${this.center.lat},${this.center.lng}`;
+    const url = `https://www.google.com/maps?q=${this.center().lat},${this.center().lng}`;
     window.open(url, '_blank');
   }
 
   getDirections() {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${this.center.lat},${this.center.lng}`;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${this.center().lat},${this.center().lng}`;
     window.open(url, '_blank');
   }
 }

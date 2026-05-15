@@ -16,7 +16,11 @@
       </a>
     </div>
     <div class="overflow-hidden rounded-[2.5rem] border border-white/80 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <app-map></app-map>
+      <app-map
+        [address]="settings().studioAddress"
+        [latitude]="settings().studioLatitude"
+        [longitude]="settings().studioLongitude"
+      ></app-map>
     </div>
   </div>
 </section>

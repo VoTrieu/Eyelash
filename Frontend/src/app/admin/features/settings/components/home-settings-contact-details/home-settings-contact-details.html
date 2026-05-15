@@ -1,0 +1,39 @@
+<p-card [formGroup]="form()">
+  <ng-template pTemplate="header">
+    <div class="px-5 pt-5">
+      <h2 class="text-xl font-semibold text-slate-950 dark:text-white">Contact details</h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        These values control the client footer and the Google map location.
+      </p>
+    </div>
+  </ng-template>
+
+  <div class="grid gap-4">
+    <label class="grid gap-2">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Studio address</span>
+      <input pInputText formControlName="studioAddress" />
+    </label>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Map latitude</span>
+        <p-inputNumber formControlName="studioLatitude" [minFractionDigits]="4" [maxFractionDigits]="8" styleClass="w-full"></p-inputNumber>
+      </label>
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Map longitude</span>
+        <p-inputNumber formControlName="studioLongitude" [minFractionDigits]="4" [maxFractionDigits]="8" styleClass="w-full"></p-inputNumber>
+      </label>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Footer email</span>
+        <input pInputText type="email" formControlName="studioEmail" />
+      </label>
+      <label class="grid gap-2">
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Footer phone</span>
+        <input pInputText formControlName="studioPhone" placeholder="(416) 555-1234" />
+      </label>
+    </div>
+  </div>
+</p-card>

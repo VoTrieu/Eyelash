@@ -39,6 +39,11 @@ export interface HomePageSettings {
   statThreeLabel: string;
   signatureTitle: string;
   signatureBody: string;
+  studioAddress: string;
+  studioLatitude: number;
+  studioLongitude: number;
+  studioEmail: string;
+  studioPhone: string;
   showServicesSection: boolean;
   showGallerySection: boolean;
   showReviewsSection: boolean;
@@ -104,6 +109,11 @@ export const defaultHomePageSettings: HomePageSettings = {
   signatureTitle: 'Signature detail',
   signatureBody:
     'Clean mapping, balanced brows, and lash looks that feel elevated without feeling heavy.',
+  studioAddress: '5150 Yonge St, North York, ON M2N 6L8',
+  studioLatitude: 43.768588,
+  studioLongitude: -79.4159027,
+  studioEmail: 'kimsbrowandlash.ca@gmail.com',
+  studioPhone: '',
   showServicesSection: true,
   showGallerySection: true,
   showReviewsSection: true,

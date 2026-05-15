@@ -3,7 +3,7 @@
   <div class="absolute flex top-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-xs">
     <div >
       <h3 class="font-semibold text-gray-800 mb-1">Location Address</h3>
-      <p class="text-sm text-gray-600">{{ address }}</p>
+      <p class="text-sm text-gray-600">{{ address() }}</p>
     </div>
 
 
@@ -22,13 +22,13 @@
 
   <!-- Google Map -->
   <google-map
-    [center]="center"
+    [center]="center()"
     [zoom]="zoom"
     width="100%"
     height="100%"
     class="rounded-lg">
     <map-marker
-      [position]="center"
+      [position]="center()"
       [options]="markerOptions">
     </map-marker>
   </google-map>

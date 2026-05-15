@@ -5,36 +5,34 @@
 
   <div class="flex flex-col gap-4">
     <h4 class="mb-2 text-base font-semibold">Contact</h4>
-    <a href="mailto:kimsbrowandlash.ca@gmail.com" class="text-gray-400 hover:text-gray-200">kimsbrowandlash.ca@gmail.com
-</a>
-    <a href="tel:123-456-7890" class="text-gray-400 hover:text-gray-200">Phone number</a>
+    <a [href]="emailHref()" class="text-gray-400 hover:text-gray-200">{{ settings().studioEmail }}</a>
+    @if (settings().studioPhone) {
+      <a [href]="phoneHref()" class="text-gray-400 hover:text-gray-200">{{ settings().studioPhone }}</a>
+    }
+    <span class="text-gray-400">{{ settings().studioAddress }}</span>
   </div>
 
   <div class="flex flex-col gap-4">
     <h4 class="mb-2 text-base font-semibold">Menu</h4>
-    <a href="#" class="text-gray-400 hover:text-gray-200">Home</a>
-    <a href="#" class="text-gray-400 hover:text-gray-200">Behind the Edit</a>
-    <a href="#" class="text-gray-400 hover:text-gray-200">Services</a>
-    <a href="#" class="text-gray-400 hover:text-gray-200">Portfolio</a>
+    <a routerLink="/" class="text-gray-400 hover:text-gray-200">Home</a>
+    <a routerLink="/services" class="text-gray-400 hover:text-gray-200">Services</a>
+    <a routerLink="/reviews" class="text-gray-400 hover:text-gray-200">Reviews</a>
+    <a routerLink="/book-appointment" class="text-gray-400 hover:text-gray-200">Booking</a>
+    <a routerLink="/contact" class="text-gray-400 hover:text-gray-200">Contact</a>
   </div>
 
   <div class="flex flex-col">
     <h4 class="mb-4 text-base font-semibold">Follow Us</h4>
     <div class="flex items-center gap-4">
       <a
-        href="#"
+        href="https://www.facebook.com/profile.php?id=61584718271302"
         class="flex items-center justify-center p-2 rounded-full bg-transparent hover:bg-gray-800"
       >
         <i class="pi pi-facebook text-xl"></i>
       </a>
+
       <a
-        href="#"
-        class="flex items-center justify-center p-2 rounded-full bg-transparent hover:bg-gray-800"
-      >
-        <i class="pi pi-twitter text-xl"></i>
-      </a>
-      <a
-        href="#"
+        href="https://www.instagram.com/pmu.lash_bykimi/"
         class="flex items-center justify-center p-2 rounded-full bg-transparent hover:bg-gray-800"
       >
         <i class="pi pi-instagram text-xl"></i>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs';
 import { ContactService } from '../../../core/services/contact-service';
+import { HomePageSettingsService } from '../../../core/services/home-page-settings-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { Map } from '../../../shared/map/map';
 
@@ -26,12 +27,13 @@ import { Map } from '../../../shared/map/map';
   styleUrls: ['./client-contact.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClientContact {
+export class ClientContact implements OnInit {
   private fb = inject(FormBuilder);
   private contactService = inject(ContactService);
+  private homePageSettingsService = inject(HomePageSettingsService);
   private toastService = inject(ToastService);
 
-  readonly address = '5150 Yonge St, North York, ON M2N 6L8';
+  settings = this.homePageSettingsService.settings;
   sending = signal(false);
 
   contactForm = this.fb.nonNullable.group({
@@ -40,6 +42,10 @@ export class ClientContact {
     phone: ['', canadianPhoneValidator],
     message: ['', Validators.required],
   });
+
+  ngOnInit() {
+    this.homePageSettingsService.loadSettings().subscribe();
+  }
 
   sendMessage() {
     if (this.contactForm.invalid) {

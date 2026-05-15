@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Map } from '../../../shared/map/map';
+import { defaultHomePageSettings, HomePageSettings } from '../../../types/home-page-settings';
 
 @Component({
   selector: 'app-home-visit-section',
@@ -10,4 +11,6 @@ import { Map } from '../../../shared/map/map';
   styleUrls: ['./home-visit-section.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeVisitSection {}
+export class HomeVisitSection {
+  settings = input<HomePageSettings>(defaultHomePageSettings);
+}

@@ -52,7 +52,7 @@
       <app-home-settings-stats-signature [form]="form"></app-home-settings-stats-signature>
     </div>
 
-    <div class="space-y-5">
+    <div class="flex flex-col gap-5">
       <app-home-settings-hero-images
         [form]="form"
         [previewImage]="previewImage"
@@ -61,6 +61,9 @@
         [heroLogoPreview]="heroLogoPreview()"
         (imageSelected)="onHeroImageSelected($event.imageType, $event.event)"
       ></app-home-settings-hero-images>
+  
+      <app-home-settings-contact-details [form]="form"></app-home-settings-contact-details>
+
       <app-home-settings-visible-sections [form]="form"></app-home-settings-visible-sections>
     </div>
   </form>

@@ -19,6 +19,7 @@ import {
 import { HomeSettingsHeroCopy } from './components/home-settings-hero-copy/home-settings-hero-copy';
 import { HomeSettingsStatsSignature } from './components/home-settings-stats-signature/home-settings-stats-signature';
 import { HomeSettingsVisibleSections } from './components/home-settings-visible-sections/home-settings-visible-sections';
+import { HomeSettingsContactDetails } from './components/home-settings-contact-details/home-settings-contact-details';
 
 @Component({
   selector: 'app-admin-home-settings',
@@ -32,6 +33,7 @@ import { HomeSettingsVisibleSections } from './components/home-settings-visible-
     HomeSettingsStatsSignature,
     HomeSettingsHeroImages,
     HomeSettingsVisibleSections,
+    HomeSettingsContactDetails,
   ],
   templateUrl: './admin-home-settings.html',
   styleUrls: ['./admin-home-settings.css'],
@@ -96,6 +98,11 @@ export class AdminHomeSettings implements OnInit {
     statThreeLabel: ['', Validators.required],
     signatureTitle: ['', Validators.required],
     signatureBody: ['', Validators.required],
+    studioAddress: ['', Validators.required],
+    studioLatitude: [43.768588, Validators.required],
+    studioLongitude: [-79.4159027, Validators.required],
+    studioEmail: ['', [Validators.required, Validators.email]],
+    studioPhone: [''],
     showServicesSection: [true],
     showGallerySection: [true],
     showReviewsSection: [true],
