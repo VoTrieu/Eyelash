@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs;
 
@@ -43,6 +44,12 @@ public class UpdateHomePageSettingsDto
     public string StatThreeLabel { get; set; } = "";
     public string SignatureTitle { get; set; } = "";
     public string SignatureBody { get; set; } = "";
+    public string StudioAddress { get; set; } = "";
+    public double StudioLatitude { get; set; }
+    public double StudioLongitude { get; set; }
+    [EmailAddress]
+    public string StudioEmail { get; set; } = "";
+    public string StudioPhone { get; set; } = "";
     public bool ShowServicesSection { get; set; } = true;
     public bool ShowGallerySection { get; set; } = true;
     public bool ShowReviewsSection { get; set; } = true;

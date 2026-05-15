@@ -57,6 +57,11 @@ public class HomePageSettingsController(
         settings.StatThreeLabel = dto.StatThreeLabel.Trim();
         settings.SignatureTitle = dto.SignatureTitle.Trim();
         settings.SignatureBody = dto.SignatureBody.Trim();
+        settings.StudioAddress = dto.StudioAddress.Trim();
+        settings.StudioLatitude = dto.StudioLatitude;
+        settings.StudioLongitude = dto.StudioLongitude;
+        settings.StudioEmail = dto.StudioEmail.Trim();
+        settings.StudioPhone = dto.StudioPhone.Trim();
         settings.ShowServicesSection = dto.ShowServicesSection;
         settings.ShowGallerySection = dto.ShowGallerySection;
         settings.ShowReviewsSection = dto.ShowReviewsSection;
@@ -205,6 +210,11 @@ public class HomePageSettingsController(
             StatThreeLabel = "Finish",
             SignatureTitle = "Signature detail",
             SignatureBody = "Clean mapping, balanced brows, and lash looks that feel elevated without feeling heavy.",
+            StudioAddress = "5150 Yonge St, North York, ON M2N 6L8",
+            StudioLatitude = 43.768588,
+            StudioLongitude = -79.4159027,
+            StudioEmail = "kimsbrowandlash.ca@gmail.com",
+            StudioPhone = "",
             ShowServicesSection = true,
             ShowGallerySection = true,
             ShowReviewsSection = true,
@@ -257,6 +267,11 @@ public class HomePageSettingsController(
             StatThreeLabel = settings.StatThreeLabel,
             SignatureTitle = settings.SignatureTitle,
             SignatureBody = settings.SignatureBody,
+            StudioAddress = settings.StudioAddress,
+            StudioLatitude = settings.StudioLatitude,
+            StudioLongitude = settings.StudioLongitude,
+            StudioEmail = settings.StudioEmail,
+            StudioPhone = settings.StudioPhone,
             ShowServicesSection = settings.ShowServicesSection,
             ShowGallerySection = settings.ShowGallerySection,
             ShowReviewsSection = settings.ShowReviewsSection,

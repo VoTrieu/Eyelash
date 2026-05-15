@@ -42,6 +42,11 @@ public class HomePageSettingsDto
     public string StatThreeLabel { get; set; } = "";
     public string SignatureTitle { get; set; } = "";
     public string SignatureBody { get; set; } = "";
+    public string StudioAddress { get; set; } = "";
+    public double StudioLatitude { get; set; }
+    public double StudioLongitude { get; set; }
+    public string StudioEmail { get; set; } = "";
+    public string StudioPhone { get; set; } = "";
     public bool ShowServicesSection { get; set; }
     public bool ShowGallerySection { get; set; }
     public bool ShowReviewsSection { get; set; }
