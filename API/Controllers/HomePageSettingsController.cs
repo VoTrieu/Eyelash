@@ -34,9 +34,21 @@ public class HomePageSettingsController(
         settings.PrimaryButtonLink = NormalizeRoute(dto.PrimaryButtonLink);
         settings.SecondaryButtonLabel = dto.SecondaryButtonLabel.Trim();
         settings.SecondaryButtonLink = NormalizeRoute(dto.SecondaryButtonLink);
-        settings.HeroMainImageUrl = dto.HeroMainImageUrl.Trim();
-        settings.HeroSecondaryImageUrl = dto.HeroSecondaryImageUrl.Trim();
-        settings.HeroLogoUrl = dto.HeroLogoUrl.Trim();
+        settings.HeroMainImageUrl = KeepExistingIfBlank(dto.HeroMainImageUrl, settings.HeroMainImageUrl);
+        settings.HeroSecondaryImageUrl = KeepExistingIfBlank(dto.HeroSecondaryImageUrl, settings.HeroSecondaryImageUrl);
+        settings.HeroLogoUrl = KeepExistingIfBlank(dto.HeroLogoUrl, settings.HeroLogoUrl);
+        settings.GalleryImageOneUrl = KeepExistingIfBlank(dto.GalleryImageOneUrl, settings.GalleryImageOneUrl);
+        settings.GalleryImageOneTitle = dto.GalleryImageOneTitle.Trim();
+        settings.GalleryImageTwoUrl = KeepExistingIfBlank(dto.GalleryImageTwoUrl, settings.GalleryImageTwoUrl);
+        settings.GalleryImageTwoTitle = dto.GalleryImageTwoTitle.Trim();
+        settings.GalleryImageThreeUrl = KeepExistingIfBlank(dto.GalleryImageThreeUrl, settings.GalleryImageThreeUrl);
+        settings.GalleryImageThreeTitle = dto.GalleryImageThreeTitle.Trim();
+        settings.GalleryImageFourUrl = KeepExistingIfBlank(dto.GalleryImageFourUrl, settings.GalleryImageFourUrl);
+        settings.GalleryImageFourTitle = dto.GalleryImageFourTitle.Trim();
+        settings.GalleryImageFiveUrl = KeepExistingIfBlank(dto.GalleryImageFiveUrl, settings.GalleryImageFiveUrl);
+        settings.GalleryImageFiveTitle = dto.GalleryImageFiveTitle.Trim();
+        settings.GalleryImageSixUrl = KeepExistingIfBlank(dto.GalleryImageSixUrl, settings.GalleryImageSixUrl);
+        settings.GalleryImageSixTitle = dto.GalleryImageSixTitle.Trim();
         settings.StatOneValue = dto.StatOneValue.Trim();
         settings.StatOneLabel = dto.StatOneLabel.Trim();
         settings.StatTwoValue = dto.StatTwoValue.Trim();
@@ -78,6 +90,60 @@ public class HomePageSettingsController(
                 publicId => settings.HeroLogoPublicId = publicId);
         }
 
+        if (dto.GalleryImageOne != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageOne,
+                settings.GalleryImageOnePublicId,
+                url => settings.GalleryImageOneUrl = url,
+                publicId => settings.GalleryImageOnePublicId = publicId);
+        }
+
+        if (dto.GalleryImageTwo != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageTwo,
+                settings.GalleryImageTwoPublicId,
+                url => settings.GalleryImageTwoUrl = url,
+                publicId => settings.GalleryImageTwoPublicId = publicId);
+        }
+
+        if (dto.GalleryImageThree != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageThree,
+                settings.GalleryImageThreePublicId,
+                url => settings.GalleryImageThreeUrl = url,
+                publicId => settings.GalleryImageThreePublicId = publicId);
+        }
+
+        if (dto.GalleryImageFour != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageFour,
+                settings.GalleryImageFourPublicId,
+                url => settings.GalleryImageFourUrl = url,
+                publicId => settings.GalleryImageFourPublicId = publicId);
+        }
+
+        if (dto.GalleryImageFive != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageFive,
+                settings.GalleryImageFivePublicId,
+                url => settings.GalleryImageFiveUrl = url,
+                publicId => settings.GalleryImageFivePublicId = publicId);
+        }
+
+        if (dto.GalleryImageSix != null)
+        {
+            await ReplaceHeroImage(
+                dto.GalleryImageSix,
+                settings.GalleryImageSixPublicId,
+                url => settings.GalleryImageSixUrl = url,
+                publicId => settings.GalleryImageSixPublicId = publicId);
+        }
+
         await context.SaveChangesAsync();
 
         return ToDto(settings);
@@ -113,6 +179,24 @@ public class HomePageSettingsController(
             HeroSecondaryImagePublicId = null,
             HeroLogoUrl = "/brand/kims-brow-lash-mark.svg",
             HeroLogoPublicId = null,
+            GalleryImageOneUrl = "/brand/kims-brow-lash-client-hero.png",
+            GalleryImageOnePublicId = null,
+            GalleryImageOneTitle = "Kim's Brow & Lash Studio",
+            GalleryImageTwoUrl = "/brand/kims-brow-lash-service-result.png",
+            GalleryImageTwoPublicId = null,
+            GalleryImageTwoTitle = "Brow & Lash Results",
+            GalleryImageThreeUrl = "/brand/kims-brow-lash-logo.png",
+            GalleryImageThreePublicId = null,
+            GalleryImageThreeTitle = "Luxury Beauty Care",
+            GalleryImageFourUrl = "/brand/kims-brow-lash-client-hero.png",
+            GalleryImageFourPublicId = null,
+            GalleryImageFourTitle = "Soft Lash Styling",
+            GalleryImageFiveUrl = "/brand/kims-brow-lash-service-result.png",
+            GalleryImageFivePublicId = null,
+            GalleryImageFiveTitle = "Defined Brows",
+            GalleryImageSixUrl = "/brand/kims-brow-lash-logo.png",
+            GalleryImageSixPublicId = null,
+            GalleryImageSixTitle = "Natural Enhancements",
             StatOneValue = "5★",
             StatOneLabel = "Reviews",
             StatTwoValue = "1:1",
@@ -147,6 +231,24 @@ public class HomePageSettingsController(
             HeroSecondaryImagePublicId = settings.HeroSecondaryImagePublicId,
             HeroLogoUrl = settings.HeroLogoUrl,
             HeroLogoPublicId = settings.HeroLogoPublicId,
+            GalleryImageOneUrl = settings.GalleryImageOneUrl,
+            GalleryImageOnePublicId = settings.GalleryImageOnePublicId,
+            GalleryImageOneTitle = settings.GalleryImageOneTitle,
+            GalleryImageTwoUrl = settings.GalleryImageTwoUrl,
+            GalleryImageTwoPublicId = settings.GalleryImageTwoPublicId,
+            GalleryImageTwoTitle = settings.GalleryImageTwoTitle,
+            GalleryImageThreeUrl = settings.GalleryImageThreeUrl,
+            GalleryImageThreePublicId = settings.GalleryImageThreePublicId,
+            GalleryImageThreeTitle = settings.GalleryImageThreeTitle,
+            GalleryImageFourUrl = settings.GalleryImageFourUrl,
+            GalleryImageFourPublicId = settings.GalleryImageFourPublicId,
+            GalleryImageFourTitle = settings.GalleryImageFourTitle,
+            GalleryImageFiveUrl = settings.GalleryImageFiveUrl,
+            GalleryImageFivePublicId = settings.GalleryImageFivePublicId,
+            GalleryImageFiveTitle = settings.GalleryImageFiveTitle,
+            GalleryImageSixUrl = settings.GalleryImageSixUrl,
+            GalleryImageSixPublicId = settings.GalleryImageSixPublicId,
+            GalleryImageSixTitle = settings.GalleryImageSixTitle,
             StatOneValue = settings.StatOneValue,
             StatOneLabel = settings.StatOneLabel,
             StatTwoValue = settings.StatTwoValue,
@@ -169,6 +271,11 @@ public class HomePageSettingsController(
         if (string.IsNullOrWhiteSpace(route)) return "/";
         if (route.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return route;
         return route.StartsWith('/') ? route : $"/{route}";
+    }
+
+    private static string KeepExistingIfBlank(string newValue, string existingValue)
+    {
+        return string.IsNullOrWhiteSpace(newValue) ? existingValue : newValue.Trim();
     }
 
     private async Task ReplaceHeroImage(

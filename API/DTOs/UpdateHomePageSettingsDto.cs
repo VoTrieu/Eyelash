@@ -17,6 +17,24 @@ public class UpdateHomePageSettingsDto
     public IFormFile? HeroSecondaryImage { get; set; }
     public string HeroLogoUrl { get; set; } = "";
     public IFormFile? HeroLogoImage { get; set; }
+    public string GalleryImageOneUrl { get; set; } = "";
+    public IFormFile? GalleryImageOne { get; set; }
+    public string GalleryImageOneTitle { get; set; } = "";
+    public string GalleryImageTwoUrl { get; set; } = "";
+    public IFormFile? GalleryImageTwo { get; set; }
+    public string GalleryImageTwoTitle { get; set; } = "";
+    public string GalleryImageThreeUrl { get; set; } = "";
+    public IFormFile? GalleryImageThree { get; set; }
+    public string GalleryImageThreeTitle { get; set; } = "";
+    public string GalleryImageFourUrl { get; set; } = "";
+    public IFormFile? GalleryImageFour { get; set; }
+    public string GalleryImageFourTitle { get; set; } = "";
+    public string GalleryImageFiveUrl { get; set; } = "";
+    public IFormFile? GalleryImageFive { get; set; }
+    public string GalleryImageFiveTitle { get; set; } = "";
+    public string GalleryImageSixUrl { get; set; } = "";
+    public IFormFile? GalleryImageSix { get; set; }
+    public string GalleryImageSixTitle { get; set; } = "";
     public string StatOneValue { get; set; } = "";
     public string StatOneLabel { get; set; } = "";
     public string StatTwoValue { get; set; } = "";
