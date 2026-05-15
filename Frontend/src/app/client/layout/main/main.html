@@ -3,6 +3,9 @@
   @if (header.isFixed()) {
     <div aria-hidden="true" [style.height.px]="header.headerHeightPx()"></div>
   }
+  @if (busyService.busy()) {
+    <p-progressBar mode="indeterminate" [style]="{ height: '4px' }"></p-progressBar>
+  }
   <router-outlet></router-outlet>
   <app-footer></app-footer>
 </div>

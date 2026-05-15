@@ -9,6 +9,4 @@ import { AppConfirmDialog } from './shared/confirm-dialog/app-confirm-dialog';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  
-}
+export class App {}
