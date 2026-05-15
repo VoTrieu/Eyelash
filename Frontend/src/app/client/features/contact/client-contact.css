@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep input.ng-invalid.ng-touched,
+:host ::ng-deep textarea.ng-invalid.ng-touched,
+:host ::ng-deep input.ng-invalid.ng-dirty,
+:host ::ng-deep textarea.ng-invalid.ng-dirty {
+  border-color: #ef4444 !important;
+}
