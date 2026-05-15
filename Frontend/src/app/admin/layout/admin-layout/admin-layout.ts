@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ButtonModule } from 'primeng/button';
@@ -24,6 +24,7 @@ import { AppointmentsService } from '../../../core/services/appointments-service
 export class AdminLayout implements OnInit, OnDestroy {
   protected readonly sidebarService = inject(SidebarService);
   private readonly appointmentsService = inject(AppointmentsService);
+  topbarHeight = signal(64);
 
   ngOnInit() {
     void this.appointmentsService.startRealtime();
@@ -31,5 +32,9 @@ export class AdminLayout implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     void this.appointmentsService.stopRealtime();
+  }
+
+  setTopbarHeight(height: number) {
+    this.topbarHeight.set(height);
   }
 }

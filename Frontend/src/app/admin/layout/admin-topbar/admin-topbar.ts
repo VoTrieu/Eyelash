@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, computed, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
@@ -14,11 +14,17 @@ import { AccountService } from '../../../core/services/account-service';
   standalone: true,
   imports: [CommonModule, ButtonModule, AvatarModule, MenuModule],
   templateUrl: './admin-topbar.html',
-  styleUrls: ['./admin-topbar.css']
+  styleUrls: ['./admin-topbar.css'],
+  host: {
+    '(window:resize)': 'emitHeight()',
+  },
 })
-export class AdminTopbar {
+export class AdminTopbar implements AfterViewInit, OnDestroy {
+  private elementRef = inject(ElementRef<HTMLElement>);
   private accountService = inject(AccountService);
   private router = inject(Router);
+  private resizeObserver?: ResizeObserver;
+  heightChange = output<number>();
 
   currentUser = this.accountService.currentUser;
   avatarLabel = computed(() => this.currentUser()?.displayName?.charAt(0).toUpperCase() || 'A');
@@ -44,6 +50,26 @@ export class AdminTopbar {
     public sidebarService: SidebarService,
     public themeService: ThemeService
   ) {}
+
+  ngAfterViewInit() {
+    this.emitHeight();
+    requestAnimationFrame(() => this.emitHeight());
+
+    const header = this.elementRef.nativeElement.querySelector('header');
+    if (header) {
+      this.resizeObserver = new ResizeObserver(() => this.emitHeight());
+      this.resizeObserver.observe(header);
+    }
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+  }
+
+  emitHeight() {
+    const header = this.elementRef.nativeElement.querySelector('header');
+    this.heightChange.emit(header?.offsetHeight || this.elementRef.nativeElement.offsetHeight);
+  }
 
   logout() {
     this.accountService.logout();

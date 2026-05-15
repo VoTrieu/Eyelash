@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { PanelMenuModule } from 'primeng/panelmenu';
@@ -14,6 +14,7 @@ import { SidebarService } from '../../../core/services/sidebar-service';
 })
 export class AdminSidebar {
   protected readonly sidebarService = inject(SidebarService);
+  topbarHeight = input(64);
 
   items: MenuItem[] = [
     {

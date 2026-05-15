@@ -1,5 +1,8 @@
 <div class="bg-white">
-  <app-header></app-header>
+  <app-header #header></app-header>
+  @if (header.isFixed()) {
+    <div aria-hidden="true" [style.height.px]="header.headerHeightPx()"></div>
+  }
   <router-outlet></router-outlet>
   <app-footer></app-footer>
 </div>

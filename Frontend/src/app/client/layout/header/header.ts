@@ -22,8 +22,9 @@ export class Header implements AfterViewInit {
   private elementRef = inject(ElementRef<HTMLElement>);
 
   protected isScrolled = signal(false);
-  protected isFixed = signal(false);
-  private headerHeight = 0;
+  isFixed = signal(false);
+  headerHeightPx = signal(0);
+  private measuredHeaderHeight = 0;
 
   constructor(public themeService: ThemeService) {}
 
@@ -35,7 +36,7 @@ export class Header implements AfterViewInit {
   onScroll() {
     const shouldFix = this.isFixed()
       ? window.scrollY > 8
-      : window.scrollY >= this.headerHeight;
+      : window.scrollY >= this.measuredHeaderHeight;
 
     if (this.isFixed() !== shouldFix) {
       this.isFixed.set(shouldFix);
@@ -44,7 +45,8 @@ export class Header implements AfterViewInit {
   }
 
   protected setHeaderHeight() {
-    this.headerHeight = this.elementRef.nativeElement.offsetHeight;
+    this.measuredHeaderHeight = this.elementRef.nativeElement.offsetHeight;
+    this.headerHeightPx.set(this.measuredHeaderHeight);
   }
 
   navButtonClass(): string {
