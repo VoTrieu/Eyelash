@@ -61,6 +61,7 @@ export class AdminUsers implements OnInit {
   selectedAvatar = signal<File | null>(null);
   avatarPreviewUrl = signal<string | null>(null);
   existingAvatarUrl = signal<string | null>(null);
+  showPassword = signal(false);
 
   rows = 10;
   first = 0;
@@ -158,6 +159,7 @@ export class AdminUsers implements OnInit {
     this.userForm.controls.password.updateValueAndValidity();
     this.clearAvatarSelection();
     this.existingAvatarUrl.set(null);
+    this.showPassword.set(false);
     this.displayDialog.set(true);
   }
 
@@ -179,6 +181,7 @@ export class AdminUsers implements OnInit {
     });
     this.clearAvatarSelection();
     this.existingAvatarUrl.set(user.imageUrl ?? null);
+    this.showPassword.set(false);
     this.displayDialog.set(true);
   }
 
@@ -295,7 +298,12 @@ export class AdminUsers implements OnInit {
 
     if (!visible) {
       this.clearAvatarSelection();
+      this.showPassword.set(false);
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword.update((visible) => !visible);
   }
 
   private normalizeFormValue(): AdminUserFormValue {

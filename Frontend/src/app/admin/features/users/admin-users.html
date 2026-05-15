@@ -204,7 +204,23 @@
         <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">
           Password {{ isEditing() ? '(leave blank to keep current)' : '' }}
         </span>
-        <input pInputText formControlName="password" type="password" autocomplete="new-password" />
+        <span class="relative">
+          <input
+            pInputText
+            formControlName="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+            class="w-full pr-12"
+          />
+          <button
+            pButton
+            type="button"
+            [icon]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"
+            class="p-button-rounded p-button-text absolute right-1 top-1/2 -translate-y-1/2 text-slate-500"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            (click)="togglePasswordVisibility()"
+          ></button>
+        </span>
       </label>
 
       <label class="grid gap-2">
