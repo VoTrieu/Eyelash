@@ -9,13 +9,14 @@ import { MessageService } from 'primeng/api';
 import { jwtInterceptor } from './core/interceptors/jwt-interceptor';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
 import { busyInterceptor } from './core/interceptors/busy-interceptor';
+import { cacheInterceptor } from './core/interceptors/cache-interceptor';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideHttpClient(withInterceptors([busyInterceptor, jwtInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([busyInterceptor, jwtInterceptor, cacheInterceptor, errorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     providePrimeNG({
       theme: {

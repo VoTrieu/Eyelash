@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
 builder.Services.AddOpenApi();
 builder.Services.AddCors(opt =>
 {

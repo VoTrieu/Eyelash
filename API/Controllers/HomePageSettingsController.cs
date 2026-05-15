@@ -5,18 +5,31 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers;
 
 public class HomePageSettingsController(
     AppDbContext context,
-    IPhotoService photoService) : BaseApiController
+    IPhotoService photoService,
+    IMemoryCache cache) : BaseApiController
 {
+    private const string CacheKey = "home-page-settings";
+
     [HttpGet]
     public async Task<ActionResult<HomePageSettingsDto>> GetHomePageSettings()
     {
+        if (cache.TryGetValue(CacheKey, out HomePageSettingsDto? cachedSettings))
+        {
+            return Ok(cachedSettings);
+        }
+
         var settings = await GetOrCreateSettings();
-        return ToDto(settings);
+        var dto = ToDto(settings);
+
+        cache.Set(CacheKey, dto, TimeSpan.FromMinutes(30));
+
+        return Ok(dto);
     }
 
     [Authorize(Policy = "RequireAdminRole")]
@@ -150,6 +163,7 @@ public class HomePageSettingsController(
         }
 
         await context.SaveChangesAsync();
+        cache.Remove(CacheKey);
 
         return ToDto(settings);
     }
