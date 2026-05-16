@@ -63,6 +63,7 @@ public class ServicesController(IUnitOfWork uow, IPhotoService photoService): Ba
             
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<ServiceDetailDto>> UpdateService(int id, [FromForm] UpdateServiceDto dto)
     {
