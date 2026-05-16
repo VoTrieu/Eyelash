@@ -7,9 +7,9 @@ import { DataViewModule } from 'primeng/dataview';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { ServicesService } from '../../../core/services/services-service';
-import { ServiceDetail } from '../../../types/service';
+import { Service } from '../../../types/service';
 import { ServiceCard } from '../../components/service-card/service-card';
 
 @Component({
@@ -24,7 +24,7 @@ export class ClientServices implements OnInit {
   private servicesService = inject(ServicesService);
   private router = inject(Router);
 
-  services = signal<ServiceDetail[]>([]);
+  services = signal<Service[]>([]);
   selectedServiceIds = signal<number[]>([]);
   searchTerm = signal('');
   loading = signal(false);
@@ -54,16 +54,10 @@ export class ClientServices implements OnInit {
     this.servicesService
       .loadServices({ pageNumber: 1, pageSize: 50, isAvailable: true, sortBy: 'name' })
       .pipe(
-        switchMap((result) => {
-          const services = result.items;
-          if (!services.length) return of([]);
-
-          return forkJoin(services.map((service) => this.servicesService.getService(service.id)));
-        }),
         finalize(() => this.loading.set(false))
       )
       .subscribe({
-        next: (services) => this.services.set(services)
+        next: (result) => this.services.set(result.items)
       });
   }
 

@@ -6,7 +6,7 @@ import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { ServicesService } from '../../../core/services/services-service';
 import { ImageGalleryDialog } from '../../../shared/image-gallery-dialog/image-gallery-dialog';
 import { ImageZoomGalleryItem } from '../../../shared/image-zoom-gallery/image-zoom-gallery';
-import { ServiceDetail } from '../../../types/service';
+import { Service } from '../../../types/service';
 
 @Component({
   selector: 'app-service-card',
@@ -18,7 +18,7 @@ import { ServiceDetail } from '../../../types/service';
 export class ServiceCard {
   private servicesService = inject(ServicesService);
 
-  service = input.required<ServiceDetail>();
+  service = input.required<Service>();
   selected = input(false);
   bookNow = output<number>();
   selectedChange = output<{ serviceId: number; selected: boolean }>();

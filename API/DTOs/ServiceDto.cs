@@ -12,4 +12,5 @@ public class ServiceDto
     public bool IsAvailable { get; set; }
     public DateTime Created { get; set; }
     public string? MainPhotoUrl { get; set; }
+    public List<PhotoDto> Photos { get; set; } = [];
 }

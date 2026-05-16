@@ -14,14 +14,22 @@ public class MappingProfiles: Profile
             .ForMember(dest => dest.MainPhotoUrl,
             opt => opt.MapFrom(src => src.Photos.Where(p => p.IsMain)
             .Select(p => p.Url)
-            .FirstOrDefault()));
+            .FirstOrDefault()))
+            .ForMember(dest => dest.Photos,
+            opt => opt.MapFrom(src => src.Photos
+            .OrderByDescending(p => p.IsMain)
+            .ThenBy(p => p.Id)));
 
         // Service -> Detail
         CreateMap<Service, ServiceDetailDto>()
             .ForMember(dest => dest.MainPhotoUrl,
             opt => opt.MapFrom(src => src.Photos.Where(p => p.IsMain)
             .Select(p => p.Url)
-            .FirstOrDefault()));
+            .FirstOrDefault()))
+            .ForMember(dest => dest.Photos,
+            opt => opt.MapFrom(src => src.Photos
+            .OrderByDescending(p => p.IsMain)
+            .ThenBy(p => p.Id)));
 
         // Photo
         CreateMap<Photo, PhotoDto>();

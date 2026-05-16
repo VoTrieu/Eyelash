@@ -9,6 +9,7 @@ export interface Service {
   isAvailable: boolean;
   created: string;
   mainPhotoUrl?: string | null;
+  photos: Photo[];
 }
 
 export interface Photo {
@@ -18,7 +19,6 @@ export interface Photo {
 }
 
 export interface ServiceDetail extends Service {
-  photos: Photo[];
   reviews: Review[];
 }
 
