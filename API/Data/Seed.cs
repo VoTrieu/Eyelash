@@ -282,6 +282,7 @@ public class Seed
             Rating = rating,
             Comment = comment,
             Created = created,
+            IsPublished = true,
             Photos = photos
         });
     }
