@@ -15,6 +15,7 @@ public class Review
     public string ClientName { get; set; } = "";
     public string? ClientEmail { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
+    public bool IsPublished { get; set; }
 
     public int? AppointmentId { get; set; }
     [JsonIgnore]

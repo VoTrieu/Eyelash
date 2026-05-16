@@ -19,6 +19,7 @@ public class UpsertReviewDto
     public int ServiceId { get; set; }
 
     public int? AppointmentId { get; set; }
+    public bool IsPublished { get; set; }
     public List<IFormFile> Photos { get; set; } = [];
     public List<int> DeletePhotoIds { get; set; } = [];
 }

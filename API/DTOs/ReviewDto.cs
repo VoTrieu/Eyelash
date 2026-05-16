@@ -10,6 +10,7 @@ public class ReviewDto
     public string ClientName { get; set; } = "";
     public string? ClientEmail { get; set; }
     public DateTime Created { get; set; }
+    public bool IsPublished { get; set; }
     public int ServiceId { get; set; }
     public string ServiceName { get; set; } = "";
     public int? AppointmentId { get; set; }
