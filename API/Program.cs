@@ -8,7 +8,6 @@ using API.Repositories;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -28,40 +27,16 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
     options.AddPolicy("AuthPolicy", context =>
-        RateLimitPartition.GetFixedWindowLimiter(GetRateLimitPartitionKey(context), _ =>
-            new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0
-            }));
+        GetClientFixedWindowLimiter(context, "auth", 5, TimeSpan.FromMinutes(1)));
 
     options.AddPolicy("ContactPolicy", context =>
-        RateLimitPartition.GetFixedWindowLimiter(GetRateLimitPartitionKey(context), _ =>
-            new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 3,
-                Window = TimeSpan.FromMinutes(10),
-                QueueLimit = 0
-            }));
+        GetClientFixedWindowLimiter(context, "contact", 3, TimeSpan.FromMinutes(10)));
 
     options.AddPolicy("AppointmentRequestPolicy", context =>
-        RateLimitPartition.GetFixedWindowLimiter(GetRateLimitPartitionKey(context), _ =>
-            new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(10),
-                QueueLimit = 0
-            }));
+        GetClientFixedWindowLimiter(context, "appointment-request", 5, TimeSpan.FromMinutes(10)));
 
     options.AddPolicy("ReviewSubmissionPolicy", context =>
-        RateLimitPartition.GetFixedWindowLimiter(GetRateLimitPartitionKey(context), _ =>
-            new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 3,
-                Window = TimeSpan.FromMinutes(10),
-                QueueLimit = 0
-            }));
+        GetClientFixedWindowLimiter(context, "review-submission", 3, TimeSpan.FromMinutes(10)));
 });
 builder.Services.AddCors(opt =>
 {
@@ -186,6 +161,27 @@ catch (Exception ex)
 }
 
 app.Run();
+
+static RateLimitPartition<string> GetClientFixedWindowLimiter(
+    HttpContext context,
+    string policyName,
+    int permitLimit,
+    TimeSpan window)
+{
+    if (context.User.IsInRole("Admin"))
+    {
+        return RateLimitPartition.GetNoLimiter($"admin:{policyName}");
+    }
+
+    return RateLimitPartition.GetFixedWindowLimiter(
+        $"{policyName}:{GetRateLimitPartitionKey(context)}",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = permitLimit,
+            Window = window,
+            QueueLimit = 0
+        });
+}
 
 static string GetRateLimitPartitionKey(HttpContext context)
 {

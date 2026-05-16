@@ -87,6 +87,13 @@ public class ReviewsController(
     [EnableRateLimiting("ReviewSubmissionPolicy")]
     public async Task<ActionResult<ReviewDto>> CreateReview([FromForm] UpsertReviewDto dto)
     {
+        var isAdmin = User.IsInRole("Admin");
+
+        if (!isAdmin && dto.Photos.Count > 4)
+        {
+            return BadRequest("Reviews can include a maximum of 4 images.");
+        }
+
         if (!await context.Services.AnyAsync(s => s.Id == dto.ServiceId))
         {
             return BadRequest("Selected service does not exist.");
@@ -106,7 +113,7 @@ public class ReviewsController(
             Comment = dto.Comment?.Trim(),
             ServiceId = dto.ServiceId,
             AppointmentId = dto.AppointmentId,
-            IsPublished = User.IsInRole("Admin") && dto.IsPublished
+            IsPublished = isAdmin && dto.IsPublished
         };
 
         if (dto.Photos.Any())
