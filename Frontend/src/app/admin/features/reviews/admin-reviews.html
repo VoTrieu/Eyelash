@@ -74,6 +74,7 @@
         <th pSortableColumn="serviceName">Service <p-sortIcon field="serviceName" /></th>
         <th pSortableColumn="rating">Rating <p-sortIcon field="rating" /></th>
         <th>Feedback</th>
+        <th>Status</th>
         <th pSortableColumn="created">Created <p-sortIcon field="created" /></th>
         <th class="w-32 text-right">Actions</th>
       </tr>
@@ -110,9 +111,23 @@
             {{ review.comment || 'No comment' }}
           </div>
         </td>
+        <td>
+          <p-tag
+            [value]="review.isPublished ? 'Published' : 'Hidden'"
+            [severity]="review.isPublished ? 'success' : 'warn'">
+          </p-tag>
+        </td>
         <td>{{ review.created | date: 'mediumDate' }}</td>
         <td>
           <div class="flex justify-end gap-1">
+            <button
+              pButton
+              type="button"
+              [icon]="review.isPublished ? 'pi pi-eye-slash' : 'pi pi-eye'"
+              class="p-button-rounded p-button-text p-button-sm"
+              [attr.aria-label]="review.isPublished ? 'Hide review' : 'Publish review'"
+              (click)="togglePublished(review)"
+            ></button>
             <button
               pButton
               type="button"
@@ -136,125 +151,23 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="7" class="py-8 text-center text-slate-500 dark:text-slate-400">No reviews found.</td>
+        <td colspan="8" class="py-8 text-center text-slate-500 dark:text-slate-400">No reviews found.</td>
       </tr>
     </ng-template>
   </p-table>
 </section>
 
-<p-dialog
-  [header]="isEditing() ? 'Edit review' : 'New review'"
+<app-review-editor-dialog
   [visible]="displayDialog()"
   (visibleChange)="displayDialog.set($event)"
-  [modal]="true"
-  [style]="{ width: 'min(720px, 94vw)' }"
-  [draggable]="false"
-  [resizable]="false"
->
-  <form [formGroup]="reviewForm" (ngSubmit)="saveReview()" class="mt-2 grid gap-4">
-    <div class="grid gap-4 md:grid-cols-2">
-      <div class="grid gap-2">
-        <label for="clientName" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Client name</label>
-        <input pInputText id="clientName" formControlName="clientName" />
-      </div>
-
-      <div class="grid gap-2">
-        <label for="clientEmail" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Client email</label>
-        <input pInputText id="clientEmail" type="email" formControlName="clientEmail" />
-      </div>
-    </div>
-
-    <div class="grid gap-4 md:grid-cols-2">
-      <div class="grid gap-2">
-        <label for="serviceId" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Service</label>
-        <p-select
-          inputId="serviceId"
-          formControlName="serviceId"
-          [options]="serviceOptions()"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select service"
-        />
-      </div>
-
-      <div class="grid gap-2">
-        <label for="appointmentId" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Appointment ID optional</label>
-        <p-inputNumber inputId="appointmentId" formControlName="appointmentId" styleClass="w-full" />
-      </div>
-    </div>
-
-    <div class="grid gap-2">
-      <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Rating</label>
-      <div class="flex items-center gap-3 rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-        <p-rating formControlName="rating"  />
-        <span class="text-sm text-slate-500">{{ reviewForm.value.rating }}/5</span>
-      </div>
-    </div>
-
-    <div class="grid gap-2">
-      <label for="comment" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Feedback</label>
-      <textarea pTextarea id="comment" formControlName="comment" rows="4" class="w-full"></textarea>
-    </div>
-
-    <div class="grid gap-2">
-      <label for="uploadFile" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Photos</label>
-      @if (isEditing() && existingPhotos().length) {
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          @for (photo of existingPhotos(); track photo.id) {
-            <div class="relative overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
-              <img [src]="imageUrl(photo.url)" alt="Review photo" class="aspect-square w-full object-cover" />
-              <button
-                pButton
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-rounded p-button-danger p-button-sm absolute right-2 top-2"
-                (click)="removeExistingPhoto(photo)"
-              ></button>
-            </div>
-          }
-        </div>
-      }
-
-      <p-fileUpload
-        id="uploadFile"
-        #uploadFile
-        mode="advanced"
-        accept="image/*"
-        maxFileSize="4194304"
-        chooseLabel="Choose images"
-        chooseIcon="pi pi-image"
-        showUploadButton="false"
-        showCancelButton="false"
-        class="w-full"
-        invalidFileSizeMessageSummary="File too large"
-        invalidFileSizeMessageDetail="Maximum upload size is 4 MB"
-        [multiple]="true"
-        [customUpload]="true"
-        (onSelect)="onPhotosSelected($event)"
-      />
-      @if (selectedFiles().length) {
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          {{ selectedFiles().length }} photo{{ selectedFiles().length === 1 ? '' : 's' }} selected.
-        </p>
-      }
-    </div>
-
-    <div class="flex justify-end gap-2 pt-2">
-      <button
-        pButton
-        type="button"
-        label="Cancel"
-        class="p-button-text p-button-secondary"
-        (click)="displayDialog.set(false)"
-      ></button>
-      <button
-        pButton
-        type="submit"
-        label="Save"
-        icon="pi pi-check"
-        [loading]="saving()"
-        [disabled]="reviewForm.invalid"
-      ></button>
-    </div>
-  </form>
-</p-dialog>
+  [header]="isEditing() ? 'Edit review' : 'New review'"
+  [review]="editingReview()"
+  [services]="services()"
+  [saving]="saving()"
+  [showPublishedControl]="true"
+  [showAppointmentId]="true"
+  [showPhotos]="true"
+  [defaultPublished]="true"
+  submitLabel="Save"
+  (save)="saveReview($event)"
+></app-review-editor-dialog>

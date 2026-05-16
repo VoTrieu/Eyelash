@@ -34,11 +34,7 @@ export class ReviewsService {
   }
 
   createReview(review: ReviewFormValue, photos: File[] = []) {
-    return this.http.post<Review>(this.baseUrl + 'reviews', this.toFormData(review, photos)).pipe(
-      tap((createdReview) => {
-        this.reviews.update((reviews) => [createdReview, ...reviews]);
-      })
-    );
+    return this.http.post<Review>(this.baseUrl + 'reviews', this.toFormData(review, photos));
   }
 
   updateReview(id: number, review: ReviewFormValue, photos: File[] = [], deletePhotoIds: number[] = []) {
@@ -85,6 +81,7 @@ export class ReviewsService {
     formData.append('rating', String(review.rating));
     formData.append('comment', review.comment ?? '');
     formData.append('serviceId', String(review.serviceId));
+    formData.append('isPublished', String(!!review.isPublished));
 
     if (review.appointmentId) {
       formData.append('appointmentId', String(review.appointmentId));

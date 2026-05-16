@@ -8,6 +8,7 @@ export interface Review {
   clientEmail?: string | null;
   displayName: string;
   created: string;
+  isPublished: boolean;
   serviceId: number;
   serviceName: string;
   appointmentId?: number | null;
@@ -20,6 +21,7 @@ export interface ReviewQueryParams {
   search?: string;
   serviceId?: number | null;
   rating?: number | null;
+  isPublished?: boolean | null;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 }
@@ -31,4 +33,5 @@ export interface ReviewFormValue {
   comment?: string | null;
   serviceId: number;
   appointmentId?: number | null;
+  isPublished?: boolean;
 }

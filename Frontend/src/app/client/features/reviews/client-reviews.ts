@@ -7,12 +7,14 @@ import { finalize } from 'rxjs';
 import { ReviewCard } from '../../components/review-card/review-card';
 import { ReviewsService } from '../../../core/services/reviews-service';
 import { ServicesService } from '../../../core/services/services-service';
+import { ToastService } from '../../../core/services/toast-service';
+import { ReviewEditorDialog, ReviewEditorSaveEvent } from '../../../shared/review-editor-dialog/review-editor-dialog';
 import { Service } from '../../../types/service';
 
 @Component({
   selector: 'app-client-reviews',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonModule, SelectModule, ReviewCard],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, SelectModule, ReviewCard, ReviewEditorDialog],
   templateUrl: './client-reviews.html',
   styleUrls: ['./client-reviews.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,11 +22,14 @@ import { Service } from '../../../types/service';
 export class ClientReviews implements OnInit {
   private reviewsService = inject(ReviewsService);
   private servicesService = inject(ServicesService);
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   reviews = this.reviewsService.reviews;
   services = this.servicesService.services;
   loading = signal(false);
+  submitting = signal(false);
+  reviewDialogVisible = signal(false);
   totalRecords = computed(() => this.reviewsService.pagination()?.totalItems ?? 0);
 
   filterForm = this.fb.group({
@@ -68,6 +73,19 @@ export class ClientReviews implements OnInit {
   clearFilters() {
     this.filterForm.reset({ serviceId: null, rating: null });
     this.loadReviews();
+  }
+
+  submitReview(event: ReviewEditorSaveEvent) {
+    this.submitting.set(true);
+    this.reviewsService
+      .createReview({ ...event.value, isPublished: false }, event.photos)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.reviewDialogVisible.set(false);
+          this.toastService.showSuccess('Review submitted for approval');
+        }
+      });
   }
 
   serviceOptions() {

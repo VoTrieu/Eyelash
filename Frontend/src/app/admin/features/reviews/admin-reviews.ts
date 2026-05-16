@@ -1,23 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { FileUpload, FileUploadModule } from 'primeng/fileupload';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { RatingModule } from 'primeng/rating';
 import { SelectModule } from 'primeng/select';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs';
 import { ReviewsService } from '../../../core/services/reviews-service';
 import { ServicesService } from '../../../core/services/services-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { ConfirmDialogService } from '../../../shared/confirm-dialog/confirm-dialog-service';
+import { ReviewEditorDialog, ReviewEditorSaveEvent } from '../../../shared/review-editor-dialog/review-editor-dialog';
 import { Review, ReviewFormValue, ReviewQueryParams } from '../../../types/review';
-import { Photo, Service } from '../../../types/service';
+import { Service } from '../../../types/service';
 
 @Component({
   selector: 'app-admin-reviews',
@@ -27,15 +24,12 @@ import { Photo, Service } from '../../../types/service';
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
-    DialogModule,
-    FileUploadModule,
-    InputNumberModule,
     InputTextModule,
     RatingModule,
     SelectModule,
     TableModule,
     TagModule,
-    TextareaModule,
+    ReviewEditorDialog,
   ],
   templateUrl: './admin-reviews.html',
   styleUrls: ['./admin-reviews.css'],
@@ -47,7 +41,6 @@ export class AdminReviews implements OnInit {
   private toastService = inject(ToastService);
   private confirmDialogService = inject(ConfirmDialogService);
   private fb = inject(FormBuilder);
-  private fileUpload: Signal<FileUpload | undefined> = viewChild('uploadFile');
 
   reviews = this.reviewsService.reviews;
   services = this.servicesService.services;
@@ -58,9 +51,7 @@ export class AdminReviews implements OnInit {
   displayDialog = signal(false);
   isEditing = signal(false);
   editingId = signal<number | null>(null);
-  selectedFiles = signal<File[]>([]);
-  existingPhotos = signal<Photo[]>([]);
-  deletePhotoIds = signal<number[]>([]);
+  editingReview = signal<Review | null>(null);
 
   rows = 10;
   first = 0;
@@ -80,15 +71,6 @@ export class AdminReviews implements OnInit {
     search: [''],
     serviceId: [null as number | null],
     rating: [null as number | null],
-  });
-
-  reviewForm = this.fb.group({
-    clientName: ['', Validators.required],
-    clientEmail: ['', Validators.email],
-    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
-    comment: [''],
-    serviceId: [null as number | null, Validators.required],
-    appointmentId: [null as number | null],
   });
 
   ngOnInit() {
@@ -143,70 +125,52 @@ export class AdminReviews implements OnInit {
   openNew() {
     this.isEditing.set(false);
     this.editingId.set(null);
-    this.selectedFiles.set([]);
-    this.existingPhotos.set([]);
-    this.deletePhotoIds.set([]);
-    this.fileUpload()?.clear();
-    this.reviewForm.reset({
-      clientName: '',
-      clientEmail: '',
-      rating: 5,
-      comment: '',
-      serviceId: null,
-      appointmentId: null,
-    });
+    this.editingReview.set(null);
     this.displayDialog.set(true);
   }
 
   editReview(review: Review) {
     this.isEditing.set(true);
     this.editingId.set(review.id);
-    this.selectedFiles.set([]);
-    this.existingPhotos.set(review.photos);
-    this.deletePhotoIds.set([]);
-    this.fileUpload()?.clear();
-    this.reviewForm.reset({
-      clientName: review.clientName,
-      clientEmail: review.clientEmail ?? '',
-      rating: review.rating,
-      comment: review.comment ?? '',
-      serviceId: review.serviceId,
-      appointmentId: review.appointmentId ?? null,
-    });
+    this.editingReview.set(review);
     this.displayDialog.set(true);
   }
 
-  removeExistingPhoto(photo: Photo) {
-    this.existingPhotos.update((photos) => photos.filter((p) => p.id !== photo.id));
-    this.deletePhotoIds.update((ids) => [...ids, photo.id]);
+  togglePublished(review: Review) {
+    const value: ReviewFormValue = {
+      clientName: review.clientName,
+      clientEmail: review.clientEmail,
+      rating: review.rating,
+      comment: review.comment,
+      serviceId: review.serviceId,
+      appointmentId: review.appointmentId,
+      isPublished: !review.isPublished,
+    };
+
+    this.reviewsService.updateReview(review.id, value).subscribe({
+      next: () => {
+        this.toastService.showSuccess(value.isPublished ? 'Review published' : 'Review hidden');
+        this.loadReviews();
+      }
+    });
   }
 
-  onPhotosSelected(event: any) {
-    const files = event.currentFiles || event.files || [];
-    this.selectedFiles.set([...files]);
-  }
-
-  saveReview() {
-    if (this.reviewForm.invalid) {
-      this.reviewForm.markAllAsTouched();
-      return;
-    }
-
-    const value = this.reviewForm.getRawValue() as ReviewFormValue;
+  saveReview(event: ReviewEditorSaveEvent) {
     this.saving.set(true);
 
     const request = this.isEditing() && this.editingId() !== null
       ? this.reviewsService.updateReview(
         this.editingId()!,
-        value,
-        this.selectedFiles(),
-        this.deletePhotoIds()
+        event.value,
+        event.photos,
+        event.deletePhotoIds
       )
-      : this.reviewsService.createReview(value, this.selectedFiles());
+      : this.reviewsService.createReview(event.value, event.photos);
 
     request.pipe(finalize(() => this.saving.set(false))).subscribe({
       next: () => {
         this.displayDialog.set(false);
+        this.editingReview.set(null);
         this.toastService.showSuccess(this.isEditing() ? 'Review updated' : 'Review created');
         this.loadReviews();
       }

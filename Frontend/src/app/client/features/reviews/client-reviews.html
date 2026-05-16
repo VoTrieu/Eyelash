@@ -13,6 +13,16 @@
         </p>
       </div>
 
+      <div class="flex justify-start">
+        <button
+          pButton
+          type="button"
+          label="Write a review"
+          icon="pi pi-star"
+          (click)="reviewDialogVisible.set(true)"
+        ></button>
+      </div>
+
       <form
         [formGroup]="filterForm"
         (ngSubmit)="loadReviews()"
@@ -68,3 +78,18 @@
     }
   </div>
 </section>
+
+<app-review-editor-dialog
+  [visible]="reviewDialogVisible()"
+  (visibleChange)="reviewDialogVisible.set($event)"
+  header="Write a review"
+  [services]="services()"
+  [saving]="submitting()"
+  [showPublishedControl]="false"
+  [showAppointmentId]="false"
+  [showPhotos]="true"
+  [maxPhotoCount]="4"
+  [defaultPublished]="false"
+  submitLabel="Submit review"
+  (save)="submitReview($event)"
+></app-review-editor-dialog>
