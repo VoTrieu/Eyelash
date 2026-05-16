@@ -53,6 +53,15 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(10),
                 QueueLimit = 0
             }));
+
+    options.AddPolicy("ReviewSubmissionPolicy", context =>
+        RateLimitPartition.GetFixedWindowLimiter(GetRateLimitPartitionKey(context), _ =>
+            new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(10),
+                QueueLimit = 0
+            }));
 });
 builder.Services.AddCors(opt =>
 {

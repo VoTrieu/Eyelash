@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
@@ -21,6 +22,19 @@ public class ReviewsController(
         [FromQuery] ReviewParams reviewParams)
     {
         var query = context.Reviews.AsQueryable();
+        var isAdmin = User.IsInRole("Admin");
+
+        if (isAdmin)
+        {
+            if (reviewParams.IsPublished.HasValue)
+            {
+                query = query.Where(r => r.IsPublished == reviewParams.IsPublished.Value);
+            }
+        }
+        else
+        {
+            query = query.Where(r => r.IsPublished);
+        }
 
         if (!string.IsNullOrWhiteSpace(reviewParams.Search))
         {
@@ -55,18 +69,22 @@ public class ReviewsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ReviewDto>> GetReview(int id)
     {
-        var review = await context.Reviews
-            .Where(r => r.Id == id)
-            .ProjectTo<ReviewDto>(mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync();
+        var query = context.Reviews.Where(r => r.Id == id);
+
+        if (!User.IsInRole("Admin"))
+        {
+            query = query.Where(r => r.IsPublished);
+        }
+
+        var review = await query.ProjectTo<ReviewDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
 
         if (review == null) return NotFound();
 
         return review;
     }
 
-    [Authorize(Policy = "RequireAdminRole")]
     [HttpPost]
+    [EnableRateLimiting("ReviewSubmissionPolicy")]
     public async Task<ActionResult<ReviewDto>> CreateReview([FromForm] UpsertReviewDto dto)
     {
         if (!await context.Services.AnyAsync(s => s.Id == dto.ServiceId))
@@ -87,7 +105,8 @@ public class ReviewsController(
             Rating = dto.Rating,
             Comment = dto.Comment?.Trim(),
             ServiceId = dto.ServiceId,
-            AppointmentId = dto.AppointmentId
+            AppointmentId = dto.AppointmentId,
+            IsPublished = User.IsInRole("Admin") && dto.IsPublished
         };
 
         if (dto.Photos.Any())
@@ -133,6 +152,7 @@ public class ReviewsController(
         review.Comment = dto.Comment?.Trim();
         review.ServiceId = dto.ServiceId;
         review.AppointmentId = dto.AppointmentId;
+        review.IsPublished = dto.IsPublished;
 
         var photosToDelete = review.Photos.Where(p => dto.DeletePhotoIds.Contains(p.Id)).ToList();
         foreach (var photo in photosToDelete)
