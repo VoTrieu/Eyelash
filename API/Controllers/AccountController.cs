@@ -5,6 +5,7 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
@@ -12,6 +13,7 @@ namespace API.Controllers;
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService) : BaseApiController
 {
     [HttpPost("login")]
+    [EnableRateLimiting("AuthPolicy")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await userManager.FindByEmailAsync(loginDto.Email);
@@ -25,6 +27,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     }
 
     [HttpPost("register")]
+    [EnableRateLimiting("AuthPolicy")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         var existingUser = await userManager.FindByEmailAsync(registerDto.Email);

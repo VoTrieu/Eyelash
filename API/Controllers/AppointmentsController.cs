@@ -5,6 +5,7 @@ using API.Hubs;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Controllers;
@@ -32,6 +33,7 @@ public class AppointmentsController(
     }
 
     [HttpPost]
+    [EnableRateLimiting("AppointmentRequestPolicy")]
     public async Task<ActionResult<AppointmentDto>> CreateAppointment([FromForm] CreateAppointmentDto dto)
     {
         var services = new List<Service>();

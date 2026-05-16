@@ -3,6 +3,7 @@ using System.Net.Mail;
 using System.Text;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers;
 
@@ -14,6 +15,7 @@ public class ContactController(
     private const string ClientTemplatePath = "EmailTemplates/ContactClientConfirmation.html";
 
     [HttpPost]
+    [EnableRateLimiting("ContactPolicy")]
     public async Task<ActionResult> SendContactInquiry(ContactInquiryDto dto)
     {
         var studioRecipient = config["Notifications:Contact:StudioRecipient"];
