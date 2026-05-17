@@ -43,7 +43,8 @@ function clearCacheForMutation(url: string) {
   if (
     normalizedUrl.includes('/homepagesettings') ||
     normalizedUrl.includes('/services') ||
-    normalizedUrl.includes('/reviews')
+    normalizedUrl.includes('/reviews') ||
+    normalizedUrl.includes('/appointmentavailability')
   ) {
     cache.clear();
   }
