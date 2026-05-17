@@ -39,7 +39,7 @@ export class Availability implements OnInit{
   rows = 10;
   first = 0;
   sortBy = 'date';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  sortDirection: 'asc' | 'desc' = 'desc';
   defaultDate = new Date();
  
 

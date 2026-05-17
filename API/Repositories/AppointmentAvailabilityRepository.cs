@@ -30,6 +30,7 @@ public class AppointmentAvailabilityRepository(AppDbContext context, IMapper map
     public async Task<PaginatedResult<AppointmentAvailabilityBlockDto>> GetAllAvailabilityBlocksAsync(AppointmentAvailabilityParams appointmentAvailabilityParams)
     {
         var query = context.AppointmentAvailabilityBlocks.AsQueryable();
+        var descending = appointmentAvailabilityParams.SortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
 
         if (appointmentAvailabilityParams.FromDate.HasValue)
         {
@@ -41,7 +42,12 @@ public class AppointmentAvailabilityRepository(AppDbContext context, IMapper map
             query = query.Where(a => a.Date <= appointmentAvailabilityParams.ToDate.Value);
         }
 
-        query = query.OrderBy(a => a.Date).OrderBy(a => a.StartTime);
+        query = appointmentAvailabilityParams.SortBy?.ToLowerInvariant() switch
+        {
+            "date" => descending ? query.OrderByDescending(a => a.Date).ThenByDescending(a => a.StartTime) : query.OrderBy(a => a.Date).ThenBy(a => a.StartTime),
+            "type" => descending ? query.OrderByDescending(a => a.Type) : query.OrderBy(a => a.Type),
+            _ => query.OrderBy(a => a.Id)
+        };
 
         var dtoQuery = query.ProjectTo<AppointmentAvailabilityBlockDto>(mapper.ConfigurationProvider);
 
