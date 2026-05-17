@@ -81,7 +81,7 @@ export class RegisterComponent {
       const submissionData = { ...registerData, gender: genderCode };
 
       this.accountService.register(submissionData as RegisterCreds).subscribe({
-        next: user => {
+        next: () => {
           this.toastService.showSuccess('Registration successful!');
           this.router.navigate(['/']);
         }

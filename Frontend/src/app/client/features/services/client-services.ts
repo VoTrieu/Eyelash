@@ -61,12 +61,6 @@ export class ClientServices implements OnInit {
       });
   }
 
-  toggleBookingList(serviceId: number) {
-    this.selectedServiceIds.update((ids) =>
-      ids.includes(serviceId) ? ids.filter((id) => id !== serviceId) : [...ids, serviceId]
-    );
-  }
-
   setBookingListSelection(event: { serviceId: number; selected: boolean }) {
     this.selectedServiceIds.update((ids) => {
       if (event.selected) {

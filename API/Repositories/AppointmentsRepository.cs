@@ -97,8 +97,4 @@ public class AppointmentsRepository(AppDbContext context, IMapper mapper) : IApp
         return settings;
     }
 
-    public Task<IReadOnlyList<Appointment>> GetAppointmentForDateAsync(DateOnly date)
-    {
-        throw new NotImplementedException();
-    }
 }

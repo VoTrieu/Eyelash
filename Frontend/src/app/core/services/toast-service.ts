@@ -23,12 +23,4 @@ export class ToastService {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: message });
     }
 
-    showContrast(message: string) {
-        this.messageService.add({ severity: 'contrast', summary: 'Contrast', detail: message });
-    }
-
-    showSecondary(message: string) {
-        this.messageService.add({ severity: 'secondary', summary: 'Secondary', detail: message });
-    }
-
 }

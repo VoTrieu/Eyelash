@@ -33,11 +33,6 @@ export class AvailabilityService {
       );
   }
 
-  loadAvailabilityBlockForDay(date?: string | null){
-    return this.http.get<AppointmentAvalabilityBlock[]>(
-      this.baseUrl + 'appointmentavailability/day' + date, {params: this.buildParams({ date: date ?? ''})});
-  }
-
   createAvailabilityBlock(block: AppointmentAvailabilityFormValue){
     return this.http.post<AppointmentAvalabilityBlock>(this.baseUrl + 'appointmentavailability', block).pipe(
       tap((newBlock) => {

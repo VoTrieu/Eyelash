@@ -3,7 +3,7 @@ import { AccountService } from '../services/account-service';
 import { inject } from '@angular/core';
 import { ToastService } from '../services/toast-service';
 
-export const adminGuard: CanActivateChildFn = (route, state) => {
+export const adminGuard: CanActivateChildFn = (_route, state) => {
   const accountService = inject(AccountService);
   const toastService = inject(ToastService); 
   const router = inject(Router); 

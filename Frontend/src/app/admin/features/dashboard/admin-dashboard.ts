@@ -33,13 +33,15 @@ export class AdminDashboard implements OnInit {
 
   today = toDateOnly(new Date())!;
 
-  private realtimeRefreshEffect = effect(() => {
-    const version = this.appointmentsService.realtimeAppointmentVersion();
+  constructor() {
+    effect(() => {
+      const version = this.appointmentsService.realtimeAppointmentVersion();
 
-    if (version > 0) {
-      queueMicrotask(() => this.loadDashboard());
-    }
-  });
+      if (version > 0) {
+        queueMicrotask(() => this.loadDashboard());
+      }
+    });
+  }
 
   ngOnInit() {
     this.loadDashboard();
