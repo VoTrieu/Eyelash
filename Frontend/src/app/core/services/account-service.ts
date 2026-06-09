@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { LoginCreds, RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs/internal/operators/tap';
+import { resolveMediaUrl } from '../helpers/media-url-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -54,9 +55,7 @@ export class AccountService {
   }
 
   resolveImageUrl(url?: string | null) {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    return this.mediaUrl + url.replace(/^\//, '');
+    return resolveMediaUrl(url, this.mediaUrl);
   }
 
   isTokenValid(): boolean {

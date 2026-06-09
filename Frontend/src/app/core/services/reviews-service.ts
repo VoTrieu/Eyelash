@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { resolveMediaUrl } from '../helpers/media-url-helper';
 import { PaginatedResult } from '../../types/pagination';
 import { Review, ReviewFormValue, ReviewQueryParams } from '../../types/review';
 
@@ -56,9 +57,7 @@ export class ReviewsService {
   }
 
   resolvePhotoUrl(url?: string | null) {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    return this.mediaUrl + url.replace(/^\//, '');
+    return resolveMediaUrl(url, this.mediaUrl);
   }
 
   private buildParams(params: ReviewQueryParams) {

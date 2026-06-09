@@ -7,6 +7,7 @@ import {
   HomePageSettings,
   UpdateHomePageSettings,
 } from '../../types/home-page-settings';
+import { resolveMediaUrl } from '../helpers/media-url-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -44,10 +45,7 @@ export class HomePageSettingsService {
   }
 
   resolveImageUrl(url?: string | null) {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    if (url.startsWith('/brand/')) return url;
-    return this.mediaUrl + url.replace(/^\//, '');
+    return resolveMediaUrl(url, this.mediaUrl);
   }
 
   private toFormData(

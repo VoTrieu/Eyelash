@@ -10,6 +10,7 @@ import {
   AppointmentSettings,
 } from '../../types/appointment';
 import { PaginatedResult } from '../../types/pagination';
+import { resolveMediaUrl } from '../helpers/media-url-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -133,9 +134,7 @@ export class AppointmentsService {
   }
 
   resolvePhotoUrl(url?: string | null) {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    return this.mediaUrl + url.replace(/^\//, '');
+    return resolveMediaUrl(url, this.mediaUrl);
   }
 
   private upsertAppointment(appointment: Appointment) {

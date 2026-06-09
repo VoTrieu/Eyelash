@@ -9,6 +9,7 @@ import {
 } from '../../types/service';
 import { tap } from 'rxjs/internal/operators/tap';
 import { PaginatedResult } from '../../types/pagination';
+import { resolveMediaUrl } from '../helpers/media-url-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -61,10 +62,7 @@ export class ServicesService {
   }
 
   resolvePhotoUrl(url?: string | null) {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    if (url.startsWith('/brand/')) return url;
-    return this.mediaUrl + url.replace(/^\//, '');
+    return resolveMediaUrl(url, this.mediaUrl);
   }
 
   private buildParams(params: ServiceQueryParams) {
