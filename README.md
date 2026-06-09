@@ -4,6 +4,32 @@ Full-stack booking and administration app for Kim's Brow & Lash.
 
 The solution contains an ASP.NET Core API, an Angular client, SQL Server persistence, JWT-based admin authentication, service photo galleries, appointment requests, reviews, home page settings, contact forms, email notifications, and SignalR appointment updates.
 
+## Application Screenshots
+
+Public client pages:
+
+| Home | Services |
+| --- | --- |
+| ![Home page](docs/screenshots/home.png) | ![Services page](docs/screenshots/services.png) |
+
+| Booking | Reviews |
+| --- | --- |
+| ![Booking page](docs/screenshots/booking.png) | ![Reviews page](docs/screenshots/reviews.png) |
+
+| Contact | Login |
+| --- | --- |
+| ![Contact page](docs/screenshots/contact.png) | ![Login page](docs/screenshots/login.png) |
+
+Admin pages:
+
+| Dashboard | Services |
+| --- | --- |
+| ![Admin dashboard](docs/screenshots/admin-dashboard.png) | ![Admin services page](docs/screenshots/admin-services.png) |
+
+| Appointments | Home Settings |
+| --- | --- |
+| ![Admin appointments page](docs/screenshots/admin-appointments.png) | ![Admin home settings page](docs/screenshots/admin-settings.png) |
+
 ## Tech Stack
 
 - ASP.NET Core 10
@@ -19,6 +45,7 @@ The solution contains an ASP.NET Core API, an Angular client, SQL Server persist
 ```text
 API/        ASP.NET Core backend, EF Core migrations, DTOs, repositories, services
 Frontend/   Angular application
+docs/       Project screenshots and documentation assets
 docker-compose.yml
 Eyelash.sln
 ```
